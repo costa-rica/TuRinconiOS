@@ -6,9 +6,10 @@
 //
 
 import UIKit
-import PhotosUI
+//import PhotosUI
 
-class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate {
+//class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate {
+    class RinconVC: DefaultViewController, RinconVCDelegate {
     
     var userStore: UserStore!
     var rinconStore: RinconStore!
@@ -216,7 +217,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         txtPost.removeFromSuperview()
         stckVwSubmitBtns.removeFromSuperview()
         btnSubmitPost.removeFromSuperview()
-        btnAddPhotos.removeFromSuperview()
+//        btnAddPhotos.removeFromSuperview()
         vwPostSpacer.removeFromSuperview()
     }
     
@@ -342,66 +343,66 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("Selecting Photos")
         self.arryNewPostImageFilenames = []
         self.arryNewPostImages = []
-        openPhotoGallery()
+//        openPhotoGallery()
     }
     
-    func openPhotoGallery() {
-        print("- in openPhotoGallery")
-        
-        var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
-        configuration.selectionLimit = 0 // No limit
-        configuration.filter = .images // Only images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
-        print("-- end openPhotoGallery --")
-    }
+//    func openPhotoGallery() {
+//        print("- in openPhotoGallery")
+//
+//        var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
+//        configuration.selectionLimit = 0 // No limit
+//        configuration.filter = .images // Only images
+//        let picker = PHPickerViewController(configuration: configuration)
+//        picker.delegate = self
+//        present(picker, animated: true, completion: nil)
+//        print("-- end openPhotoGallery --")
+//    }
 
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        print("--- in picker ---")
-
-        
-        for result in results {
-            
-            let resultProvider = result.itemProvider
-            resultProvider.loadFileRepresentation(forTypeIdentifier: "public.item") { (url,error) in
-                if error != nil {
-                    print("error: \(error!)")
-                } else {
-
-                    
-                    if let url = url {
-                        print("url: \(url)")
-                        let temp_image = getImageFrom(url: url)
-                        if let temp_image = temp_image {
-                            self.arryNewPostImageFilenames!.append(url.lastPathComponent)
-                            self.arryNewPostImages.append(temp_image)
-                            
-
-                        }
-                    }
-
-                }
-            }
-            
-
-        }
-        
-
-        
-        picker.dismiss(animated: true, completion: nil)
-        
-//        if let unwp_array = self.arryNewPostImageFilenames {
-//            print("arryNewPostImageFilenames")
-//            print(unwp_array)
+//    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+//        print("--- in picker ---")
+//
+//
+//        for result in results {
+//
+//            let resultProvider = result.itemProvider
+//            resultProvider.loadFileRepresentation(forTypeIdentifier: "public.item") { (url,error) in
+//                if error != nil {
+//                    print("error: \(error!)")
+//                } else {
+//
+//
+//                    if let url = url {
+//                        print("url: \(url)")
+//                        let temp_image = getImageFrom(url: url)
+//                        if let temp_image = temp_image {
+//                            self.arryNewPostImageFilenames!.append(url.lastPathComponent)
+//                            self.arryNewPostImages.append(temp_image)
+//
+//
+//                        }
+//                    }
+//
+//                }
+//            }
+//
+//
 //        }
-//        if let unwrp_array2 = self.arryNewPostImages {
-//            print("arryNewPostImages")
-//            print(unwrp_array2)
-//        }
-//        print("* ---- Multiple images selected above --------- *")
-        print("- end picker ---")
-    }
+//
+//
+//
+//        picker.dismiss(animated: true, completion: nil)
+//
+////        if let unwp_array = self.arryNewPostImageFilenames {
+////            print("arryNewPostImageFilenames")
+////            print(unwp_array)
+////        }
+////        if let unwrp_array2 = self.arryNewPostImages {
+////            print("arryNewPostImages")
+////            print(unwrp_array2)
+////        }
+////        print("* ---- Multiple images selected above --------- *")
+//        print("- end picker ---")
+//    }
     
     func customReloadCell(indexPath:IndexPath){
         tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)

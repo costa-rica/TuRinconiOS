@@ -30,7 +30,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     var spinnerViewDict:[String: UIActivityIndicatorView]?
     var stackViewImages: UIStackView?
     
-    var videoView: VideoView?
+//    var videoView: VideoView?
     
     var lineImageImageView01: UIImageView!
     
@@ -86,7 +86,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
         if let unwrappaed_stackViewImages = stackViewImages{
             unwrappaed_stackViewImages.removeFromSuperview()
         }
-        self.videoView?.removeFromSuperview()
+//        self.videoView?.removeFromSuperview()
         lineImageImageView01.removeFromSuperview()
         stckVwUserInteraction.removeFromSuperview()
         
@@ -117,7 +117,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
         setup_lblUsername()
         setup_lblPostText()
         setup_images()
-        setup_video()
+//        setup_video()
         setup_line01()
         setup_userInteractionStackView()
         setup_line02()
@@ -241,68 +241,68 @@ class PostCell: UITableViewCell, PostCellDelegate {
 
     } // setup_images
     
-    func setup_video(){
-        if let unwrapped_video_filename =  self.post.video_file_name{
-            
-            if rinconStore.rinconFileExists(rincon: self.rincon, file_name: unwrapped_video_filename){
-                setup_videoPlayer(videoFilename: unwrapped_video_filename)
-            } else {
-                
-                /* setup a defualt photo*/
-                imgViewDict = [String:UIImageView]()
-                imgDict = [String:(image:UIImage,downloaded:Bool)]()
-                spinnerViewDict = [String: UIActivityIndicatorView]()
-                
-                imgDict![unwrapped_video_filename] = (image:UIImage(named: "blackScreen")!, downloaded:false)
-                let spinner = UIActivityIndicatorView(style: .large)
-                spinner.translatesAutoresizingMaskIntoConstraints = false
-                spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
-                spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
-                spinner.startAnimating()
-                self.spinnerViewDict![unwrapped_video_filename] = spinner
-                
-                let imgArraySorted = resizeImagesInDictionary(imgDict!)
-                let stackViewImagesResult = generateStackView(with: imgArraySorted)
-                stackViewImages = stackViewImagesResult.0
-//                let stackViewImagesHeight = stackViewImagesResult.2
-//                print("*** stackViewImagesHeight: \(stackViewImagesHeight)")
-                stckVwPostCell.addArrangedSubview(stackViewImages!)
-                stackViewImages?.accessibilityIdentifier = "stackViewImages"
-                
-                
-                /* download video */
-                self.rinconStore.requestPostVideo(rincon_id: post.rincon_id, video_file_name: unwrapped_video_filename) { tempLocalURL in
-                    do {
-                        let fileManager = FileManager.default
-                        let rinconFolderPath = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
-                        try fileManager.createDirectory(at: rinconFolderPath, withIntermediateDirectories: true, attributes: nil)
-                        let destinationURL = rinconFolderPath.appendingPathComponent(unwrapped_video_filename)
-                        try fileManager.moveItem(at: tempLocalURL, to: destinationURL)
-                        
-                        OperationQueue.main.addOperation  {
-                            self.stackViewImages?.removeFromSuperview()
-//                            self.post.cell_height = self.post.cell_height - stackViewImagesHeight
-                            self.setup_videoPlayer(videoFilename: unwrapped_video_filename)
-                        }
-                    } catch {
-                        print("Failed to download video")
-                    }
-                }
-                
-            }
-        }
-
-    } // setup_video
+//    func setup_video(){
+//        if let unwrapped_video_filename =  self.post.video_file_name{
+//
+//            if rinconStore.rinconFileExists(rincon: self.rincon, file_name: unwrapped_video_filename){
+//                setup_videoPlayer(videoFilename: unwrapped_video_filename)
+//            } else {
+//
+//                /* setup a defualt photo*/
+//                imgViewDict = [String:UIImageView]()
+//                imgDict = [String:(image:UIImage,downloaded:Bool)]()
+//                spinnerViewDict = [String: UIActivityIndicatorView]()
+//
+//                imgDict![unwrapped_video_filename] = (image:UIImage(named: "blackScreen")!, downloaded:false)
+//                let spinner = UIActivityIndicatorView(style: .large)
+//                spinner.translatesAutoresizingMaskIntoConstraints = false
+//                spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
+//                spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
+//                spinner.startAnimating()
+//                self.spinnerViewDict![unwrapped_video_filename] = spinner
+//
+//                let imgArraySorted = resizeImagesInDictionary(imgDict!)
+//                let stackViewImagesResult = generateStackView(with: imgArraySorted)
+//                stackViewImages = stackViewImagesResult.0
+////                let stackViewImagesHeight = stackViewImagesResult.2
+////                print("*** stackViewImagesHeight: \(stackViewImagesHeight)")
+//                stckVwPostCell.addArrangedSubview(stackViewImages!)
+//                stackViewImages?.accessibilityIdentifier = "stackViewImages"
+//
+//
+//                /* download video */
+//                self.rinconStore.requestPostVideo(rincon_id: post.rincon_id, video_file_name: unwrapped_video_filename) { tempLocalURL in
+//                    do {
+//                        let fileManager = FileManager.default
+//                        let rinconFolderPath = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
+//                        try fileManager.createDirectory(at: rinconFolderPath, withIntermediateDirectories: true, attributes: nil)
+//                        let destinationURL = rinconFolderPath.appendingPathComponent(unwrapped_video_filename)
+//                        try fileManager.moveItem(at: tempLocalURL, to: destinationURL)
+//
+//                        OperationQueue.main.addOperation  {
+//                            self.stackViewImages?.removeFromSuperview()
+////                            self.post.cell_height = self.post.cell_height - stackViewImagesHeight
+//                            self.setup_videoPlayer(videoFilename: unwrapped_video_filename)
+//                        }
+//                    } catch {
+//                        print("Failed to download video")
+//                    }
+//                }
+//
+//            }
+//        }
+//
+//    } // setup_video
     
-    func setup_videoPlayer(videoFilename: String){
-        videoView = VideoView(frame: CGRect(x: 0, y: 0, width: contentView.bounds.width, height: 300), post: post)
-        stckVwPostCell.addArrangedSubview(videoView!)
-        videoView?.accessibilityIdentifier = "videoView"
-        videoView!.translatesAutoresizingMaskIntoConstraints = false
-        videoView!.heightAnchor.constraint(equalToConstant: 300).isActive = true
-        videoView!.widthAnchor.constraint(equalToConstant: screenWidth).isActive=true
-//        post.cell_height = post.cell_height + 300
-    }
+//    func setup_videoPlayer(videoFilename: String){
+//        videoView = VideoView(frame: CGRect(x: 0, y: 0, width: contentView.bounds.width, height: 300), post: post)
+//        stckVwPostCell.addArrangedSubview(videoView!)
+//        videoView?.accessibilityIdentifier = "videoView"
+//        videoView!.translatesAutoresizingMaskIntoConstraints = false
+//        videoView!.heightAnchor.constraint(equalToConstant: 300).isActive = true
+//        videoView!.widthAnchor.constraint(equalToConstant: screenWidth).isActive=true
+////        post.cell_height = post.cell_height + 300
+//    }
     
     func setup_line01(){
         lineImageImageView01 = createDividerLine(thicknessOfLine: 1.0)
