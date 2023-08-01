@@ -47,12 +47,13 @@ class ImageStore {
         return imageFromDisk
     }
     
-    func deleteImage(forKey key: String) {
+    func deleteImage(forKey key: String, rincon:Rincon) {
         cache.removeObject(forKey: key as NSString)
         
-        let url = imageURL(forKey: key)
+//        let url = imageURL(forKey: key)
+        let rinconUrl = rinconImageURL(rincon: rincon, forKey: key)
         do {
-            try FileManager.default.removeItem(at: url)
+            try FileManager.default.removeItem(at: rinconUrl)
         } catch {
             print("Error removing the image from disk: \(error)")
         }

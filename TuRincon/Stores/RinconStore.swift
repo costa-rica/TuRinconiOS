@@ -94,7 +94,6 @@ class RinconStore {
         }
     }
     
-    
     func requestPostPhoto(rincon_id:String,image_file_name:String, completion:@escaping(Result<UIImage, Error>) -> Void){
         print("- RinconStore.requestPostPhoto")
         print("image_file_name: \(image_file_name)")
@@ -183,9 +182,6 @@ class RinconStore {
             do {
                 if let unwrapped_data = data  {
                     let _ = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers)
-//                    print("-- likePost jsonResults --")
-//                    print(jsonResult)
-//                    print("--- end of jsonResults ---")
                 }
 
             } catch {
@@ -333,51 +329,6 @@ class RinconStore {
     }
     
     
-//    func sendImage(uiimage:UIImage,post:Post, completion:@escaping([String:String])->Void) {
-//        print("- in RinconStore.sendImage ")
-//        let request = requestStore.createRequestSendImageAndToken(image: uiimage, post: post)
-//        let task = requestStore.session.dataTask(with: request) { data, response, error in
-//            do {
-//                if let unwrapped_data = data  {
-//                    
-//                    if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
-//                        OperationQueue.main.addOperation {
-//                            completion(jsonResult)
-//                        }
-//                        print("getLastPostId resulst: \(jsonResult)")
-//                    }
-//                }
-//                
-//            } catch {
-//                print("* (sendImage) Error receiving response: most likely Post did not decode well")
-//            }
-//        }
-//        task.resume()
-//    }
-    
-    func sendImageTwo(uiimage:UIImage, uiimageName:String, completion:@escaping([String:String]) -> Void) {
-        print("- in sendImageTwo for \(uiimageName) which is \(uiimage)")
-        let request_data = requestStore.createRequestSendImageAndTokenTwo(uiimage: uiimage, uiimageName: uiimageName)
-        let task = requestStore.session.uploadTask(with: request_data.0, from: request_data.1) {data, reseponse, error in
-            
-            do {
-                if let unwrapped_data = data  {
-                    
-                    if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
-                        OperationQueue.main.addOperation {
-                            completion(jsonResult)
-                        }
-                        print("getLastPostId resulst: \(jsonResult)")
-                    }
-                }
-                
-            } catch {
-                print("* (sendImageTwo) Error receiving response: most likely Post did not decode well")
-            }
-        }
-        task.resume()
-    }
-    
     func sendImagesThree(dictNewImages:[String: UIImage], completion:@escaping([String:String])->Void){
         print("- in sendImagesThree")
         print("filenames: \(dictNewImages.keys)")
@@ -401,5 +352,28 @@ class RinconStore {
         }
         task.resume()
     }
+    
+    func deletePost(post:Post, completion:@escaping([String:String])->Void){
+        print("- in rinconStore.deletePost -")
+        let request = requestStore.createRequestWithTokenAndQueryString(endpoint: .delete_post, queryString: [post.post_id])
+        let task = requestStore.session.dataTask(with: request) { (data,response,error) in
+            do {
+                if let unwrapped_data = data  {
+                    
+                    if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
+                        OperationQueue.main.addOperation {
+                            completion(jsonResult)
+                        }
+                        print("getLastPostId resulst: \(jsonResult)")
+                    }
+                }
+                
+            } catch {
+                print("* (rinconStore.deletePost) Error receiving response: either error in API or api did not send JSON")
+            }
+        }
+        task.resume()
+    }
+    
     
 }

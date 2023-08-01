@@ -265,20 +265,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                     
                     self.sendNewPostImages(post_id: jsonResponse["new_post_id"]!)
 
-//                    DispatchQueue.main.async {
-//                        self.rinconVcAlertMessage = "Post successfully sent"
-//                        self.alertConfirmPost()
-//                    }
-//                    self.hideStckVwSubmitPostTxtAndBtn()
-                    
                 }
-//                else {
-//                    DispatchQueue.main.async {
-//                        self.rinconVcAlertMessage = "Post successfully sent"
-//                        self.alertConfirmPost()
-//                    }
-//                    self.hideStckVwSubmitPostTxtAndBtn()
-//                }
+
                 DispatchQueue.main.async {
                     self.rinconVcAlertMessage = "Post successfully sent"
                     self.alertConfirmPost()
@@ -452,6 +440,48 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alert, animated: true, completion: nil)
     }
     
+    func deletePostAreYouSure(indexPath:IndexPath){
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alertController.modalPresentationStyle = .popover
+//        alertController.popoverPresentationController?.sourceRect = self.bounds
+        alertController.popoverPresentationController?.sourceView = self.stckVwRincon
+        
+        let current_post = posts[indexPath.row]
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let deleteCommentAction = UIAlertAction(title: "Delete", style: .destructive){_ in
+            print("delete  postid:\(current_post.post_id!) ")
+            self.rinconStore.deletePost(post: current_post) { jsonDict in
+                if jsonDict["deleted_post_id"] == current_post.post_id!{
+                    print("--> good: succusfully deleted post (\(current_post.post_id!)) from API")
+                    
+                    if let unwp_images_array =  current_post.image_files_array {
+                        for img_name in unwp_images_array{
+                            self.imageStore.deleteImage(forKey: img_name, rincon:self.rincon)
+                        }
+                    }
+                    
+                    self.posts.remove(at: indexPath.row)
+                    self.rinconStore.writePostsToJson(rincon: self.rincon, posts: self.posts)
+
+                    self.tblRincon.reloadData()
+                    print("successfully removed post from this Phone")
+                } else{
+                    print("--> bad: failed to delete post:")
+                }
+            }
+            
+//            self.rinconStore.deleteComment(rincon_id: current_post.rincon_id, post_id: current_post.post_id, comment_id: sender.comment_id) { post in
+//                self.posts[indexPath.row] = post
+//                self.customUpdatePostsAndReloadCell(posts:self.posts, indexPath: indexPath)
+//            }
+        }
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteCommentAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
 }
 
 extension RinconVC: UITableViewDelegate {
@@ -477,6 +507,7 @@ extension RinconVC: UITableViewDataSource {
         cell.rinconVCDelegate = self
         cell.indexPath = indexPath
         cell.rincon = self.rincon
+        cell.currentUser = self.userStore.user
         if let unwrapped_image_filenames = this_post.image_filenames_ios{
             this_post.image_files_array = imageFileNameParser(unwrapped_image_filenames)
         }
@@ -490,6 +521,6 @@ extension RinconVC: UITableViewDataSource {
 protocol RinconVCDelegate{
     func customReloadCell(indexPath:IndexPath)
     func customUpdatePostsAndReloadCell(posts:[Post], indexPath:IndexPath)
-    
     func deleteCommentAreYouSure(sender:DeleteCommentButton, indexPath:IndexPath)
+    func deletePostAreYouSure(indexPath:IndexPath)
 }

@@ -13,6 +13,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     var rincon:Rincon!
     var imageStore: ImageStore!
     var rinconStore: RinconStore!
+    var currentUser: User!
     
     var rinconVCDelegate: RinconVCDelegate!
     var indexPath: IndexPath!
@@ -35,18 +36,14 @@ class PostCell: UITableViewCell, PostCellDelegate {
     var lineImageImageView01: UIImageView!
     
     var stckVwUserInteraction=UIStackView()
-    var stckVwUserInteractionHeight:CGFloat!
+//    var stckVwUserInteractionHeight:CGFloat!
+    var btnDeletePost:UIButton?
     var likeView:LikeView!
     var commentView:CommentView!
     var lineImageImageView02: UIImageView!
     
     
 //    //comments stack
-//    var stckVwComments: UIStackView?
-//    var dictCommentsDate: [String:UILabel]?
-//    var dictCommentsUsername: [String:UILabel]?
-//    var dictCommentsText: [String:UILabel]?
-//    var dictCommentsVw: [String:UIView]?
     var commentsVw: CommentsView?
     
     var btnPostDiagnostics: UIButton?
@@ -89,29 +86,22 @@ class PostCell: UITableViewCell, PostCellDelegate {
         self.videoView?.removeFromSuperview()
         lineImageImageView01.removeFromSuperview()
         stckVwUserInteraction.removeFromSuperview()
+        btnDeletePost?.removeFromSuperview()
         
         likeView.removeFromSuperview()
         
         commentView.removeFromSuperview()
         lineImageImageView02.removeFromSuperview()
 
-//        if let unwrapped_comments = post.comments {
-//            for comment_element in unwrapped_comments{
-//                if let commentId = comment_element["comment_id"]{
-//                    dictCommentsText?["\(post.post_id!), \(commentId)"]?.removeFromSuperview()
-//                    dictCommentsVw!["\(post.post_id!), \(commentId)"]?.removeFromSuperview()
-//                }
-//            }
-//        }
         commentsVw?.removeFromSuperview()
         
-//        stckVwComments?.removeFromSuperview()
         lineImageImageView03?.removeFromSuperview()
         txtNewComment?.removeFromSuperview()
         
     }
     func configure(with post: Post) {
         self.post = post
+
         setup_stckVwPostCell()
         setup_lblDate()
         setup_lblUsername()
@@ -124,8 +114,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
         setup_stckVwNewComment()
         setup_line03()
         setup_commentsView()
-        print("--------")
-        print("post_id: \(post.post_id!)")
+
         if post.image_files_array != nil{
             print("post.image names: \(post.image_files_array! )")
         } else {print("post.image names: no post.image_files_array ")}
@@ -312,6 +301,21 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_userInteractionStackView(){
         stckVwUserInteraction.axis = .horizontal
+        var userInteractionBtnWidth = screenWidth/2
+        print("------> post.user_id: \(post.user_id!)")
+        print("------> currentUser.id: \(currentUser.id!)")
+        if post.user_id == currentUser.id {
+            print("* Should access to make a delete button for post: \(post.post_id!)")
+            userInteractionBtnWidth = screenWidth/3
+            btnDeletePost = UIButton()
+            btnDeletePost!.setImage(UIImage(systemName: "trash"), for: .normal)
+            btnDeletePost!.translatesAutoresizingMaskIntoConstraints=false
+            btnDeletePost!.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
+            stckVwUserInteraction.addArrangedSubview(btnDeletePost!)
+            btnDeletePost!.addTarget(self, action: #selector(btnDeletePostTouchDown), for: .touchUpInside)
+            btnDeletePost!.addTarget(self, action: #selector(btnDeletePostTouchUpInside), for: .touchUpInside)
+        }
+        
         likeView = LikeView()
         
         likeView.rinconStore = self.rinconStore
@@ -325,8 +329,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
         
         commentView.translatesAutoresizingMaskIntoConstraints=false
         likeView.translatesAutoresizingMaskIntoConstraints=false
-        commentView.widthAnchor.constraint(equalToConstant: screenWidth/2).isActive=true
-        likeView.widthAnchor.constraint(equalToConstant: screenWidth/2).isActive=true
+        commentView.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
+        likeView.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
 
         stckVwUserInteraction.addArrangedSubview(commentView)
         commentView.accessibilityIdentifier = "commentView"
@@ -335,14 +339,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stckVwUserInteraction.translatesAutoresizingMaskIntoConstraints=false
         stckVwPostCell.addArrangedSubview(stckVwUserInteraction)
         stckVwUserInteraction.accessibilityIdentifier = "stckVwUserInteraction"
-//        layoutIfNeeded()
-//        print("stckVwUserInteraction.frame.height : \(stckVwUserInteraction.frame.height )")
-//        likeView.viewHeight
-//        stckVwUserInteractionHeight = max(likeView.viewHeight, commentView.viewHeight)
-//        let stckVwUserInteractionHeight = 25.0
-//        post.cell_height = post.cell_height + stckVwUserInteractionHeight
-//        commentView.backgroundColor = .cyan
-//        likeView.backgroundColor = .gray
     }
     
     func setup_line02(){
@@ -368,8 +364,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
         
     }
     
-
-    
     func setup_line03(){
         lineImageImageView03 = createDividerLine(thicknessOfLine: 1.5)
         stckVwPostCell.addArrangedSubview(lineImageImageView02)
@@ -388,21 +382,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
         print("btnCommentTestPressed, post: \(post.post_id!)")
     }
     
-//    @objc func btnPostDiagnosticsPressed(){
-//        print("btnPostDiagnosticsPressed post: \(post.post_id!)")
-//        print("btnPostDiagnostics size: \(btnPostDiagnosticsSize!)")
-//        print("stckVwPostCell size: \(stckVwPostCell.frame.size)")
-//        print("lblDate size: \(lblDate.frame.size)")
-//        print("lblUsername size: \(lblUsername.frame.size)")
-//        print("lblPostText size: \(lblPostText!.frame.size)")
-//        print("stackViewImages size: \(stackViewImages!.frame.size)")
-//        print("lineImageImageView01 size: \(lineImageImageView01.frame.size)")
-//        print("stckVwUserInteraction size: \(stckVwUserInteraction.frame.size)")
-//        print("likeView size: \(likeView.frame.size)")
-//        print("commentView size: \(commentView.frame.size)")
-////        print("stckVwComments: \(stckVwComments!.frame.size.height)")
-////        print("stckViewCommentsHeight: \(stckVwCommentsHeight!)")
-//    }
     
     func expandNewComment(){
         print("- accessed expandNewComment(): post: \(post.post_id!) ")
@@ -478,6 +457,25 @@ class PostCell: UITableViewCell, PostCellDelegate {
             }
         }
     }
+    
+    
+    @objc func btnDeletePostTouchDown(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: nil)
+
+    }
+    @objc func btnDeletePostTouchUpInside(_ sender: UIButton){
+        print("- btnDeletePostTouchUpInside ")
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        print("request to delete post: \(post.post_id!)")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
+            self.rinconVCDelegate.deletePostAreYouSure(indexPath: self.indexPath)
+        }
+    }
+    
     
 }
 
