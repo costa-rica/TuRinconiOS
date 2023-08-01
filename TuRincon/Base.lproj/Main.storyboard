@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="T5V-sQ-TVf">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--HomeVC-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController storyboardIdentifier="HomeVC" id="BYZ-38-t0r" customClass="HomeVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Z6L-bw-fU2"/>
+                    <connections>
+                        <segue destination="1Yz-Et-F8L" kind="show" identifier="goToLoginVC" id="sho-wD-eCb"/>
+                        <segue destination="cy6-B8-342" kind="show" identifier="goToRegisterVC" id="T4k-pS-kHt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="814.50381679389307" y="-27.464788732394368"/>
+        </scene>
+        <!--RegisterVC-->
+        <scene sceneID="TMq-oL-qej">
+            <objects>
+                <viewController storyboardIdentifier="RegisterVC" id="cy6-B8-342" customClass="RegisterVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Iux-d6-4pZ">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="tGV-zX-FQr"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="TJh-yK-Wm9"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jtg-Fa-RfO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1784" y="-511"/>
+        </scene>
+        <!--LoginVC-->
+        <scene sceneID="bja-pc-eqN">
+            <objects>
+                <viewController storyboardIdentifier="LoginVC" id="1Yz-Et-F8L" customClass="LoginVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="338-7a-1K0">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="pdj-uE-Gzs"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="jWK-7i-09C"/>
+                    <connections>
+                        <segue destination="fPs-V8-H7t" kind="show" identifier="goToYourRinconsVC" id="N5v-ed-TVT"/>
+                        <segue destination="9Tp-Lh-kg9" kind="show" identifier="goToAdminVC" id="hbz-Xk-zto"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dEH-tL-Vpx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1784" y="351"/>
+        </scene>
+        <!--AdminVC-->
+        <scene sceneID="JJ0-vd-TS5">
+            <objects>
+                <viewController id="9Tp-Lh-kg9" customClass="AdminVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="nKJ-Ti-RS4">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="bMg-ge-ELF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="9dE-Dw-Rvl"/>
+                    <connections>
+                        <segue destination="Gpg-m2-I8d" kind="show" identifier="goToRinconsDirectoriesVC" id="k6u-h1-w9B"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hkG-AX-p4p" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2958" y="-511"/>
+        </scene>
+        <!--Rincons DirectoriesVC-->
+        <scene sceneID="eml-d5-Ip0">
+            <objects>
+                <viewController storyboardIdentifier="RinconsDirectoriesVC" id="Gpg-m2-I8d" customClass="RinconsDirectoriesVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="QdF-fA-fEr">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="PCR-ts-Bwp"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="mBO-b2-R75"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nD7-P3-hI0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3873" y="-511"/>
+        </scene>
+        <!--Your RinconsVC-->
+        <scene sceneID="RiO-2j-Ybp">
+            <objects>
+                <viewController storyboardIdentifier="YourRinconsVC" id="fPs-V8-H7t" customClass="YourRinconsVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pYH-1n-Az6">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="q4L-zF-tvt"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="9h1-m8-98p"/>
+                    <connections>
+                        <segue destination="ubv-FI-pNc" kind="show" identifier="goToRinconVC" id="qzv-RJ-Wc1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gpe-Ih-maI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2787" y="351"/>
+        </scene>
+        <!--RinconVC-->
+        <scene sceneID="KXw-WN-iPy">
+            <objects>
+                <viewController storyboardIdentifier="RinconVC" id="ubv-FI-pNc" customClass="RinconVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hAo-e6-RAN">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Gjp-L0-WmU"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="jAm-Cd-1do"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y1b-6b-now" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3750" y="351"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="AOg-RZ-gxI">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="T5V-sQ-TVf" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="nYR-ow-Rub">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="KeK-GO-KeO"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mqb-tP-2Ar" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-112.21374045801527" y="-27.464788732394368"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
