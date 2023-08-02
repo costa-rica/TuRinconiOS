@@ -179,9 +179,7 @@ class HomeVC: DefaultViewController {
         btnToRegister.setTitle("Register", for: .normal)
         btnToRegister.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
         btnToRegister.backgroundColor = UIColor(named: "orangePrimary")
-        
-
-        
+                
         btnToRegister.layer.cornerRadius = 10
         
         btnToRegister.translatesAutoresizingMaskIntoConstraints=false
@@ -189,21 +187,14 @@ class HomeVC: DefaultViewController {
         btnToRegister.topAnchor.constraint(equalTo: vwEtymologyBackground.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
         btnToRegister.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
         btnToRegister.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
-        
-//        btnToRegister.addTarget(self, action: #selector(goToRegisterVC), for: .touchUpInside)
-        
+                
         btnToRegister.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToRegister.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
-//        btnLogin.addTarget(self, action: #selector(touchDragExit(_:)), for: .touchDragExit)
-//        btnLogin.addTarget(self, action: #selector(touchDragEnter(_:)), for: .touchDragEnter)
+
 
         
     }
-//    @objc func goToRegisterVC(){
-////        print("-goTo RegisterVC")
-//        performSegue(withIdentifier: "goToRegisterVC", sender: self)
-//
-//    }
+
     
     func setup_btnToLogin(){
         btnToLogin.setTitle("Login", for: .normal)
@@ -223,8 +214,7 @@ class HomeVC: DefaultViewController {
         
         btnToLogin.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToLogin.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
-//        btnLogin.addTarget(self, action: #selector(touchDragExit(_:)), for: .touchDragExit)
-//        btnLogin.addTarget(self, action: #selector(touchDragEnter(_:)), for: .touchDragEnter)
+
 
         
     }
@@ -251,21 +241,20 @@ class HomeVC: DefaultViewController {
 
     
     
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if (segue.identifier == "goToYourLoginVC"){
-//            let yourLoginVC = segue.destination as! YourRinconsVC
-//            yourLoginVC.userStore = self.userStore
-//            yourLoginVC.urlStore = self.urlStore
-//            yourLoginVC.rinconStore = self.rinconStore
-//            
-//        }   else if (segue.identifier == "goToRegisterVC"){
-//            let RegisterVC = segue.destination as! RegisterVC
-//            RegisterVC.userStore = self.userStore
-////            RegisterVC.urlStore = self.urlStore
-////            RegisterVC.user = self.user
-////            RegisterVC.rinconStore = self.rinconStore
-//        }
-//    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "goToLoginVC"){
+            let loginVC = segue.destination as! LoginVC
+            loginVC.userStore = self.userStore
+            loginVC.urlStore = self.urlStore
+            loginVC.rinconStore = self.rinconStore
+
+            
+        }   else if (segue.identifier == "goToRegisterVC"){
+            let RegisterVC = segue.destination as! RegisterVC
+            RegisterVC.userStore = self.userStore
+
+        }
+    }
 
 
 }

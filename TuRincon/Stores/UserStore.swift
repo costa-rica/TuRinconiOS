@@ -48,8 +48,8 @@ class UserStore {
         var jsonData = Data()
         var request = URLRequest(url:url)
         request.httpMethod = "POST"
-        request.addValue("application/json",forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json",forHTTPHeaderField: "Accept")
+        request.setValue("application/json",forHTTPHeaderField: "Content-Type")
+//        request.addValue("application/json",forHTTPHeaderField: "Accept")
         var bodyDict = [String:String]()
         
         bodyDict["new_email"] = email

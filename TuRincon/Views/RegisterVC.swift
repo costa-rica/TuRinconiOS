@@ -36,8 +36,8 @@ class RegisterVC: DefaultViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        userStore=UserStore()
-        userStore.urlStore = URLStore()
+//        userStore=UserStore()
+//        userStore.urlStore = URLStore()
         setup_vwVCHeaderOrange()
         setup_vwVCHeaderOrangeTitle()
         setup_vwBackgroundCard()

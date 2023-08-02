@@ -77,13 +77,13 @@ class LoginVC: DefaultViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        userStore = UserStore()
-        urlStore = URLStore()
+//        userStore = UserStore()
+//        urlStore = URLStore()
 //        urlStore.baseString = "https://api.tu-rincon.com/"
-        userStore.urlStore = urlStore
-        rinconStore = RinconStore()
-        rinconStore.requestStore = RequestStore()
-        rinconStore.requestStore.urlStore = self.urlStore
+//        userStore.urlStore = urlStore
+//        rinconStore = RinconStore()
+//        rinconStore.requestStore = RequestStore()
+//        rinconStore.requestStore.urlStore = self.urlStore
         
         
         setup_vwVCHeaderOrange()
