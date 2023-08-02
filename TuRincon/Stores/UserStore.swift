@@ -42,6 +42,43 @@ class UserStore {
         self.documentsURL = self.fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
+    func registerNewUser(email:String,password:String,completion:@escaping(User)->Void){
+        let url = urlStore.callEndpoint(endPoint: .register)
+        
+        var jsonData = Data()
+        var request = URLRequest(url:url)
+        request.httpMethod = "POST"
+        request.addValue("application/json",forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json",forHTTPHeaderField: "Accept")
+        var bodyDict = [String:String]()
+        
+        bodyDict["new_email"] = email
+        bodyDict["new_password"] = password
+        do {
+            let jsonEncoder = JSONEncoder()
+            jsonData = try jsonEncoder.encode(bodyDict)
+        } catch {
+            print("- Failed to encode bodyDict ")
+        }
+        request.httpBody = jsonData
+
+        let task = session.dataTask(with: request) { data, resp, error in
+            guard let unwrapped_data = data else {print("no data response"); return}
+
+            do {
+                let jsonDecoder = JSONDecoder()
+                let jsonUser = try jsonDecoder.decode(User.self, from: unwrapped_data)
+                OperationQueue.main.addOperation {
+                    completion(jsonUser)
+                    
+                }
+            }catch {
+                print(" Failed to read response")
+            }
+        }
+        task.resume()
+        
+    }
     
     func requestLoginUser(email:String, password:String, completion:@escaping([String:Any]) -> Void){
         let url = urlStore.callEndpoint(endPoint: .login)
@@ -100,7 +137,6 @@ class UserStore {
         }
     }
 
-    
     func checkUserJson(completion: (Result<User,Error>) -> Void){
         print("- checking for user.json")
         
@@ -136,5 +172,7 @@ class UserStore {
             print("No no user file")
         }
     }
+    
+    
 }
 

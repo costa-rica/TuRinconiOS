@@ -117,7 +117,7 @@ extension YourRinconsVC: UITableViewDelegate {
             
 //            print("- selected rincon_id: \(self.segue_rincon_id!)")
             
-            self.rinconStore.requestRinconPosts(rincon_id: segue_rincon.id) { response_posts_list in
+            self.rinconStore.requestRinconPosts(rincon: segue_rincon) { response_posts_list in
                 for p in response_posts_list{
 //                    p.cell_height = 0.0
                     p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.segue_rincon)

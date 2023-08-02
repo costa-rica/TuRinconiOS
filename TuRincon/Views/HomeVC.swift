@@ -9,6 +9,11 @@ import UIKit
 
 class HomeVC: DefaultViewController {
     
+    var userStore: UserStore!
+    var user: User?
+    var urlStore: URLStore!
+    var rinconStore: RinconStore!
+    
     let vwVCHeaderOrange = UIView()
     let vwVCHeaderOrangeTitle = UIView()
     let imgVwIconNoName = UIImageView()
@@ -25,6 +30,16 @@ class HomeVC: DefaultViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        userStore = UserStore()
+        urlStore = URLStore()
+        urlStore.baseString = "https://dev.api.tu-rincon.com/"
+        userStore.urlStore = self.urlStore
+        rinconStore = RinconStore()
+        rinconStore.requestStore = RequestStore()
+        rinconStore.requestStore.urlStore = self.urlStore
+        
+        
         setup_vwVCHeaderOrange()
         setup_vwVCHeaderOrangeTitle()
         setup_vwEtymology()
@@ -236,13 +251,21 @@ class HomeVC: DefaultViewController {
 
     
     
-//    @objc func goToLoginVC(){
-//
-//        print("-goTo LoginVC")
-//        performSegue(withIdentifier: "goToLoginVC", sender: self)
-//
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if (segue.identifier == "goToYourLoginVC"){
+//            let yourLoginVC = segue.destination as! YourRinconsVC
+//            yourLoginVC.userStore = self.userStore
+//            yourLoginVC.urlStore = self.urlStore
+//            yourLoginVC.rinconStore = self.rinconStore
+//            
+//        }   else if (segue.identifier == "goToRegisterVC"){
+//            let RegisterVC = segue.destination as! RegisterVC
+//            RegisterVC.userStore = self.userStore
+////            RegisterVC.urlStore = self.urlStore
+////            RegisterVC.user = self.user
+////            RegisterVC.rinconStore = self.rinconStore
+//        }
 //    }
-    
 
 
 }

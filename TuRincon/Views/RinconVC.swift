@@ -13,13 +13,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var userStore: UserStore!
     var rinconStore: RinconStore!
     var imageStore: ImageStore!
-//    var rincon_id: String!
     var rincon:Rincon!
     var posts: [Post]!
     let vwVCHeaderOrange = UIView()
-//    let lblTitle = UILabel()
     var stckVwRincon=UIStackView()
-//
     var tblRincon = UITableView()
     var backgroundColor: CGColor!
     
@@ -42,7 +39,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         didSet{
             newPost = Post()
             newPost.post_id = String(newPostId)
-//            createNewPost()
             appendToNewPost()
         }
     }
@@ -240,33 +236,33 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             
             self.dictNewImages = [String:UIImage]()
             for (index, uiimage) in self.arryNewPostImages.enumerated(){
-// self.dictNewImages!["user_\(self.userStore.user.id!)_post_\(self.nextPostId)_image_\(String(index+1)).jpeg"]=uiimage
-//                self.imageId = index + 1
-//                self.dictNewImages![self.currentImageFilename]=uiimage
                 self.dictNewImages!["post_\(self.newPostId)_image_\(String(index+1)).jpeg"]=uiimage
             }
             self.arryNewPostImageFilenames = Array(self.dictNewImages!.keys)
-            print("----> self.dictNewImages!: \(self.dictNewImages!)")
-            print("- self.arryNewPostImageFilenames (renamed): \(self.arryNewPostImageFilenames!)")
+
             self.newPost.image_files_array = self.arryNewPostImageFilenames
             self.newPost.image_filenames_ios = self.arryNewPostImageFilenames?.joined(separator: ",")
-            print("******************")
-            print("self.newPost.image_filenames_ios: \(self.newPost.image_filenames_ios!)")
-            print("******************")
+
         }
         
         
         rinconStore.sendPostToApi(post: newPost) { jsonResponse in
             if jsonResponse["post_received_status"] == "success"{
                 self.posts.append(self.newPost)
+//                let newIndexPath =
                 
-                self.tblRincon.reloadData()
+                
                 if self.arryNewPostImageFilenames != nil  {
-                    
                     self.sendNewPostImages(post_id: jsonResponse["new_post_id"]!)
-
                 }
-
+                
+                self.rinconStore.requestRinconPosts(rincon: self.rincon) { arryPosts in
+                    self.posts = arryPosts
+//                    self.customReloadCell(indexPath: <#T##IndexPath#>)
+                    self.tblRincon.reloadData()
+                }
+                
+                
                 DispatchQueue.main.async {
                     self.rinconVcAlertMessage = "Post successfully sent"
                     self.alertConfirmPost()
@@ -278,7 +274,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                     self.rinconVcAlertMessage = "Didn't send, something went wrong"
                     self.alertConfirmPost()
                 }
-                
             }
         }
     }
@@ -287,13 +282,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("- in RinconVC sendNewPostImages")
 
         if let unwp_dict = self.dictNewImages {
-//            for (name, img) in self.dictNewImages! {
-//                self.rinconStore.sendImageTwo(uiimage: img, uiimageName:name) { jsonDict in
-//                    print("* rinconStore.sendImage response: ")
-//                    print(jsonDict)
-//                    //MARK: This needs to change corrected image name
-//                    self.imageStore.setImage(img, forKey: name, rincon_id:self.rincon_id)
-//                }
+
             self.rinconStore.sendImagesThree(dictNewImages: unwp_dict) { jsonDict in
                 print("* rinconStore.sendImage response: ")
                 print(jsonDict)
@@ -304,14 +293,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                     }
                 }
             }
-                
-                
-                
-                
-                
-//            }
-////            imageCounter += 1
-//            imageId += 1
         }
         arryNewPostImages = []
         arryNewPostImageFilenames = []

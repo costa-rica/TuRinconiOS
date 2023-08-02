@@ -31,6 +31,7 @@ enum EndPoint: String {
 }
 
 class URLStore {
+    
     var baseString:String!
 //    var baseString = Environment.dev.rawValue
 //    var baseString = "http://127.0.0.1:5001/"
@@ -140,75 +141,6 @@ class RequestStore {
         return request
     }
     
-//    /*send image*/
-//    func createRequestSendImageAndToken(image: UIImage, post: Post) -> URLRequest {
-//        let url = urlStore.callEndpoint(endPoint: .receive_image)
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        request.setValue("multipart/form-data; boundary=Boundary-\(UUID().uuidString)", forHTTPHeaderField: "Content-Type")
-//        request.setValue( self.token, forHTTPHeaderField: "x-access-token")
-//        let httpBody = NSMutableData()
-//        // Add image data
-//        let imageData = image.jpegData(compressionQuality: 1.0)
-//        httpBody.append("--Boundary-\(UUID().uuidString)\r\n".data(using: .utf8)!)
-//        httpBody.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
-//        httpBody.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-//        httpBody.append(imageData!)
-//        httpBody.append("\r\n".data(using: .utf8)!)
-//        // Add JSON data
-//        do {
-//            let postData = try JSONEncoder().encode(post)
-//            httpBody.append("--Boundary-\(UUID().uuidString)\r\n".data(using: .utf8)!)
-//            httpBody.append("Content-Disposition: form-data; name=\"post\"\r\n".data(using: .utf8)!)
-//            httpBody.append("Content-Type: application/json\r\n\r\n".data(using: .utf8)!)
-//            httpBody.append(postData)
-//            httpBody.append("\r\n".data(using: .utf8)!)
-//        } catch {
-//            print("Error encoding request with image")
-//        }
-//        httpBody.append("--Boundary-\(UUID().uuidString)--\r\n".data(using: .utf8)!)
-//        request.httpBody = httpBody as Data
-//        print("***")
-//        print("request: \(request)")
-//        print("***")
-//        return request
-//    }
-//
-//    /* send image 2: stackoverflow version */
-//    func createRequestSendImageAndTokenTwo(uiimage:UIImage,uiimageName:String) -> (URLRequest, Data){
-//        print("- createRequestSendImageAndTokenTwo")
-//        print("uiimage: \(uiimage)")
-//        print("uiimageName: \(uiimageName)")
-//        let url = urlStore.callEndpoint(endPoint: .receive_image)
-//        // generate boundary string using a unique per-app string
-//        let boundary = UUID().uuidString
-//        // Set the URLRequest to POST and to the specified URL
-//        var urlRequest = URLRequest(url: url)
-//        urlRequest.httpMethod = "POST"
-//        urlRequest.setValue( self.token, forHTTPHeaderField: "x-access-token")
-//
-//        // Set Content-Type Header to multipart/form-data, this is equivalent to submitting form data with file upload in a web browser
-//        // And the boundary is also set here
-//        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//
-//        var data = Data()
-//
-//        // Add the image data to the raw http request data
-//        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-//        data.append("Content-Disposition: form-data; name=\"image_custom_name\"; filename=\"\(uiimageName)\"\r\n".data(using: .utf8)!)
-//        data.append("Content-Type: image/png\r\n\r\n".data(using: .utf8)!)
-//        data.append(uiimage.pngData()!)
-//
-//        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
-//
-//        print("----- urlRequest ------")
-//        print(urlRequest)
-//        print("----- data -----")
-//        print(data)
-//        print("- createRequestSendImageAndTokenTwo: FINISHED -")
-//        return (urlRequest, data)
-//    }
-
     
     /* send image 3: stackoverflow version */
     func createRequestSendImageAndTokenThree(dictNewImages:[String:UIImage]) -> (URLRequest, Data){
@@ -229,30 +161,9 @@ class RequestStore {
             data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
             data.append(uiimage.jpegData(compressionQuality: 1)!)
         }
-//        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-//        data.append("Content-Disposition: form-data; name=\"image1\"; filename=\"image1.jpg\"\r\n".data(using: .utf8)!)
-//        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-//        data.append(image1.jpegData(compressionQuality: 1)!)
-//
-//        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-//        data.append("Content-Disposition: form-data; name=\"image2\"; filename=\"image2.jpg\"\r\n".data(using: .utf8)!)
-//        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-//        data.append(image2.jpegData(compressionQuality: 1)!)
-//
-//        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-//        data.append("Content-Disposition: form-data; name=\"image3\"; filename=\"image3.jpg\"\r\n".data(using: .utf8)!)
-//        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-//        data.append(image3.jpegData(compressionQuality: 1)!)
         
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
-        
         urlRequest.httpBody = data
-
-        print("----- urlRequest ------")
-        print(urlRequest)
-        print("----- data -----")
-        print(data)
-        print("- createRequestSendImageAndTokenTwo: FINISHED -")
         return (urlRequest, data)
     }
     

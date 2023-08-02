@@ -8,21 +8,42 @@
 import UIKit
 
 class RegisterVC: DefaultViewController{
+    var userStore:UserStore!
+    
     
     let vwVCHeaderOrange = UIView()
     let vwVCHeaderOrangeTitle = UIView()
     let imgVwIconNoName = UIImageView()
     let lblHeaderTitle = UILabel()
     let vwBackgroundCard = UIView()
-    
     let lblTitle = UILabel()
+    
+    let stckVwLogin = UIStackView()
+    let stckVwEmailRow = UIStackView()
+    let stckVwPasswordRow = UIStackView()
+    let stckVwAdmin = UIStackView()
+    
+    let lblEmail = UILabel()
+    let txtEmail = UITextField()
+    let lblPassword = UILabel()
+    let txtPassword = UITextField()
+    let btnShowPassword = UIButton()
+    
+    let cardInteriorPadding = Float(5.0)
+    let screenWidth = UIScreen.main.bounds.width
+    
+    var btnRegister=UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        userStore=UserStore()
+        userStore.urlStore = URLStore()
         setup_vwVCHeaderOrange()
         setup_vwVCHeaderOrangeTitle()
         setup_vwBackgroundCard()
         setup_lblTitle()
+        setup_stckVwLogin()
+        setup_btnRegister()
     }
     
     func setup_vwVCHeaderOrange(){
@@ -79,5 +100,101 @@ class RegisterVC: DefaultViewController{
         lblTitle.topAnchor.constraint(equalTo: vwBackgroundCard.topAnchor, constant: heightFromPct(percent: 5)).isActive=true
         lblTitle.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
     }
+    
+    func setup_stckVwLogin(){
+        lblEmail.text = "Email"
+        lblPassword.text = "Password"
+        
+        stckVwLogin.translatesAutoresizingMaskIntoConstraints = false
+        stckVwEmailRow.translatesAutoresizingMaskIntoConstraints = false
+        stckVwPasswordRow.translatesAutoresizingMaskIntoConstraints = false
+        txtEmail.translatesAutoresizingMaskIntoConstraints = false
+        txtPassword.translatesAutoresizingMaskIntoConstraints = false
+        lblEmail.translatesAutoresizingMaskIntoConstraints = false
+        lblPassword.translatesAutoresizingMaskIntoConstraints = false
+
+        txtPassword.isSecureTextEntry = true
+        btnShowPassword.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        btnShowPassword.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
+        
+        stckVwEmailRow.addArrangedSubview(lblEmail)
+        stckVwEmailRow.addArrangedSubview(txtEmail)
+        
+        stckVwPasswordRow.addArrangedSubview(lblPassword)
+        stckVwPasswordRow.addArrangedSubview(txtPassword)
+        stckVwPasswordRow.addArrangedSubview(btnShowPassword)
+
+        stckVwLogin.addArrangedSubview(stckVwEmailRow)
+        stckVwLogin.addArrangedSubview(stckVwPasswordRow)
+
+        stckVwLogin.axis = .vertical
+        stckVwEmailRow.axis = .horizontal
+        stckVwPasswordRow.axis = .horizontal
+        
+        stckVwLogin.spacing = 5
+        stckVwEmailRow.spacing = 2
+        stckVwPasswordRow.spacing = 2
+        
+        txtEmail.borderStyle = .roundedRect
+        txtPassword.borderStyle = .roundedRect
+        
+        view.addSubview(stckVwLogin)
+
+        NSLayoutConstraint.activate([
+            stckVwLogin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor,constant: widthFromPct(percent: cardInteriorPadding)),
+            stckVwLogin.trailingAnchor.constraint(equalTo: vwBackgroundCard.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)),
+            stckVwLogin.topAnchor.constraint(equalTo: lblTitle.topAnchor, constant: heightFromPct(percent: cardInteriorPadding)),
+            
+            lblEmail.widthAnchor.constraint(equalTo: lblPassword.widthAnchor),
+        ])
+        
+        view.layoutIfNeeded()// <-- Realizes size of lblPassword and stckVwLogin
+
+        // This code makes the widths of lblPassword and btnShowPassword take lower precedence than txtPassword.
+        lblPassword.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        btnShowPassword.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+    }
+    
+    
+    @objc func togglePasswordVisibility() {
+        txtPassword.isSecureTextEntry = !txtPassword.isSecureTextEntry
+        let imageName = txtPassword.isSecureTextEntry ? "eye.slash" : "eye"
+        btnShowPassword.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+    
+    func setup_btnRegister(){
+        btnRegister.setTitle("Register", for: .normal)
+        btnRegister.layer.borderColor = UIColor(named: "orangePrimary")?.cgColor
+        btnRegister.layer.borderWidth = 2
+        btnRegister.setTitleColor(.black, for: .normal)
+        btnRegister.layer.cornerRadius = 10
+        btnRegister.translatesAutoresizingMaskIntoConstraints = false
+        stckVwLogin.addArrangedSubview(btnRegister)
+        
+        btnRegister.addTarget(self, action: #selector(touchDownRegister(_:)), for: .touchDown)
+        btnRegister.addTarget(self, action: #selector(touchUpInsideRegister(_:)), for: .touchUpInside)
+
+    }
+    @objc func touchDownRegister(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: nil)
+    }
+    @objc func touchUpInsideRegister(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        requestRegister()
+    }
+    
+    func requestRegister(){
+        print("- request register")
+        print("lblemail text: \(txtEmail.text!)")
+        print("lblpassword text: \(txtPassword.text!)")
+        userStore.registerNewUser(email: txtEmail.text!, password: txtPassword.text!) { jsonUser in
+            print(jsonUser)
+        }
+    }
+    
 }
 

@@ -16,10 +16,9 @@ class RinconStore {
     var token: String!
     var requestStore:RequestStore!
     
-    func requestRinconPosts(rincon_id:String, completion: @escaping([Post]) -> Void){
+    func requestRinconPosts(rincon:Rincon, completion: @escaping([Post]) -> Void){
 
-//        let request = createRequestWithTokenAndRinconAndBody(endpoint: .rincon_posts, rincon_id: rincon_id, bodyParamDict: ["rincon_id":rincon_id], file_name: nil)
-        let request = requestStore.createRequestWithTokenAndRinconAndBody(endpoint: .rincon_posts, rincon_id: rincon_id, bodyParamDict: ["rincon_id":rincon_id], file_name: nil)
+        let request = requestStore.createRequestWithTokenAndRinconAndBody(endpoint: .rincon_posts, rincon_id: rincon.id, bodyParamDict: ["rincon_id":rincon.id], file_name: nil)
         
         let task = requestStore.session.dataTask(with: request){(data,response,error) in
             guard let unwrapped_data = data else{return}
@@ -40,7 +39,6 @@ class RinconStore {
         }
         task.resume()
     }
-    
     
     func writePostsToJson(rincon:Rincon,posts:[Post]){
         
@@ -63,14 +61,12 @@ class RinconStore {
     func rinconFolderUrl(rincon:Rincon) -> URL {
         let documentsDirectories = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentDirectory = documentsDirectories.first!
-//        let rinconFolderName = "rincon_\(rincon_id)"
         let rinconFolderName = rinconImageFolderName(rincon:rincon)
         let rinconFolderPath =  documentDirectory.appendingPathComponent(rinconFolderName)
         return rinconFolderPath
     }
     
     func rinconFolderJsonUrl(rincon:Rincon) -> URL {
-//        let jsonFileName = "posts_for_\(rincon.id!)_\(rincon.name_no_spaces!).json"
         let jsonFileName = "posts_for_\(rinconImageFolderName(rincon:rincon)).json"
         let rinconFolderPath = rinconFolderUrl(rincon:rincon)
         return rinconFolderPath.appendingPathComponent(jsonFileName)
@@ -375,5 +371,5 @@ class RinconStore {
         task.resume()
     }
     
-    
+
 }
