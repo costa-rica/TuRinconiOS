@@ -39,17 +39,14 @@ class YourRinconsVC: DefaultViewController{
     var stckVwYourRincons=UIStackView()
     
     var tblYourRincons = UITableView()
-    let backgroundColor = UIColor(named: "gray-300")?.cgColor
+    var btnFindRincon: UIBarButtonItem!
+//    let backgroundColor = UIColor(named: "gray-300")?.cgColor
 //    let backgroundColor = CGColor(red: 164 / 255.0, green: 157 / 255.0, blue: 149 / 255.0, alpha: 1.0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setup_vwVCHeaderOrange()
-        /* Only place to initialize RinconStore and RequestStore*/
-//        rinconStore = RinconStore()
-//        rinconStore.requestStore = RequestStore()
-//        rinconStore.requestStore.urlStore = self.urlStore
-//        rinconStore.requestStore.token = userStore.user.token
+
         tblYourRincons.delegate = self
         tblYourRincons.dataSource = self
         
@@ -57,6 +54,7 @@ class YourRinconsVC: DefaultViewController{
         tblYourRincons.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
 
         setup_stckVwYourRincons()
+        setup_btnFindRincon()
     }
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
@@ -84,11 +82,26 @@ class YourRinconsVC: DefaultViewController{
         tblYourRincons.translatesAutoresizingMaskIntoConstraints=false
         stckVwYourRincons.addArrangedSubview(tblYourRincons)
         
-        if let unwp_color = backgroundColor {
-            tblYourRincons.backgroundColor = UIColor(cgColor: unwp_color)
-        }
+//        if let unwp_color = backgroundColor {
+//            tblYourRincons.backgroundColor = UIColor(cgColor: unwp_color)
+//        }
         
         
+    }
+    
+    func setup_btnFindRincon() {
+        btnFindRincon = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(findRincon))
+//        if rincon.permission_post {
+//            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
+//        } else {
+//            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name!)"
+//            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
+//        }
+        self.navigationItem.rightBarButtonItem = btnFindRincon
+    }
+    
+    @objc func findRincon(){
+        print("- let's go find a Rincon! ")
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -99,10 +112,10 @@ class YourRinconsVC: DefaultViewController{
             rinconVC.rinconStore = self.rinconStore
             rinconVC.rinconStore.token = self.userStore.user.token!
             rinconVC.posts = self.segue_rincon_posts
-            rinconVC.backgroundColor = self.backgroundColor
-//            rinconVC.rincon_id = self.segue_rincon_id
+            print("Rincon obj: \(self.segue_rincon.name!), \(self.segue_rincon.permission_post)")
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
+            print("UserStore.user objec: \(self.userStore.user.username!)")
         }
     }
     
@@ -145,6 +158,7 @@ extension YourRinconsVC: UITableViewDataSource {
         if let unwrapped_rincons = userStore.user.user_rincons {
             cell.textLabel?.text = unwrapped_rincons[indexPath.row].name
 //            cell.detailTextLabel?.text = unwrapped_rincons[indexPath.row][0]
+//            cell.backgroundColor = UIColor(named: "gray-300")
         }
         return cell
     }

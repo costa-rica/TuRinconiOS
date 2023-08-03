@@ -18,7 +18,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     let vwVCHeaderOrange = UIView()
     var stckVwRincon=UIStackView()
     var tblRincon = UITableView()
-    var backgroundColor: CGColor!
+//    var backgroundColor: CGColor!
     
     var stckVwSubmitPostTxtAndBtn = UIStackView()
     var stckVwSubmitBtns = UIStackView()
@@ -32,7 +32,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var arryNewPostImageFilenames: [String]?
     var dictNewImages:[String:UIImage]?
 
-    
+    var btnCreatePost: UIBarButtonItem!
     var newPost:Post!
     /* new post critical path #2 */
     var newPostId = String() {// <-- get's set by @objc func btnSubmitPostTouchUpInside(_ sender: UIButton)
@@ -73,17 +73,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
 
     @objc func keyboardWillShow(notification: NSNotification) {
         print("-keyboardWillShow")
-        
         if let unwp_array = self.arryNewPostImageFilenames{
             print("* --- arryNewPostImageFilenames ----*")
             print(unwp_array)
         }
-//        if let unwp_array = self.arryNewPostImages{
-            print("* ---arryNewPostImages ---- *")
-            print(self.arryNewPostImages)
-//        }
-        
-        
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if self.view.frame.origin.y == 0 {
                 bottomConstraint.constant = -keyboardSize.height
@@ -128,11 +121,17 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         tblRincon.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(tblRincon)
 
-        stckVwRincon.backgroundColor = UIColor(cgColor: backgroundColor)
+//        stckVwRincon.backgroundColor = UIColor(cgColor: backgroundColor)
     }
     func setupRightBarButtonItem() {
-        let rightButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
-        self.navigationItem.rightBarButtonItem = rightButton
+        
+        if rincon.permission_post {
+            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
+        } else {
+            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name!)"
+            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
+        }
+        self.navigationItem.rightBarButtonItem = btnCreatePost
     }
     
     @objc func handleRightButtonTap() {
@@ -217,7 +216,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     }
     
     /* new post critical path #3 */
-//    private func createNewPost(){
     private func appendToNewPost(){
         
         newPost.user_id = userStore.user.id
@@ -265,14 +263,14 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                 
                 DispatchQueue.main.async {
                     self.rinconVcAlertMessage = "Post successfully sent"
-                    self.alertConfirmPost()
+                    self.rinconAlert()
                 }
                 self.hideStckVwSubmitPostTxtAndBtn()
                 
             } else {
                 DispatchQueue.main.async {
                     self.rinconVcAlertMessage = "Didn't send, something went wrong"
-                    self.alertConfirmPost()
+                    self.rinconAlert()
                 }
             }
         }
@@ -329,7 +327,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         print("--- in picker ---")
 
-        
         for result in results {
             
             let resultProvider = result.itemProvider
@@ -356,19 +353,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
 
         }
         
-
-        
         picker.dismiss(animated: true, completion: nil)
         
-//        if let unwp_array = self.arryNewPostImageFilenames {
-//            print("arryNewPostImageFilenames")
-//            print(unwp_array)
-//        }
-//        if let unwrp_array2 = self.arryNewPostImages {
-//            print("arryNewPostImages")
-//            print(unwrp_array2)
-//        }
-//        print("* ---- Multiple images selected above --------- *")
         print("- end picker ---")
     }
     
@@ -404,7 +390,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func alertConfirmPost() {
+    @objc func rinconAlert() {
         // Create an alert
         let alert = UIAlertController(title: nil, message: rinconVcAlertMessage, preferredStyle: .alert)
         

@@ -20,13 +20,17 @@ class HomeVC: DefaultViewController {
     let lblHeaderTitle = UILabel()
     
     let vwEtymologyBackground = UIView()
-    let btnToLogin = UIButton()
-    let btnToRegister = UIButton()
+
     
     let cardInteriorPadding = Float(5.0)
     let cardTopSpacing = Float(2.5)
     
     let safeAreaTopAdjustment = 40.0
+    
+    private var scrllVwHome=UIScrollView()
+    private var stckVwHome=UIStackView()
+    let btnToLogin = UIButton()
+    let btnToRegister = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,8 +47,9 @@ class HomeVC: DefaultViewController {
         setup_vwVCHeaderOrange()
         setup_vwVCHeaderOrangeTitle()
         setup_vwEtymology()
-        setup_btnToRegister()
-        setup_btnToLogin()
+        setup_stckVwHome()
+//        setup_btnToRegister()
+//        setup_btnToLogin()
         print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
         print("finished loading HomeVC")
         let computerName = ProcessInfo.processInfo.hostName
@@ -101,7 +106,6 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_vwEtymology(){
-        
         vwEtymologyBackground.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(vwEtymologyBackground)
         vwEtymologyBackground.accessibilityIdentifier = "vwEtymologyBackground"
@@ -109,7 +113,7 @@ class HomeVC: DefaultViewController {
         vwEtymologyBackground.topAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.bottomAnchor, constant: heightFromPct(percent: cardTopSpacing)).isActive=true
         vwEtymologyBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
         vwEtymologyBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
-        vwEtymologyBackground.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 55)).isActive=true
+        vwEtymologyBackground.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 52)).isActive=true
         vwEtymologyBackground.layer.cornerRadius = 10
         
         let lblEtymologyTitle = UILabel()
@@ -118,7 +122,7 @@ class HomeVC: DefaultViewController {
         vwEtymologyBackground.addSubview(lblEtymologyTitle)
         lblEtymologyTitle.accessibilityIdentifier = "lblEtymologyTitle"
         lblEtymologyTitle.translatesAutoresizingMaskIntoConstraints=false
-        lblEtymologyTitle.topAnchor.constraint(equalTo: vwEtymologyBackground.topAnchor, constant: heightFromPct(percent: 5)).isActive=true
+        lblEtymologyTitle.topAnchor.constraint(equalTo: vwEtymologyBackground.topAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
         lblEtymologyTitle.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
         
         let lblEtymology = UILabel()
@@ -174,6 +178,40 @@ class HomeVC: DefaultViewController {
         lblDate.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
     }
     
+    func setup_stckVwHome(){
+        print("- setup_stckVwHome")
+        scrllVwHome.translatesAutoresizingMaskIntoConstraints=false
+        view.addSubview(scrllVwHome)
+        scrllVwHome.accessibilityIdentifier="scrllVwHome"
+//        scrllVwHome.backgroundColor = .cyan
+        
+        scrllVwHome.topAnchor.constraint(equalTo: vwEtymologyBackground.bottomAnchor, constant: heightFromPct(percent: 1)).isActive=true
+        scrllVwHome.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
+        scrllVwHome.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
+//        scrllVwAdmin.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
+        scrllVwHome.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: heightFromPct(percent: -10)).isActive=true
+        
+//        scrllVwAdmin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor).isActive=true
+        
+        view.layoutIfNeeded()
+        print("scrllVwHome width: \(scrllVwHome.frame.size)")
+        
+        stckVwHome.translatesAutoresizingMaskIntoConstraints=false
+        scrllVwHome.addSubview(stckVwHome)
+        stckVwHome.accessibilityIdentifier = "stckVwHome"
+        stckVwHome.axis = .vertical
+        stckVwHome.topAnchor.constraint(equalTo: scrllVwHome.topAnchor).isActive=true
+        stckVwHome.widthAnchor.constraint(equalToConstant: scrllVwHome.frame.size.width).isActive=true
+//        stckVwHome.leadingAnchor.constraint(equalTo: scrllVwHome.leadingAnchor).isActive=true
+//        stckVwHome.trailingAnchor.constraint(equalTo: scrllVwHome.trailingAnchor).isActive=true
+        stckVwHome.bottomAnchor.constraint(equalTo: scrllVwHome.bottomAnchor).isActive=true
+//        stckVwHome.backgroundColor = .black
+        stckVwHome.spacing = 8
+        setup_btnToRegister()
+        setup_btnToLogin()
+        setup_pickerApi()
+    }
+    
     func setup_btnToRegister(){
         
         btnToRegister.setTitle("Register", for: .normal)
@@ -183,10 +221,11 @@ class HomeVC: DefaultViewController {
         btnToRegister.layer.cornerRadius = 10
         
         btnToRegister.translatesAutoresizingMaskIntoConstraints=false
-        view.addSubview(btnToRegister)
-        btnToRegister.topAnchor.constraint(equalTo: vwEtymologyBackground.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
-        btnToRegister.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
-        btnToRegister.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
+        stckVwHome.addArrangedSubview(btnToRegister)
+//        view.addSubview(btnToRegister)
+//        btnToRegister.topAnchor.constraint(equalTo: vwEtymologyBackground.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
+//        btnToRegister.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
+//        btnToRegister.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
                 
         btnToRegister.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToRegister.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
@@ -195,7 +234,6 @@ class HomeVC: DefaultViewController {
         
     }
 
-    
     func setup_btnToLogin(){
         btnToLogin.setTitle("Login", for: .normal)
         btnToLogin.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
@@ -205,18 +243,43 @@ class HomeVC: DefaultViewController {
         btnToLogin.layer.cornerRadius = 10
         btnToLogin.layer.borderWidth = 2
         btnToLogin.translatesAutoresizingMaskIntoConstraints=false
-        view.addSubview(btnToLogin)
-        btnToLogin.topAnchor.constraint(equalTo: btnToRegister.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
-        btnToLogin.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
-        btnToLogin.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
+        stckVwHome.addArrangedSubview(btnToLogin)
+//        view.addSubview(btnToLogin)
+//        btnToLogin.topAnchor.constraint(equalTo: btnToRegister.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
+//        btnToLogin.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
+//        btnToLogin.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
         
 //        btnToLogin.addTarget(self, action: #selector(goToLoginVC), for: .touchUpInside)
         
         btnToLogin.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToLogin.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
 
-
         
+    }
+    
+    func setup_pickerApi(){
+        
+        let lblApi = UILabel()
+        lblApi.text = "Which Api?:"
+        lblApi.translatesAutoresizingMaskIntoConstraints=false
+        stckVwHome.addArrangedSubview(lblApi)
+        
+        
+        urlStore.baseString = "http://127.0.0.1:5001/"
+        let indexDict = ["http://127.0.0.1:5001/":0,"https://dev.api.tu-rincon.com/":1,"https://api.tu-rincon.com/":2]
+        
+        let segmentedControl = UISegmentedControl(items: Environment.allCases.map { $0.rawValue })
+        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+        
+        // Set initial selected segment
+        segmentedControl.selectedSegmentIndex = indexDict[urlStore.baseString] ?? 0
+        stckVwHome.addArrangedSubview(segmentedControl)
+        
+        let btnToWebsite = UIButton(type: .system)
+//        btnToWebsite.frame = CGRect(x: 20, y: 100, width: 300, height: 50)
+        btnToWebsite.setTitle("Go To Tu Rincón Web", for: .normal)
+        btnToWebsite.addTarget(self, action: #selector(goToWebsite), for: .touchUpInside)
+        stckVwHome.addArrangedSubview(btnToWebsite)
     }
     
     @objc func touchDown(_ sender: UIButton) {
@@ -238,9 +301,18 @@ class HomeVC: DefaultViewController {
             performSegue(withIdentifier: "goToLoginVC", sender: self)
         }
     }
+    
+    
+    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        let selectedEnvironment = Environment.allCases[sender.selectedSegmentIndex]
+        urlStore.baseString = selectedEnvironment.baseString
+    }
+    
+    @objc func goToWebsite() {
+        guard let url = URL(string: "https://tu-rincon.com") else { return }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
 
-    
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToLoginVC"){
             let loginVC = segue.destination as! LoginVC

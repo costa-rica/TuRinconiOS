@@ -10,7 +10,7 @@ import UIKit
 class LoginVC: DefaultViewController{
     
     var userStore: UserStore!
-    var user: User?
+//    var user: User?
     var urlStore: URLStore!
     var rinconStore: RinconStore!
     
@@ -77,15 +77,7 @@ class LoginVC: DefaultViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        userStore = UserStore()
-//        urlStore = URLStore()
-//        urlStore.baseString = "https://api.tu-rincon.com/"
-//        userStore.urlStore = urlStore
-//        rinconStore = RinconStore()
-//        rinconStore.requestStore = RequestStore()
-//        rinconStore.requestStore.urlStore = self.urlStore
-        
-        
+
         setup_vwVCHeaderOrange()
         setup_vwVCHeaderOrangeTitle()
         setup_vwBackgroundCard()
@@ -95,14 +87,13 @@ class LoginVC: DefaultViewController{
         setup_stckVwRememberMe()
         setup_stckVwAdmin()
         setup_lblMachineName()
-        setupSegmentedPicker()
         
         userStore.checkUserJson(completion: { result in
             switch result{
             case let .success(user):
                 self.txtEmail.text = user.email
                 self.txtPassword.text = user.password
-                self.user = user
+                self.userStore.user = user
                 if user.email == "nrodrig1@gmail.com"{
                     setup_btnAdmin()
                     
@@ -116,7 +107,7 @@ class LoginVC: DefaultViewController{
     func setup_btnAdmin(){
         btnAdmin=UIButton()
         
-        btnAdmin!.setTitle("Login To Admin", for: .normal)
+        btnAdmin!.setTitle("Login To Developer Screen", for: .normal)
         btnAdmin!.layer.borderColor = UIColor(named: "gray-400")?.cgColor
         btnAdmin!.layer.borderWidth = 2
         btnAdmin!.setTitleColor(.gray, for: .normal)
@@ -160,7 +151,6 @@ class LoginVC: DefaultViewController{
         lblHeaderTitle.translatesAutoresizingMaskIntoConstraints=false
         lblHeaderTitle.leadingAnchor.constraint(equalTo: imgVwIconNoName.trailingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
         lblHeaderTitle.centerYAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.centerYAnchor).isActive=true
-        
     }
     func setup_vwBackgroundCard(){
         vwBackgroundCard.translatesAutoresizingMaskIntoConstraints = false
@@ -235,9 +225,7 @@ class LoginVC: DefaultViewController{
         lblPassword.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         btnShowPassword.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
-    
 
-    
     @objc func togglePasswordVisibility() {
         txtPassword.isSecureTextEntry = !txtPassword.isSecureTextEntry
         let imageName = txtPassword.isSecureTextEntry ? "eye.slash" : "eye"
@@ -279,7 +267,6 @@ class LoginVC: DefaultViewController{
 
     func requestLogin(){
         
-        
         if let unwrapped_email = txtEmail.text, let unwrapped_pw = txtPassword.text {
             
             // send api request
@@ -290,14 +277,23 @@ class LoginVC: DefaultViewController{
                     self.lblLoginStatusMessage = tempLabel
                     self.lblLoginStatusMessage.textColor = UIColor.white
                 }
-                else if let user_login_response = result_dict["user_login_response"] as? UserLoginResponse{
-                    self.userStore.user.id = user_login_response.user_id
-                    self.userStore.user.token = user_login_response.token
+                else if let user_response = result_dict["user"] as? User {
+                    print("user_response: \(user_response)")
+                    self.userStore.user.id = user_response.id
+                    self.userStore.user.token = user_response.token
                     self.userStore.user.email = self.txtEmail.text
                     self.userStore.user.password = self.txtPassword.text
-                    self.userStore.user.user_rincons = user_login_response.user_rincons
+                    self.userStore.user.user_rincons = user_response.user_rincons
+                    self.userStore.user.username = user_response.username
+                    
+                    for rincon in self.userStore.user.user_rincons!{
+                        print("----------------")
+                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
+                        print("permission_post: \(rincon.permission_post)")
+                    }
+                                
                     self.lblLoginStatusMessage.text = ""
-                    self.token = user_login_response.token
+                    self.token = user_response.token!
                 }
                 else {
                     let tempLabel = UILabel()
@@ -411,12 +407,14 @@ class LoginVC: DefaultViewController{
             let yourRinconsVC = segue.destination as! YourRinconsVC
             yourRinconsVC.userStore = self.userStore
             yourRinconsVC.urlStore = self.urlStore
+            print("LoginVC segue to YourRinconsVC")
+            print("userStore objc: \(self.userStore.user.username)")
             yourRinconsVC.rinconStore = self.rinconStore
         }   else if (segue.identifier == "goToAdminVC"){
             let adminVC = segue.destination as! AdminVC
             adminVC.userStore = self.userStore
             adminVC.urlStore = self.urlStore
-            adminVC.user = self.user
+//            adminVC.user = self.userStore.user
             adminVC.rinconStore = self.rinconStore
         }
     }

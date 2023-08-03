@@ -13,6 +13,6 @@ class DefaultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.layer.backgroundColor = UIColor(named: "gray-300")?.cgColor
+//        view.layer.backgroundColor = UIColor(named: "gray-300")?.cgColor
     }
 }

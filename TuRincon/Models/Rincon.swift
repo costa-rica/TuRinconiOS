@@ -12,4 +12,9 @@ class Rincon:Codable {
     var name: String!
     var name_no_spaces: String!
 //    var posts: [Post]?
+    var permission_view=true
+    var permission_like=false
+    var permission_comment=false
+    var permission_post=false
+    var permission_admin=false
 }

@@ -42,7 +42,7 @@ class UserStore {
         self.documentsURL = self.fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
-    func registerNewUser(email:String,password:String,completion:@escaping(User)->Void){
+    func registerNewUser(email:String,password:String,completion:@escaping([String:Any])->Void){
         let url = urlStore.callEndpoint(endPoint: .register)
         
         var jsonData = Data()
@@ -66,14 +66,19 @@ class UserStore {
             guard let unwrapped_data = data else {print("no data response"); return}
 
             do {
-                let jsonDecoder = JSONDecoder()
-                let jsonUser = try jsonDecoder.decode(User.self, from: unwrapped_data)
-                OperationQueue.main.addOperation {
-                    completion(jsonUser)
-                    
-                }
+//                let jsonDecoder = JSONDecoder()
+//                let userRegDict = try jsonDecoder.decode(UserRegisterResponse.self, from: unwrapped_data)
+//                OperationQueue.main.addOperation {
+//                    completion(userRegDict)
+//                }
+                let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers)
+                    OperationQueue.main.addOperation {
+                        completion(jsonResult as! [String : Any])
+                    }
+//                print(jsonResult)
+                print("* UserStore.registerNewUser: success!")
             }catch {
-                print(" Failed to read response")
+                print("---- UserStore.registerNewUser: Failed to read response")
             }
         }
         task.resume()
@@ -98,9 +103,10 @@ class UserStore {
 
             do {
                 let jsonDecoder = JSONDecoder()
-                let json = try jsonDecoder.decode(UserLoginResponse.self, from: unwrapped_data)
+                let jsonUser = try jsonDecoder.decode(User.self, from: unwrapped_data)
+                print("- successsfull response: \(jsonUser)")
                 OperationQueue.main.addOperation {
-                    completion(["user_login_response":json])
+                    completion(["user":jsonUser])
                 }
             }catch {
                 print(" Failed to read response")
@@ -108,7 +114,7 @@ class UserStore {
             
             guard let unwrapped_response = response  as? HTTPURLResponse else { return}
             
-            print("statius code : \(unwrapped_response.statusCode)")
+            print("status code : \(unwrapped_response.statusCode)")
             
             if unwrapped_response.statusCode == 401 {
                 OperationQueue.main.addOperation {

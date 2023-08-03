@@ -10,7 +10,7 @@ import UIKit
 class AdminVC: DefaultViewController{
     
     var userStore: UserStore!
-    var user: User!
+//    var user: User!
     var urlStore: URLStore!
     var rinconStore: RinconStore!
     
@@ -89,7 +89,7 @@ class AdminVC: DefaultViewController{
         vwBackgroundCard.layer.cornerRadius = 10
     }
     func setup_lblTitle(){
-        lblTitle.text = "Admin"
+        lblTitle.text = "Developer Info"
         lblTitle.font = UIFont(name: "Rockwell_tu", size: 30)
         lblTitle.translatesAutoresizingMaskIntoConstraints = false
         lblTitle.accessibilityIdentifier="lblTitle"
