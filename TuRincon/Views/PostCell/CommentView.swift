@@ -22,6 +22,7 @@ class CommentView:UIView {
     var btnComment=UIButton()
     var viewHeight = 0.0
     var postCellDelegate: PostCellDelegate!
+    var configSfSymbolSizeUserInteraction:UIImage.SymbolConfiguration!
     
     
     override init(frame: CGRect) {
@@ -33,7 +34,7 @@ class CommentView:UIView {
     }
     
     func setup_view(){
-        btnComment.setImage(UIImage(systemName: "bubble.left"), for: .normal)
+        btnComment.setImage(UIImage(systemName: "bubble.left", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
         btnComment.addTarget(self, action: #selector(btnCommentPressed), for: .touchUpInside)
         
         
@@ -51,10 +52,11 @@ class CommentView:UIView {
         
         // Size lbl
         let _ = sizeLabel(lbl: lblCommentCount)
-        print("post: \(post.post_id!)")
-        print("lblCommentCount size: \(lblCommentCount.frame.size)")
-        print("btnComment.imageView.image.frame.size size: \(btnComment.imageView!.image!.size)")
+//        print("post: \(post.post_id!)")
+//        print("lblCommentCount size: \(lblCommentCount.frame.size)")
+//        print("btnComment.imageView.image.frame.size size: \(btnComment.imageView!.image!.size)")
         viewHeight = max(lblCommentCount.frame.size.height, btnComment.imageView!.image!.size.height)
+//        btnComment.heightAnchor.constraint(equalToConstant: viewHeight + 10).isActive=true
         //        viewHeight = 25.0
     }
     
@@ -167,12 +169,17 @@ class CommentsView:UIView {
                     if comment_element.delete_comment_permission{
                         dictCommentsDeleteBtn!["\(post.post_id!), \(comment_element.comment_id!)"] = DeleteCommentButton()
                         if let unwp_btnDelete = dictCommentsDeleteBtn?["\(post.post_id!), \(comment_element.comment_id!)"] as? DeleteCommentButton {
-                            unwp_btnDelete.setTitle("delete", for: .normal)
+//                            unwp_btnDelete.setTitle("delete", for: .normal)
+                            let largeConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .bold, scale: .large) // create a large configuration
+                            unwp_btnDelete.setImage(UIImage(systemName: "trash", withConfiguration: largeConfig), for: .normal)
+                            unwp_btnDelete.tintColor = UIColor(named: "redDelete")
                             unwp_btnDelete.layer.borderColor = UIColor(named: "redDelete")?.cgColor
-                            unwp_btnDelete.layer.borderWidth = 2
-                            unwp_btnDelete.setTitleColor(.black, for: .normal)
-                            unwp_btnDelete.layer.cornerRadius = 10
-                            unwp_btnDelete.backgroundColor = UIColor(named: "gray-500")
+
+                            
+//                            unwp_btnDelete.layer.borderWidth = 2
+//                            unwp_btnDelete.setTitleColor(.black, for: .normal)
+//                            unwp_btnDelete.layer.cornerRadius = 10
+//                            unwp_btnDelete.backgroundColor = UIColor(named: "gray-500")
                             
                             unwp_btnDelete.translatesAutoresizingMaskIntoConstraints = false
                             //                                unwp_btnDelete.configuration?.contentInsets = .zero

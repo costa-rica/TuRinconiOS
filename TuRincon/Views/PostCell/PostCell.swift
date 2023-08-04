@@ -35,6 +35,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     var lineImageImageView01: UIImageView!
     
+    let configSfSymbolSizeUserInteraction = UIImage.SymbolConfiguration(pointSize: 17, weight: .bold, scale: .large) // create a large configuration
     var stckVwUserInteraction=UIStackView()
 //    var stckVwUserInteractionHeight:CGFloat!
     var btnDeletePost:UIButton?
@@ -302,13 +303,13 @@ class PostCell: UITableViewCell, PostCellDelegate {
     func setup_userInteractionStackView(){
         stckVwUserInteraction.axis = .horizontal
         var userInteractionBtnWidth = screenWidth/2
-        print("------> post.user_id: \(post.user_id!)")
-        print("------> currentUser.id: \(currentUser.id!)")
+//        print("------> post.user_id: \(post.user_id!)")
+//        print("------> currentUser.id: \(currentUser.id!)")
         if post.user_id == currentUser.id {
-            print("* Should access to make a delete button for post: \(post.post_id!)")
+//            print("* Should access to make a delete button for post: \(post.post_id!)")
             userInteractionBtnWidth = screenWidth/3
             btnDeletePost = UIButton()
-            btnDeletePost!.setImage(UIImage(systemName: "trash"), for: .normal)
+            btnDeletePost!.setImage(UIImage(systemName: "trash", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
             btnDeletePost!.translatesAutoresizingMaskIntoConstraints=false
             btnDeletePost!.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
             stckVwUserInteraction.addArrangedSubview(btnDeletePost!)
@@ -319,11 +320,14 @@ class PostCell: UITableViewCell, PostCellDelegate {
         likeView = LikeView()
         
         likeView.rinconStore = self.rinconStore
+        likeView.configSfSymbolSizeUserInteraction = configSfSymbolSizeUserInteraction
         likeView.setup_view()
         likeView.post = self.post
+
         
         commentView = CommentView()
         commentView.post = post
+        commentView.configSfSymbolSizeUserInteraction = configSfSymbolSizeUserInteraction
         commentView.setup_view()
         commentView.postCellDelegate = self
         
@@ -331,6 +335,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
         likeView.translatesAutoresizingMaskIntoConstraints=false
         commentView.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
         likeView.widthAnchor.constraint(equalToConstant: userInteractionBtnWidth).isActive=true
+//        print("--->likeView size: \(likeView.frame.size)")
 
         stckVwUserInteraction.addArrangedSubview(commentView)
         commentView.accessibilityIdentifier = "commentView"
@@ -339,6 +344,11 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stckVwUserInteraction.translatesAutoresizingMaskIntoConstraints=false
         stckVwPostCell.addArrangedSubview(stckVwUserInteraction)
         stckVwUserInteraction.accessibilityIdentifier = "stckVwUserInteraction"
+        
+//        print("---commentView: \(commentView.frame.size)")
+//        print("---->commentView.buttonComment size: \(commentView.btnComment.frame.size)")
+//        print("---->commentView.viewHeight: \(commentView.viewHeight)")
+        stckVwUserInteraction.heightAnchor.constraint(equalToConstant: commentView.viewHeight + 20).isActive=true
     }
     
     func setup_line02(){

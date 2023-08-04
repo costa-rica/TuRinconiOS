@@ -11,10 +11,10 @@ class LikeView:UIView {
     var viewHeight = 0.0
     let screenWidth = UIScreen.main.bounds.width
     let stackViewUserInteractionPadding = 10.0
+    var configSfSymbolSizeUserInteraction:UIImage.SymbolConfiguration!
     var btnThumbsUp = UIButton()
     var post = Post(){
         didSet{
-            print("- LikeView Post is set -")
             setLikeCountAndButton()
         }
     }
@@ -33,7 +33,7 @@ class LikeView:UIView {
     func setup_view(){
 //        self.backgroundColor = .cyan
         lblLikeCount.text = "None"
-        btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+        btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
         btnThumbsUp.addTarget(self, action: #selector(thumbsUpButtonPressed), for: .touchUpInside)
         btnThumbsUp.translatesAutoresizingMaskIntoConstraints = false
         lblLikeCount.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +46,7 @@ class LikeView:UIView {
         btnThumbsUp.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive=true
         lblLikeCount.leadingAnchor.constraint(equalTo: btnThumbsUp.trailingAnchor).isActive=true
         lblLikeCount.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive=true
-//        lblLikeCount.topAnchor.constraint(equalTo: <#T##NSLayoutAnchor<NSLayoutYAxisAnchor>#>)
+
         
         // Size lbl
         let _ = sizeLabel(lbl: lblLikeCount)
@@ -58,9 +58,9 @@ class LikeView:UIView {
 //        lblLikeCount.backgroundColor = .cyan
         lblLikeCount.font = lblLikeCount.font.withSize(15.0)
         if post.liked{
-            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
+            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup.fill", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
         } else {
-            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
         }
 //        print("-------------------------")
 //        print("likeView for post: \(post.post_id!)")
@@ -73,17 +73,17 @@ class LikeView:UIView {
         print("Thumbs-up button pressed")
         print(post.username!)
         if post.liked{ // now user will unlike
-            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
             post.like_count -= 1
 
         } else { // was previously not liked, but user has liked
-            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
+            btnThumbsUp.setImage(UIImage(systemName: "hand.thumbsup.fill", withConfiguration: configSfSymbolSizeUserInteraction), for: .normal)
             post.like_count += 1
         }
         post.liked.toggle()
         lblLikeCount.text = String(post.like_count)
-        print("post: \(post)")
-        print("rinconStore: \(rinconStore!)")
+//        print("post: \(post)")
+//        print("rinconStore: \(rinconStore!)")
         rinconStore.likePost(rincon_id: post.rincon_id, post_id: post.post_id)
 //        rinconStore.likePost(post_id: post.post_id)
             

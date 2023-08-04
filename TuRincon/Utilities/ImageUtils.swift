@@ -138,7 +138,7 @@ func generateStackViewSimple(with imgArraySorted: [(image: UIImage, width: CGFlo
         // Add the imageView to the temporary stack view
         tempStackView?.addArrangedSubview(imageView)
         if let unwp_stckVw = tempStackView{
-            printStackViewContents(stackView: unwp_stckVw)
+//            printStackViewContents(stackView: unwp_stckVw)
             unwp_stckVw.frame = CGRect(x: 0, y: 0, width: screenWidth, height: 100)
 //            unwp_stckVw.heightAnchor.constraint(equalToConstant: 100).isActive=true
         }
@@ -264,8 +264,8 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
     let stackViewWidth = stackViewParent.bounds.width
     let stackViewHeight = stackViewParent.bounds.height
     
-    printStackViewContents(stackView: stackViewParent)
-    print("- returning above stackViewParent -")
+//    printStackViewContents(stackView: stackViewParent)
+//    print("- returning above stackViewParent -")
     return (stackViewParent, stackViewWidth, stackViewHeight)
 }
 
