@@ -112,6 +112,7 @@
                     <navigationItem key="navigationItem" id="9h1-m8-98p"/>
                     <connections>
                         <segue destination="ubv-FI-pNc" kind="show" identifier="goToRinconVC" id="qzv-RJ-Wc1"/>
+                        <segue destination="Jb4-zu-PB2" kind="show" identifier="goToSearchRinconsVC" id="v1h-u8-U5l"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gpe-Ih-maI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -133,6 +134,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="y1b-6b-now" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3750" y="351"/>
+        </scene>
+        <!--Search RinconsVC-->
+        <scene sceneID="9lX-20-YlB">
+            <objects>
+                <viewController storyboardIdentifier="SearchRinconsVC" id="Jb4-zu-PB2" customClass="SearchRinconsVC" customModule="TuRincon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mpH-f4-jHI">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="JB2-dB-xu2"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="o6p-zh-kMq"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fU0-zp-4E0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3749" y="1063"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="AOg-RZ-gxI">

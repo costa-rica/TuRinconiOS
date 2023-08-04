@@ -286,11 +286,11 @@ class LoginVC: DefaultViewController{
                     self.userStore.user.user_rincons = user_response.user_rincons
                     self.userStore.user.username = user_response.username
                     
-                    for rincon in self.userStore.user.user_rincons!{
-                        print("----------------")
-                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
-                        print("permission_post: \(rincon.permission_post)")
-                    }
+//                    for rincon in self.userStore.user.user_rincons!{
+//                        print("----------------")
+//                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
+//                        print("permission_post: \(rincon.permission_post)")
+//                    }
                                 
                     self.lblLoginStatusMessage.text = ""
                     self.token = user_response.token!

@@ -125,10 +125,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     }
     func setupRightBarButtonItem() {
         
-        if rincon.permission_post {
+        if (rincon.permission_post!) {
             btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
         } else {
-            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name!)"
+            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name)"
             btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
         }
         self.navigationItem.rightBarButtonItem = btnCreatePost
@@ -334,23 +334,16 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                 if error != nil {
                     print("error: \(error!)")
                 } else {
-
-                    
                     if let url = url {
                         print("url: \(url)")
                         let temp_image = getImageFrom(url: url)
                         if let temp_image = temp_image {
                             self.arryNewPostImageFilenames!.append(url.lastPathComponent)
                             self.arryNewPostImages.append(temp_image)
-                            
-
                         }
                     }
-
                 }
             }
-            
-
         }
         
         picker.dismiss(animated: true, completion: nil)

@@ -55,7 +55,7 @@ class RinconStore {
         } catch {
             print("Error: \(error)")
         }
-        print("- finished writePostsToJson: posts_for_\(rincon.id!).json -")
+        print("- finished writePostsToJson: posts_for_\(rincon.id).json -")
         
     }
     func rinconFolderUrl(rincon:Rincon) -> URL {
@@ -371,5 +371,36 @@ class RinconStore {
         task.resume()
     }
     
-
+    func getRinconsForSearch(completion:@escaping([Rincon])->Void){
+        print("- getRinconsForSearch")
+        let request = requestStore.createRequestWithToken(endpoint: .search_rincons)
+        
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            print("- getRinconsForSearch task")
+            if let data = data {
+                do {
+                    
+//                    let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! RinconTest
+                    let jsonDecoder = JSONDecoder()
+                    let jsonResult = try jsonDecoder.decode([Rincon].self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(jsonResult)
+                    }
+//                    let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+//                    OperationQueue.main.addOperation {
+//                        completion(jsonResult  as! [String : Any])
+//                    }
+//                    print(jsonResult)
+//                    print("*** we good ! *** ")
+                    
+                    
+                    
+                    
+                } catch {
+                    print("* (rinconStore.getRinconsForSearch) Error receiving response: either error in API or api did not send JSON")
+                }
+            }
+        }
+        task.resume()
+    }
 }

@@ -116,5 +116,7 @@ func printStackViewContents(stackView: UIStackView) {
 }
 
 func rinconImageFolderName(rincon:Rincon)->String{
-    "\(rincon.id!)_\(rincon.name_no_spaces!)"
+    "\(rincon.id)_\(rincon.name_no_spaces)"
 }
+
+

@@ -34,6 +34,20 @@ class YourRinconsVC: DefaultViewController{
             }
         }
     }
+    var segue_rincons_array = [Rincon](){
+        didSet{
+            if segue_rincons_array.count > 0 {
+                print("--- segue_rincons_array.count > 0")
+                for rincon in segue_rincons_array{
+                    print(rincon.name)
+                }
+                
+                
+                performSegue(withIdentifier: "goToSearchRinconsVC", sender: self)
+                
+            }
+        }
+    }
     let vwVCHeaderOrange = UIView()
     let lblTitle = UILabel()
     var stckVwYourRincons=UIStackView()
@@ -81,27 +95,23 @@ class YourRinconsVC: DefaultViewController{
         
         tblYourRincons.translatesAutoresizingMaskIntoConstraints=false
         stckVwYourRincons.addArrangedSubview(tblYourRincons)
-        
-//        if let unwp_color = backgroundColor {
-//            tblYourRincons.backgroundColor = UIColor(cgColor: unwp_color)
-//        }
-        
-        
+                
     }
     
     func setup_btnFindRincon() {
         btnFindRincon = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(findRincon))
-//        if rincon.permission_post {
-//            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
-//        } else {
-//            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name!)"
-//            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
-//        }
+
         self.navigationItem.rightBarButtonItem = btnFindRincon
     }
     
     @objc func findRincon(){
-        print("- let's go find a Rincon! ")
+//        print("- let's go find a Rincon! ")
+        self.rinconStore.getRinconsForSearch { jsonRinconArray in
+            print("- getting rincons")
+//            print(jsonRinconArray)
+            self.segue_rincons_array = jsonRinconArray
+        }
+        print("-- doen getting rincons")
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -112,10 +122,16 @@ class YourRinconsVC: DefaultViewController{
             rinconVC.rinconStore = self.rinconStore
             rinconVC.rinconStore.token = self.userStore.user.token!
             rinconVC.posts = self.segue_rincon_posts
-            print("Rincon obj: \(self.segue_rincon.name!), \(self.segue_rincon.permission_post)")
+            print("Rincon obj: \(self.segue_rincon.name), \(self.segue_rincon.permission_post)")
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
             print("UserStore.user objec: \(self.userStore.user.username!)")
+        }
+        else if (segue.identifier == "goToSearchRinconsVC"){
+            
+            let searchRinconsVC = segue.destination as! SearchRinconsVC
+            searchRinconsVC.arryRincons = segue_rincons_array
+            print("- Leaving YourRinconsVC ")
         }
     }
     

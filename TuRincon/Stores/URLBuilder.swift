@@ -28,6 +28,7 @@ enum EndPoint: String {
     case receive_rincon_post = "receive_rincon_post"
     case claim_a_post_id = "claim_a_post_id"
     case delete_post = "delete_post"
+    case search_rincons = "search_rincons"
 }
 
 class URLStore {
