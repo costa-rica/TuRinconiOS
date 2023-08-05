@@ -131,6 +131,7 @@ class YourRinconsVC: DefaultViewController{
             
             let searchRinconsVC = segue.destination as! SearchRinconsVC
             searchRinconsVC.arryRincons = segue_rincons_array
+            searchRinconsVC.rinconStore = rinconStore
             print("- Leaving YourRinconsVC ")
         }
     }

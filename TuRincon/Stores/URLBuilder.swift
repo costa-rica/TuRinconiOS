@@ -29,6 +29,7 @@ enum EndPoint: String {
     case claim_a_post_id = "claim_a_post_id"
     case delete_post = "delete_post"
     case search_rincons = "search_rincons"
+    case rincon_membership = "rincon_membership"
 }
 
 class URLStore {
@@ -227,5 +228,27 @@ class RequestStore {
         }
         task.resume()
     }
+    
+    func createRequestWithTokenAndRincon(rincon:Rincon)->URLRequest {
+//        let url = URL(string: "http://127.0.0.1:5001/rincon_membership/")
+        let url = urlStore.callEndpoint(endPoint: .rincon_membership)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue( self.token, forHTTPHeaderField: "x-access-token")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        do {
+            let jsonData = try encoder.encode(rincon)
+            request.httpBody = jsonData
+        } catch {
+            print("Failed to encode Rincon: \(error)")
+//            return nil
+        }
+        
+        return request
+    }
+    
 }
 

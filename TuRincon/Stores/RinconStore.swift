@@ -380,21 +380,11 @@ class RinconStore {
             if let data = data {
                 do {
                     
-//                    let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! RinconTest
                     let jsonDecoder = JSONDecoder()
                     let jsonResult = try jsonDecoder.decode([Rincon].self, from:data)
                     OperationQueue.main.addOperation {
                         completion(jsonResult)
                     }
-//                    let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-//                    OperationQueue.main.addOperation {
-//                        completion(jsonResult  as! [String : Any])
-//                    }
-//                    print(jsonResult)
-//                    print("*** we good ! *** ")
-                    
-                    
-                    
                     
                 } catch {
                     print("* (rinconStore.getRinconsForSearch) Error receiving response: either error in API or api did not send JSON")
@@ -403,4 +393,31 @@ class RinconStore {
         }
         task.resume()
     }
+    
+    func requestRinconMembership(rincon:Rincon,completion:@escaping([String:String])->Void){
+        print("-requestRinconMembership")
+        let request = requestStore.createRequestWithTokenAndRincon(rincon: rincon)
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let jsonResult = try jsonDecoder.decode([String:String].self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(jsonResult)
+                    }
+                    print("jsonResult: \(jsonResult)")
+                } catch {
+                    print("* (rinconStore.requestRinconMembership) Error receiving response: either error in API or api did not send JSON")
+                    OperationQueue.main.addOperation {
+                        completion(["status":"error"])
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    
+    
 }
+

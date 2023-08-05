@@ -7,7 +7,9 @@
 
 import UIKit
 
-class SearchRinconsVC:DefaultViewController{
+class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
+    
+    var rinconStore:RinconStore!
     
     let vwVCHeaderOrange = UIView()
     let lblTitle = UILabel()
@@ -98,6 +100,27 @@ class SearchRinconsVC:DefaultViewController{
         stckVwYourRincons.addArrangedSubview(lblTest)
     }
     
+//    func alertUpdate(message: String){
+//
+//    }
+    
+    @objc func rinconAlert(message: String) {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
 }
 
 extension SearchRinconsVC: UITableViewDelegate{
@@ -106,32 +129,39 @@ extension SearchRinconsVC: UITableViewDelegate{
 
 extension SearchRinconsVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("arryRincons.count: \(arryRincons.count)")
+//        print("arryRincons.count: \(arryRincons.count)")
         return arryRincons.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("** cellForRowAt ")
+//        print("** cellForRowAt ")
         let cell = tableView.dequeueReusableCell(withIdentifier: "RinconRow", for: indexPath) as! RinconRow
         
         let current_rincon = arryRincons[indexPath.row]
         cell.lblRinconName.text = current_rincon.name
-//        cell.lblRinconName.textAlignment = .center
         cell.membershipStatus = current_rincon.member!
-//        cell.lblPublic.text=String(current_rincon.member!)
-//        cell.backgroundColor = UIColor(named: "gray-400")
         cell.configure()
+        cell.rinconStore = self.rinconStore
+        cell.rincon = current_rincon
+        cell.searchRinconVcDelegate = self
 
         return cell
     }
     
 }
 
+protocol SearchRinconVCDelegate {
+    func rinconAlert(message: String)
+}
+
 
 class RinconRow: UITableViewCell {
+    var rinconStore:RinconStore!
+    var rincon:Rincon!
+    var searchRinconVcDelegate: SearchRinconVCDelegate!
     var stckVwRinconRow = UIStackView()
     var lblRinconName = UILabel()
-//    var lblPublic = UILabel()
+    var serachRinconVcAlertMessage:String!
     var membershipStatus:Bool! {
         didSet{
             setup_btnMembership()
@@ -150,7 +180,6 @@ class RinconRow: UITableViewCell {
     }
     
     func configure() {
-        print("*** make a RinconRow **")
         stckVwRinconRow.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(stckVwRinconRow)
         stckVwRinconRow.topAnchor.constraint(equalTo: contentView.topAnchor).isActive=true
@@ -160,15 +189,8 @@ class RinconRow: UITableViewCell {
         stckVwRinconRow.spacing = 10
         stckVwRinconRow.distribution = .fill
         
-        
         lblRinconName.translatesAutoresizingMaskIntoConstraints=false
         stckVwRinconRow.insertArrangedSubview(lblRinconName, at: 0)
-//        lblRinconName.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 60)).isActive=true
-//        lblRinconName.heightAnchor.constraint(equalToConstant: 30).isActive=true
-        
-//        lblPublic.translatesAutoresizingMaskIntoConstraints=false
-//        stckVwRinconRow.addArrangedSubview(lblPublic)
-//        lblPublic.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 25)).isActive=true
     }
     
     private func setup_btnMembership(){
@@ -179,23 +201,28 @@ class RinconRow: UITableViewCell {
         btnMembership.addTarget(self, action: #selector(btnMembershipTouchUpInside), for: .touchUpInside)
         btnMembership.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         if membershipStatus {
-            btnMembership.setTitle(" Leave ", for: .normal)
-            btnMembership.setTitleColor(UIColor(named: "redDelete"), for: .normal)
-            btnMembership.layer.borderColor = UIColor(named: "redDelete")?.cgColor
-            btnMembership.layer.borderWidth = 2
-            btnMembership.layer.cornerRadius = 10
+            setup_btnMembership_leave()
         } else {
-            btnMembership.setTitle(" Join ", for: .normal)
-            btnMembership.setTitleColor(.green, for: .normal)
-            btnMembership.layer.borderColor = UIColor.green.cgColor
-            btnMembership.layer.borderWidth = 2
-            btnMembership.layer.cornerRadius = 10
-            print("self.contentView.frame.height: \(self.contentView.frame.height)")
-            btnMembership.layer.frame = CGRect(x: 0, y: 0, width: 60, height: self.contentView.frame.height)
-            btnMembership.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 8.0, leading: 8.0, bottom: 8.0, trailing: 8.0)
+            setup_btnMembership_join()
         }
         
     }
+    
+    private func setup_btnMembership_join(){
+        btnMembership.setTitle(" Join ", for: .normal)
+        btnMembership.setTitleColor(.green, for: .normal)
+        btnMembership.layer.borderColor = UIColor.green.cgColor
+        btnMembership.layer.borderWidth = 2
+        btnMembership.layer.cornerRadius = 10
+    }
+    private func setup_btnMembership_leave(){
+        btnMembership.setTitle(" Leave ", for: .normal)
+        btnMembership.setTitleColor(UIColor(named: "redDelete"), for: .normal)
+        btnMembership.layer.borderColor = UIColor(named: "redDelete")?.cgColor
+        btnMembership.layer.borderWidth = 2
+        btnMembership.layer.cornerRadius = 10
+    }
+    
     
     // Button action
     @objc func btnMembershipTouchDown(_ sender: UIButton) {
@@ -209,6 +236,23 @@ class RinconRow: UITableViewCell {
         }, completion: nil)
         let buttonTitle = btnMembership.title(for: .normal) ?? "No Title"
         print("btnMembership pressed, title: \(buttonTitle)")
+        self.rinconStore.requestRinconMembership(rincon: rincon) { jsonDict in
+            if jsonDict["status"] == "removed user"{
+//                self.btnMembership.removeFromSuperview()
+                self.setup_btnMembership_join()
+//                self.layoutIfNeeded()
+                self.serachRinconVcAlertMessage = "You have left \(self.rincon.name)"
+            }
+            else if jsonDict["status"] == "added user"{
+//                self.btnMembership.removeFromSuperview()
+                self.setup_btnMembership_leave()
+//                self.layoutIfNeeded()
+                self.serachRinconVcAlertMessage = "You have been added to \(self.rincon.name)"
+            } else {
+                self.serachRinconVcAlertMessage = "Failed to communicate with main server"
+            }
+            self.searchRinconVcDelegate.rinconAlert(message: self.serachRinconVcAlertMessage)
+        }
     }
     
 }
