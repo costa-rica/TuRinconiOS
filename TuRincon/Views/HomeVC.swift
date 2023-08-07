@@ -314,7 +314,7 @@ class HomeVC: DefaultViewController {
 //        lblApi.textAlignment = .
         
         
-        urlStore.baseString = "https://dev.api.tu-rincon.com/"
+        urlStore.baseString = "http://127.0.0.1:5001/"
         let indexDict = ["http://127.0.0.1:5001/":0,"https://dev.api.tu-rincon.com/":1,"https://api.tu-rincon.com/":2]
         
         let segmentedControl = UISegmentedControl(items: Environment.allCases.map { $0.rawValue })

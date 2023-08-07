@@ -11,7 +11,6 @@ import UIKit
 enum EndPoint: String {
     case are_we_running = "are_we_running"
     case user = "user"
-//    case caffeineLogUpdate = "caffeine_log_update"
     case deleteLogEntry = "delete_log_entry"
     case register = "register"
     case test_response = "test_response"
@@ -30,6 +29,7 @@ enum EndPoint: String {
     case delete_post = "delete_post"
     case search_rincons = "search_rincons"
     case rincon_membership = "rincon_membership"
+    case create_a_rincon="create_a_rincon"
 }
 
 class URLStore {
@@ -229,8 +229,29 @@ class RequestStore {
         task.resume()
     }
     
+    func createRequestWithTokenAndBody(endPoint: EndPoint, dict_body:[String:String])->URLRequest {
+
+        let url = urlStore.callEndpoint(endPoint: endPoint)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue( self.token, forHTTPHeaderField: "x-access-token")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        do {
+            let jsonData = try encoder.encode(dict_body)
+            request.httpBody = jsonData
+        } catch {
+            print("Failed to encode Rincon: \(error)")
+
+        }
+        
+        return request
+    }
+    
+    
     func createRequestWithTokenAndRincon(rincon:Rincon)->URLRequest {
-//        let url = URL(string: "http://127.0.0.1:5001/rincon_membership/")
         let url = urlStore.callEndpoint(endPoint: .rincon_membership)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -244,7 +265,6 @@ class RequestStore {
             request.httpBody = jsonData
         } catch {
             print("Failed to encode Rincon: \(error)")
-//            return nil
         }
         
         return request

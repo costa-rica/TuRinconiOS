@@ -7,16 +7,23 @@
 
 import UIKit
 
-enum PhotoError: Error {
+//enum PhotoError: Error {
+//    case imageCreationError
+//    case missingImageURL
+//}
+
+enum RinconStoreError: Error {
     case imageCreationError
-    case missingImageURL
+    case failedToCreateRincon
+    case failedToCreatePost
+    case failedToReturnPostsArrayForRincon
 }
 
 class RinconStore {
     var token: String!
     var requestStore:RequestStore!
     
-    func requestRinconPosts(rincon:Rincon, completion: @escaping([Post]) -> Void){
+    func requestRinconPosts(rincon:Rincon, completion: @escaping(Result<[Post],Error>) -> Void){
 
         let request = requestStore.createRequestWithTokenAndRinconAndBody(endpoint: .rincon_posts, rincon_id: rincon.id, bodyParamDict: ["rincon_id":rincon.id], file_name: nil)
         
@@ -26,10 +33,13 @@ class RinconStore {
                 let jsonDecoder = JSONDecoder()
                 let rincon_posts_response = try jsonDecoder.decode([Post].self, from:unwrapped_data)
                 OperationQueue.main.addOperation {
-                    completion(rincon_posts_response)
+                    completion(.success(rincon_posts_response))
                 }
             } catch {
                 print("Error receiving response: most likely [Post] did not decode well")
+                OperationQueue.main.addOperation {
+                    completion(.failure(RinconStoreError.failedToReturnPostsArrayForRincon))
+                }
             }
             guard let unwrapped_resp = response as? HTTPURLResponse else{
                 print("no response")
@@ -117,7 +127,8 @@ class RinconStore {
             if data == nil {
                 return .failure(error!)
             } else {
-                return .failure(PhotoError.imageCreationError)
+//                return .failure(PhotoError.imageCreationError)
+                return .failure(RinconStoreError.imageCreationError)
             }
         }
         return .success(image)
@@ -417,6 +428,29 @@ class RinconStore {
         task.resume()
     }
     
+    func requestCreateNewRincon(rincon_name:String, is_public:Bool,completion:@escaping(Result<Rincon, Error>)->Void){
+        print("- requestCreateNewRincon")
+        let request = requestStore.createRequestWithTokenAndBody(endPoint: .create_a_rincon, dict_body: ["new_rincon_name":rincon_name,"is_public":String(is_public)])
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let new_rincon = try jsonDecoder.decode(Rincon.self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(.success(new_rincon))
+                        
+                    }
+//                    print("new_new_rincon: \(new_rincon)")
+                } catch {
+                    print("- rinconStore.requestCreateNewRincon Error receiving response")
+                    OperationQueue.main.addOperation {
+                        completion(.failure(RinconStoreError.failedToCreateRincon))
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
     
     
 }

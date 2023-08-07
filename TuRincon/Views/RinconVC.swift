@@ -18,7 +18,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     let vwVCHeaderOrange = UIView()
     var stckVwRincon=UIStackView()
     var tblRincon = UITableView()
-//    var backgroundColor: CGColor!
+    //    var backgroundColor: CGColor!
     
     var stckVwSubmitPostTxtAndBtn = UIStackView()
     var stckVwSubmitBtns = UIStackView()
@@ -27,11 +27,11 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var btnSubmitPost = UIButton()
     var btnAddPhotos = UIButton()
     var vwPostSpacer = UIView()
-//    var selectedImageURLs: [URL] = []
+    //    var selectedImageURLs: [URL] = []
     var arryNewPostImages = [UIImage]()
     var arryNewPostImageFilenames: [String]?
     var dictNewImages:[String:UIImage]?
-
+    
     var btnCreatePost: UIBarButtonItem!
     var newPost:Post!
     /* new post critical path #2 */
@@ -58,11 +58,16 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         
         setup_vwVCHeaderOrange()
         setup_stckVwRinconPosts()
-//        setup_submitPost()
         setupRightBarButtonItem()
         // Register for keyboard notifications
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        tblRincon.refreshControl = refreshControl
+        
+        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -70,7 +75,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("btnAddPhotos.size.frame: \(btnAddPhotos.frame.size)")
         print("btnSubmitPost: \(btnSubmitPost.frame.size)")
     }
-
+    
     @objc func keyboardWillShow(notification: NSNotification) {
         print("-keyboardWillShow")
         if let unwp_array = self.arryNewPostImageFilenames{
@@ -90,7 +95,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("-keyboardWillHide")
         bottomConstraint.constant = 0
         UIView.animate(withDuration: 0.25) {
-                    self.view.layoutIfNeeded()
+            self.view.layoutIfNeeded()
         }
     }
     
@@ -111,17 +116,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         stckVwRincon.topAnchor.constraint(equalTo: vwVCHeaderOrange.bottomAnchor).isActive=true
         stckVwRincon.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive=true
         stckVwRincon.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
-//        stckVwRincon.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive=true
         bottomConstraint = stckVwRincon.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         bottomConstraint.isActive=true
-//        lblTitle.text = rincon_id
-//        lblTitle.translatesAutoresizingMaskIntoConstraints = false
-//        stckVwRincon.addArrangedSubview(lblTitle)
-
         tblRincon.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(tblRincon)
-
-//        stckVwRincon.backgroundColor = UIColor(cgColor: backgroundColor)
     }
     func setupRightBarButtonItem() {
         
@@ -137,7 +135,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     @objc func handleRightButtonTap() {
         stckVwSubmitPostTxtAndBtn.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(stckVwSubmitPostTxtAndBtn)
-
+        
         txtPost.translatesAutoresizingMaskIntoConstraints=false
         stckVwSubmitPostTxtAndBtn.addArrangedSubview(txtPost)
         txtPost.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 75)).isActive=true
@@ -165,7 +163,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         btnSubmitPost.layer.cornerRadius = 10
         btnSubmitPost.layer.borderWidth = 2
         btnSubmitPost.layer.borderColor = UIColor(named: "blueBtn")?.cgColor
-
+        
         btnAddPhotos.translatesAutoresizingMaskIntoConstraints=false
         stckVwSubmitBtns.addArrangedSubview(btnAddPhotos)
         btnAddPhotos.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 5)).isActive=true
@@ -188,22 +186,17 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }, completion: nil)
     }
-
+    
     /* new post critical path #1 */
     @objc func btnSubmitPostTouchUpInside(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-
+        
         /* Send Post Critical Path: phase 2 */
         rinconStore.claimAPostId(rincon_id: rincon.id) { jsonDictResponse in
             self.newPostId = jsonDictResponse["new_post_id"] ?? "no_post_id_found_see:rinconStore.claimAPostId"
         }
-//        rinconStore.getLastPostId { jsonDict in
-//            next_post_id_int = Int(jsonDict["last_post_id"]!) ?? 9998
-//            self.nextPostId = String(next_post_id_int + 1)
-////            self.photoFilenameBase = "user_\(self.userStore.user.id!)_post_\(self.nextPostId)_image_\(self.imageId).jpeg"
-//        }
     }
     
     private func hideStckVwSubmitPostTxtAndBtn(){
@@ -223,7 +216,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         newPost.rincon_id = rincon.id
         newPost.date_for_sorting_ios = getCurrentTimestamp() // format: "2023-07-24 11:14:32.060511"
         newPost.post_text_ios = txtPost.text!
-
+        
         newPost.liked = false
         newPost.like_count = 0
         
@@ -237,53 +230,52 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                 self.dictNewImages!["post_\(self.newPostId)_image_\(String(index+1)).jpeg"]=uiimage
             }
             self.arryNewPostImageFilenames = Array(self.dictNewImages!.keys)
-
+            
             self.newPost.image_files_array = self.arryNewPostImageFilenames
             self.newPost.image_filenames_ios = self.arryNewPostImageFilenames?.joined(separator: ",")
-
+            
         }
         
         
         rinconStore.sendPostToApi(post: newPost) { jsonResponse in
             if jsonResponse["post_received_status"] == "success"{
                 self.posts.append(self.newPost)
-//                let newIndexPath =
-                
                 
                 if self.arryNewPostImageFilenames != nil  {
                     self.sendNewPostImages(post_id: jsonResponse["new_post_id"]!)
                 }
                 
-                self.rinconStore.requestRinconPosts(rincon: self.rincon) { arryPosts in
-                    self.posts = arryPosts
-//                    self.customReloadCell(indexPath: <#T##IndexPath#>)
-                    self.tblRincon.reloadData()
-                }
-                
-                
-                DispatchQueue.main.async {
-                    self.rinconVcAlertMessage = "Post successfully sent"
-                    self.rinconAlert()
-                }
-                self.hideStckVwSubmitPostTxtAndBtn()
-                
-            } else {
-                DispatchQueue.main.async {
-                    self.rinconVcAlertMessage = "Didn't send, something went wrong"
-                    self.rinconAlert()
-                }
-            }
+                self.rinconStore.requestRinconPosts(rincon: self.rincon) { responseForRinconPostsArray in
+                    switch responseForRinconPostsArray{
+                    case let .success(arryRinconPosts):
+                        self.posts = arryRinconPosts
+                        self.tblRincon.reloadData()
+                        DispatchQueue.main.async {
+                            self.rinconVcAlertMessage = "Post successfully sent"
+                            self.rinconAlert()
+                        }
+                        self.hideStckVwSubmitPostTxtAndBtn()
+                    case let .failure(error):
+                        print("Failed to get posts from api: \(error)")
+                        DispatchQueue.main.async {
+                            self.rinconVcAlertMessage = "Didn't send, something went wrong"
+                            self.rinconAlert()
+                        }
+                        
+                    }
+                }// self.rinconStore.requestRinconPosts
+            } // if jsonResponse["post_received_status"]
+            
         }
     }
     
     private func sendNewPostImages(post_id:String){
         print("- in RinconVC sendNewPostImages")
-
+        
         if let unwp_dict = self.dictNewImages {
-
+            
             self.rinconStore.sendImagesThree(dictNewImages: unwp_dict) { jsonDict in
-                print("* rinconStore.sendImage response: ")
-                print(jsonDict)
+                
                 //MARK: This needs to change corrected image name
                 if jsonDict["image_received_status"] == "Successfully send images and executed /receive_image endpoint " {
                     for (name, img) in unwp_dict {
@@ -301,32 +293,25 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }, completion: nil)
     }
-
     @objc func btnAddPhotosTouchUpInside(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-        print("Selecting Photos")
         self.arryNewPostImageFilenames = []
         self.arryNewPostImages = []
         openPhotoGallery()
     }
-    
     func openPhotoGallery() {
-        print("- in openPhotoGallery")
-        
         var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
         configuration.selectionLimit = 0 // No limit
         configuration.filter = .images // Only images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
-        print("-- end openPhotoGallery --")
     }
-
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         print("--- in picker ---")
-
+        
         for result in results {
             
             let resultProvider = result.itemProvider
@@ -351,36 +336,38 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("- end picker ---")
     }
     
-    func customReloadCell(indexPath:IndexPath){
-        tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
-        print("- customReloadCell from RinconVC")
-    }
-    func customUpdatePostsAndReloadCell(posts:[Post], indexPath:IndexPath){
-        self.posts = posts
-        tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
-    }
     
-    func deleteCommentAreYouSure(sender:DeleteCommentButton,indexPath:IndexPath){
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alertController.modalPresentationStyle = .popover
-//        alertController.popoverPresentationController?.sourceRect = self.bounds
-        alertController.popoverPresentationController?.sourceView = self.stckVwRincon
+    @objc private func refreshData(_ sender: UIRefreshControl) {
         
-        let current_post = posts[indexPath.row]
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let deleteCommentAction = UIAlertAction(title: "Delete", style: .destructive){_ in
-            print("delete this comment from postid:\(current_post.post_id!) for comment: \(sender.comment_id)")
-            
-            self.rinconStore.deleteComment(rincon_id: current_post.rincon_id, post_id: current_post.post_id, comment_id: sender.comment_id) { post in
-                self.posts[indexPath.row] = post
-                self.customUpdatePostsAndReloadCell(posts:self.posts, indexPath: indexPath)
+        
+        self.rinconStore.requestRinconPosts(rincon: rincon) { responseForRinconPostsArray in
+            switch responseForRinconPostsArray{
+            case let .success(arryRinconPosts):
+                for p in arryRinconPosts{
+                    p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
+                }
+                self.posts = arryRinconPosts
+            case let .failure(error):
+                print("FAiled to communicate with API for posts: \(error)")
             }
+            
+            
+            //        fetchDataFromAPI { (success, error) in
+            //            // Once the data is fetched, you would reload the table view and end refreshing.
+            //            if success {
+            //                DispatchQueue.main.async {
+            //                    self.tblRincon.reloadData()
+            //                    sender.endRefreshing()
+            //                }
+            //            } else {
+            //                // You might want to handle errors in a real scenario.
+            //                print("Error fetching data: \(error?.localizedDescription ?? "No error description.")")
+            //                DispatchQueue.main.async {
+            //                    sender.endRefreshing()
+            //                }
+            //            }
+            //        }
         }
-
-        alertController.addAction(cancelAction)
-        alertController.addAction(deleteCommentAction)
-        
-        self.present(alertController, animated: true, completion: nil)
     }
     
     @objc func rinconAlert() {
@@ -400,10 +387,41 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alert, animated: true, completion: nil)
     }
     
+    /* Delegat functions */
+    func customReloadCell(indexPath:IndexPath){
+        tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
+        print("- customReloadCell from RinconVC")
+    }
+    func customUpdatePostsAndReloadCell(posts:[Post], indexPath:IndexPath){
+        self.posts = posts
+        tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
+    }
+    func deleteCommentAreYouSure(sender:DeleteCommentButton,indexPath:IndexPath){
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alertController.modalPresentationStyle = .popover
+        //        alertController.popoverPresentationController?.sourceRect = self.bounds
+        alertController.popoverPresentationController?.sourceView = self.stckVwRincon
+        
+        let current_post = posts[indexPath.row]
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let deleteCommentAction = UIAlertAction(title: "Delete", style: .destructive){_ in
+            print("delete this comment from postid:\(current_post.post_id!) for comment: \(sender.comment_id)")
+            
+            self.rinconStore.deleteComment(rincon_id: current_post.rincon_id, post_id: current_post.post_id, comment_id: sender.comment_id) { post in
+                self.posts[indexPath.row] = post
+                self.customUpdatePostsAndReloadCell(posts:self.posts, indexPath: indexPath)
+            }
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteCommentAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
     func deletePostAreYouSure(indexPath:IndexPath){
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alertController.modalPresentationStyle = .popover
-//        alertController.popoverPresentationController?.sourceRect = self.bounds
+        //        alertController.popoverPresentationController?.sourceRect = self.bounds
         alertController.popoverPresentationController?.sourceView = self.stckVwRincon
         
         let current_post = posts[indexPath.row]
@@ -422,27 +440,25 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                     
                     self.posts.remove(at: indexPath.row)
                     self.rinconStore.writePostsToJson(rincon: self.rincon, posts: self.posts)
-
+                    
                     self.tblRincon.reloadData()
                     print("successfully removed post from this Phone")
                 } else{
                     print("--> bad: failed to delete post:")
                 }
             }
-            
-//            self.rinconStore.deleteComment(rincon_id: current_post.rincon_id, post_id: current_post.post_id, comment_id: sender.comment_id) { post in
-//                self.posts[indexPath.row] = post
-//                self.customUpdatePostsAndReloadCell(posts:self.posts, indexPath: indexPath)
-//            }
         }
-
+        
         alertController.addAction(cancelAction)
         alertController.addAction(deleteCommentAction)
         
         self.present(alertController, animated: true, completion: nil)
     }
     
+    
+    
 }
+
 
 extension RinconVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -454,7 +470,7 @@ extension RinconVC: UITableViewDelegate {
 
 extension RinconVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+        
         return posts.count
     }
     
@@ -472,7 +488,7 @@ extension RinconVC: UITableViewDataSource {
             this_post.image_files_array = imageFileNameParser(unwrapped_image_filenames)
         }
         cell.configure(with: this_post)
-
+        
         return cell
     }
     

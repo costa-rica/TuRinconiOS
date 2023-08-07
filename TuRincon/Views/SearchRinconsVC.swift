@@ -22,6 +22,8 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
     
     var arryRincons: [Rincon]!
     
+    var isPublic: Bool = true // the checkbox state, default is checked
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("-Entered SearchRinconsVC")
@@ -31,7 +33,7 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
         tblRincons.dataSource = self
         // Register a UITableViewCell
         tblRincons.register(RinconRow.self, forCellReuseIdentifier: "RinconRow")
-//        tblRincons.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        //tblRincons.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         tblRincons.rowHeight = UITableView.automaticDimension
         tblRincons.estimatedRowHeight = 30 // Provide an estimate here
         
@@ -41,6 +43,7 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
         setup_lblTitle()
         setup_tblRincons()
 //        setup_testLabel()
+        setupNavigationBar()
     }
     
     func setup_vwVCHeaderOrange(){
@@ -92,19 +95,8 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
 //        tblRincons.backgroundColor = UIColor(named: "gray-400")
         stckVwYourRincons.addArrangedSubview(tblRincons)
     }
-    
-    func setup_testLabel(){
-        let lblTest = UILabel()
-        lblTest.text = "Testing this out"
-        lblTest.translatesAutoresizingMaskIntoConstraints=false
-        stckVwYourRincons.addArrangedSubview(lblTest)
-    }
-    
-//    func alertUpdate(message: String){
-//
-//    }
-    
-    @objc func rinconAlert(message: String) {
+        
+    @objc func searchRinconsAlert(message: String) {
         // Create an alert
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         
@@ -120,6 +112,33 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
         // Present the alert
         self.present(alert, animated: true, completion: nil)
     }
+    
+    
+    
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRincon))
+    }
+
+    @objc private func addRincon() {
+        let createRinconVC = CreateRinconVC()
+        createRinconVC.modalPresentationStyle = .overCurrentContext
+        createRinconVC.modalTransitionStyle = .crossDissolve
+        createRinconVC.rinconStore = self.rinconStore
+        createRinconVC.searchRinconVcDelegate = self
+        present(createRinconVC, animated: true, completion: nil)
+    }
+    
+    func addRinconToArryRincons(rincon:Rincon){
+        arryRincons.append(rincon)
+        
+        // MARK: Rincon shows up with "Join" button suggesting user isn't already member ---> fix this :)
+        
+        print("rincon memebverisp: \(rincon.member)")
+        tblRincons.reloadData()
+//        tblRincons.reloadRows(at: arryRincons.count - 1, with: <#T##UITableView.RowAnimation#>)
+    }
+    
+    
     
 }
 
@@ -138,6 +157,11 @@ extension SearchRinconsVC: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RinconRow", for: indexPath) as! RinconRow
         
         let current_rincon = arryRincons[indexPath.row]
+        if current_rincon.id == arryRincons.last!.id {
+            print("** cellForRowAt ")
+            print("rincon id: \(current_rincon.id)")
+            print("rincon_membership: \(current_rincon.member)")
+        }
         cell.lblRinconName.text = current_rincon.name
         cell.membershipStatus = current_rincon.member!
         cell.configure()
@@ -151,7 +175,8 @@ extension SearchRinconsVC: UITableViewDataSource {
 }
 
 protocol SearchRinconVCDelegate {
-    func rinconAlert(message: String)
+    func searchRinconsAlert(message: String)
+    func addRinconToArryRincons(rincon:Rincon)
 }
 
 
@@ -200,10 +225,10 @@ class RinconRow: UITableViewCell {
         btnMembership.addTarget(self, action: #selector(btnMembershipTouchDown), for: .touchDown)
         btnMembership.addTarget(self, action: #selector(btnMembershipTouchUpInside), for: .touchUpInside)
         btnMembership.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        if membershipStatus {
-            setup_btnMembership_leave()
-        } else {
+        if !membershipStatus {
             setup_btnMembership_join()
+        } else {
+            setup_btnMembership_leave()
         }
         
     }
@@ -251,10 +276,156 @@ class RinconRow: UITableViewCell {
             } else {
                 self.serachRinconVcAlertMessage = "Failed to communicate with main server"
             }
-            self.searchRinconVcDelegate.rinconAlert(message: self.serachRinconVcAlertMessage)
+            self.searchRinconVcDelegate.searchRinconsAlert(message: self.serachRinconVcAlertMessage)
         }
     }
     
 }
 
+
+
+class CreateRinconVC: UIViewController {
+    var searchRinconVcDelegate: SearchRinconVCDelegate!
+    var rinconStore:RinconStore!
+    var vwCreateRincon = UIView()
+    var stckVwCreateRincon:UIStackView!
+    var lblTitle = UILabel()
+    let txtNewRinconName = UITextField()
+    let btnPublic = UIButton(type: .system)
+    var isPublic: Bool = true
+    var alertMessage:String!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
+    }
+    
+    func setupView() {
+        // The semi-transparent background
+        view.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.6)
+        
+        // The white alert view
+//        let alertView = UIView()
+//        vwCreateRincon.backgroundColor = UIColor(named: "gray-500")
+        vwCreateRincon.backgroundColor = UIColor.systemBackground
+        vwCreateRincon.layer.cornerRadius = 12
+        vwCreateRincon.layer.borderColor = UIColor(named: "gray-500")?.cgColor
+        vwCreateRincon.layer.borderWidth = 2
+        vwCreateRincon.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(vwCreateRincon)
+        
+        NSLayoutConstraint.activate([
+            vwCreateRincon.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            vwCreateRincon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            vwCreateRincon.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
+//            vwCreateRincon.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
+        ])
+        
+        setupInputsInView()
+    }
+    
+    func setupInputsInView() {
+        lblTitle.translatesAutoresizingMaskIntoConstraints = false
+        txtNewRinconName.translatesAutoresizingMaskIntoConstraints = false
+        btnPublic.translatesAutoresizingMaskIntoConstraints = false
+
+        lblTitle.text = "Create a new rincón"
+        lblTitle.font = UIFont(name: "Rockwell_tu", size: 20)
+        
+        txtNewRinconName.placeholder = " Enter Rincon Name"
+
+        txtNewRinconName.layer.borderWidth = 2
+        txtNewRinconName.layer.borderColor = CGColor(gray: 0.5, alpha: 1.0)
+        txtNewRinconName.layer.cornerRadius = 2
+        txtNewRinconName.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 80)).isActive=true
+        
+        btnPublic.setTitle(" Make public", for: .normal)
+        btnPublic.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
+        btnPublic.contentHorizontalAlignment = .left
+        btnPublic.addTarget(self, action: #selector(toggleCheckbox), for: .touchUpInside)
+
+        
+
+        let submitButton = UIButton(type: .system)
+        submitButton.setTitle("Submit", for: .normal)
+        submitButton.addTarget(self, action: #selector(submit), for: .touchUpInside)
+
+        let cancelButton = UIButton(type: .system)
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+        
+        
+        let stckVwButtons = UIStackView(arrangedSubviews: [submitButton,cancelButton])
+        stckVwButtons.translatesAutoresizingMaskIntoConstraints=false
+        
+        stckVwCreateRincon = UIStackView(arrangedSubviews: [lblTitle, txtNewRinconName, btnPublic, stckVwButtons])
+        stckVwCreateRincon.axis = .vertical
+        stckVwCreateRincon.spacing = 10
+
+        vwCreateRincon.addSubview(stckVwCreateRincon)
+
+        stckVwCreateRincon.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stckVwCreateRincon.topAnchor.constraint(equalTo: vwCreateRincon.topAnchor, constant: heightFromPct(percent: 2)),
+            stckVwCreateRincon.leadingAnchor.constraint(equalTo: vwCreateRincon.leadingAnchor, constant: widthFromPct(percent: 2)),
+            stckVwCreateRincon.trailingAnchor.constraint(equalTo: vwCreateRincon.trailingAnchor, constant: widthFromPct(percent: -2)),
+            stckVwCreateRincon.bottomAnchor.constraint(lessThanOrEqualTo: vwCreateRincon.bottomAnchor, constant: heightFromPct(percent: -2))
+        ])
+    }
+
+    @objc func toggleCheckbox() {
+        isPublic = !isPublic
+        let imageName = isPublic ? "checkmark.square" : "square"
+        btnPublic.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+
+    @objc func submit() {
+
+        if let unwped_rincon_name = txtNewRinconName.text{
+        print("Sending rincon name to api")
+        self.rinconStore.requestCreateNewRincon(rincon_name: unwped_rincon_name, is_public: isPublic) { rinconResult in
+            switch rinconResult {
+            case let .success(new_rincon):
+                self.searchRinconVcDelegate.addRinconToArryRincons(rincon: new_rincon)
+                self.dismiss(animated: true, completion: nil)
+
+            case let .failure(error):
+                print("rinconResult error: \(error)")
+                self.alertMessage = "Failed to add rincón. Try again later."
+                self.alertSearchRinconsVC()
+            }
+        }
+        } else {
+            self.alertMessage = "Must enter a rincón name"
+            alertSearchRinconsVC()
+        }
+    }
+
+    @objc func cancel() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func alertSearchRinconsVC() {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: alertMessage, preferredStyle: .alert)
+        
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+            // Go back to HomeVC
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+}
 

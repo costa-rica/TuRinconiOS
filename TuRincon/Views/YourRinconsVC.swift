@@ -14,8 +14,6 @@ class YourRinconsVC: DefaultViewController{
     var rinconStore: RinconStore!
     var urlStore: URLStore!
     var segue_rincon: Rincon!
-//    var segue_rincon_id: String!
-//    var segue_rincon_name: String!
     var segue_rincon_posts = [Post](){
         didSet{
             if segue_rincon_posts.count > 0{
@@ -54,9 +52,7 @@ class YourRinconsVC: DefaultViewController{
     
     var tblYourRincons = UITableView()
     var btnFindRincon: UIBarButtonItem!
-//    let backgroundColor = UIColor(named: "gray-300")?.cgColor
-//    let backgroundColor = CGColor(red: 164 / 255.0, green: 157 / 255.0, blue: 149 / 255.0, alpha: 1.0)
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup_vwVCHeaderOrange()
@@ -114,6 +110,25 @@ class YourRinconsVC: DefaultViewController{
         print("-- doen getting rincons")
     }
     
+    func alertYourRinconsVC(alertMessage:String) {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: alertMessage, preferredStyle: .alert)
+        
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+            // Go back to HomeVC
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToRinconVC") {
             print("- going to a Rincon")
@@ -122,10 +137,10 @@ class YourRinconsVC: DefaultViewController{
             rinconVC.rinconStore = self.rinconStore
             rinconVC.rinconStore.token = self.userStore.user.token!
             rinconVC.posts = self.segue_rincon_posts
-            print("Rincon obj: \(self.segue_rincon.name), \(self.segue_rincon.permission_post)")
+//            print("Rincon obj: \(self.segue_rincon.name), \(self.segue_rincon.permission_post)")
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
-            print("UserStore.user objec: \(self.userStore.user.username!)")
+//            print("UserStore.user objec: \(self.userStore.user.username!)")
         }
         else if (segue.identifier == "goToSearchRinconsVC"){
             
@@ -142,19 +157,18 @@ extension YourRinconsVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let unwrapped_rincons = userStore.user.user_rincons {
             self.segue_rincon = unwrapped_rincons[indexPath.row]
-//            self.segue_rincon_id = unwrapped_rincons[indexPath.row][0]
-//            self.segue_rincon_name = unwrapped_rincons[indexPath.row][1]
-            
-//            print("- selected rincon_id: \(self.segue_rincon_id!)")
-            
-            self.rinconStore.requestRinconPosts(rincon: segue_rincon) { response_posts_list in
-                for p in response_posts_list{
-//                    p.cell_height = 0.0
-                    p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.segue_rincon)
-//                    p.check_height_flag=false
-                    
+            self.rinconStore.requestRinconPosts(rincon: segue_rincon) { responseForRinconPostsArray in
+                switch responseForRinconPostsArray{
+                case let .success(arryRinconPosts):
+                    for p in arryRinconPosts{
+                        p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.segue_rincon)
+                    }
+                    self.segue_rincon_posts = arryRinconPosts
+                case let .failure(error):
+                    print("Rincon posts did not download: \(error)")
+                    self.alertYourRinconsVC(alertMessage: "Posts did not update")
                 }
-                self.segue_rincon_posts = response_posts_list
+
             }
         }
     }
