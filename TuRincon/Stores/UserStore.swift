@@ -9,6 +9,7 @@ import Foundation
 
 enum UserStoreError: Error {
     case failedDecode
+    case failedToLogin
 }
 
 class UserStore {
@@ -85,7 +86,7 @@ class UserStore {
         
     }
     
-    func requestLoginUser(email:String, password:String, completion:@escaping([String:Any]) -> Void){
+    func requestLoginUser(email:String, password:String, completion:@escaping(Result<User,Error>) -> Void){
         let url = urlStore.callEndpoint(endPoint: .login)
         var request = URLRequest(url:url)
         request.httpMethod = "GET"
@@ -98,6 +99,9 @@ class UserStore {
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
+        
+        
+        
         let task = session.dataTask(with: request) {(data,response,error) in
             guard let unwrapped_data = data else {print("no data response"); return}
 
@@ -106,21 +110,22 @@ class UserStore {
                 let jsonUser = try jsonDecoder.decode(User.self, from: unwrapped_data)
                 print("- successsfull response: \(jsonUser)")
                 OperationQueue.main.addOperation {
-                    completion(["user":jsonUser])
+                    completion(.success(jsonUser))
                 }
             }catch {
-                print(" Failed to read response")
+                print(" UserStore.requestLoginUser error: Failed to read response")
+                completion(.failure(UserStoreError.failedToLogin))
             }
             
             guard let unwrapped_response = response  as? HTTPURLResponse else { return}
             
-            print("status code : \(unwrapped_response.statusCode)")
+            print("UserStore.requestLoginUser request status code : \(unwrapped_response.statusCode)")
             
-            if unwrapped_response.statusCode == 401 {
-                OperationQueue.main.addOperation {
-                    completion(["status":"Invalid email/password"])
-                }
-            }
+//            if unwrapped_response.statusCode == 401 {
+//                OperationQueue.main.addOperation {
+//                    completion(["status":"Invalid email/password"])
+//                }
+//            }
         }
         task.resume()
     }

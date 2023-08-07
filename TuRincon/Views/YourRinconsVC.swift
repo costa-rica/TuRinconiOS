@@ -65,6 +65,10 @@ class YourRinconsVC: DefaultViewController{
 
         setup_stckVwYourRincons()
         setup_btnFindRincon()
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        tblYourRincons.refreshControl = refreshControl
     }
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
@@ -109,6 +113,25 @@ class YourRinconsVC: DefaultViewController{
         }
         print("-- doen getting rincons")
     }
+    
+    @objc private func refreshData(_ sender: UIRefreshControl) {
+        
+        
+//        self.rinconStore.requestRinconPosts(rincon: rincon) { responseForRinconPostsArray in
+//            switch responseForRinconPostsArray{
+//            case let .success(arryRinconPosts):
+//                for p in arryRinconPosts{
+//                    p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
+//                }
+//                self.posts = arryRinconPosts
+//                self.tblRincon.reloadData()
+//                sender.endRefreshing()
+//            case let .failure(error):
+//                print("FAiled to communicate with API for posts: \(error)")
+//            }
+//        }
+    }
+    
     
     func alertYourRinconsVC(alertMessage:String) {
         // Create an alert

@@ -66,8 +66,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblRincon.refreshControl = refreshControl
-        
-        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -347,26 +345,11 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                     p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
                 }
                 self.posts = arryRinconPosts
+                self.tblRincon.reloadData()
+                sender.endRefreshing()
             case let .failure(error):
                 print("FAiled to communicate with API for posts: \(error)")
             }
-            
-            
-            //        fetchDataFromAPI { (success, error) in
-            //            // Once the data is fetched, you would reload the table view and end refreshing.
-            //            if success {
-            //                DispatchQueue.main.async {
-            //                    self.tblRincon.reloadData()
-            //                    sender.endRefreshing()
-            //                }
-            //            } else {
-            //                // You might want to handle errors in a real scenario.
-            //                print("Error fetching data: \(error?.localizedDescription ?? "No error description.")")
-            //                DispatchQueue.main.async {
-            //                    sender.endRefreshing()
-            //                }
-            //            }
-            //        }
         }
     }
     

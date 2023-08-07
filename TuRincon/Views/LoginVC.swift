@@ -106,7 +106,6 @@ class LoginVC: DefaultViewController{
     
     func setup_btnAdmin(){
         btnAdmin=UIButton()
-        
         btnAdmin!.setTitle("Login To Developer Screen", for: .normal)
         btnAdmin!.layer.borderColor = UIColor(named: "gray-400")?.cgColor
         btnAdmin!.layer.borderWidth = 2
@@ -114,7 +113,6 @@ class LoginVC: DefaultViewController{
         btnAdmin!.layer.cornerRadius = 10
         btnAdmin!.translatesAutoresizingMaskIntoConstraints = false
         stckVwAdmin.addArrangedSubview(btnAdmin!)
-        
         btnAdmin!.addTarget(self, action: #selector(touchDownAdmin(_:)), for: .touchDown)
         btnAdmin!.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
     }
@@ -270,37 +268,57 @@ class LoginVC: DefaultViewController{
         if let unwrapped_email = txtEmail.text, let unwrapped_pw = txtPassword.text {
             
             // send api request
-            userStore.requestLoginUser(email: unwrapped_email, password: unwrapped_pw) { result_dict in
-                if let unwrapped_status = result_dict["status"] {
-                    let tempLabel = UILabel()
-                    tempLabel.text = unwrapped_status as? String
-                    self.lblLoginStatusMessage = tempLabel
-                    self.lblLoginStatusMessage.textColor = UIColor.white
-                }
-                else if let user_response = result_dict["user"] as? User {
-                    print("user_response: \(user_response)")
-                    self.userStore.user.id = user_response.id
-                    self.userStore.user.token = user_response.token
+            userStore.requestLoginUser(email: unwrapped_email, password: unwrapped_pw) { responseResultLogin in
+                switch responseResultLogin{
+                case let .success(user_obj):
+                    print("user_response: \(user_obj)")
+                    self.userStore.user.id = user_obj.id
+                    self.userStore.user.token = user_obj.token
                     self.userStore.user.email = self.txtEmail.text
                     self.userStore.user.password = self.txtPassword.text
-                    self.userStore.user.user_rincons = user_response.user_rincons
-                    self.userStore.user.username = user_response.username
-                    
-//                    for rincon in self.userStore.user.user_rincons!{
-//                        print("----------------")
-//                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
-//                        print("permission_post: \(rincon.permission_post)")
-//                    }
-                                
+                    self.userStore.user.user_rincons = user_obj.user_rincons
+                    self.userStore.user.username = user_obj.username
                     self.lblLoginStatusMessage.text = ""
-                    self.token = user_response.token!
+                    self.token = user_obj.token!
+                case let .failure(error):
+                    print("Login error: \(error)")
+                    OperationQueue.main.addOperation {
+                        let tempLabel = UILabel()
+                        tempLabel.text = "Failed To Login"
+                        self.lblLoginStatusMessage = tempLabel
+                        self.lblLoginStatusMessage.textColor = UIColor.white
+                    }
                 }
-                else {
-                    let tempLabel = UILabel()
-                    tempLabel.text = "Failed To Login"
-                    self.lblLoginStatusMessage = tempLabel
-                    self.lblLoginStatusMessage.textColor = UIColor.white
-                }
+//                if let unwrapped_status = result_dict["status"] {
+//                    let tempLabel = UILabel()
+//                    tempLabel.text = unwrapped_status as? String
+//                    self.lblLoginStatusMessage = tempLabel
+//                    self.lblLoginStatusMessage.textColor = UIColor.white
+//                }
+//                else if let user_response = result_dict["user"] as? User {
+//                    print("user_response: \(user_response)")
+//                    self.userStore.user.id = user_response.id
+//                    self.userStore.user.token = user_response.token
+//                    self.userStore.user.email = self.txtEmail.text
+//                    self.userStore.user.password = self.txtPassword.text
+//                    self.userStore.user.user_rincons = user_response.user_rincons
+//                    self.userStore.user.username = user_response.username
+//
+////                    for rincon in self.userStore.user.user_rincons!{
+////                        print("----------------")
+////                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
+////                        print("permission_post: \(rincon.permission_post)")
+////                    }
+//
+//                    self.lblLoginStatusMessage.text = ""
+//                    self.token = user_response.token!
+//                }
+//                else {
+//                    let tempLabel = UILabel()
+//                    tempLabel.text = "Failed To Login"
+//                    self.lblLoginStatusMessage = tempLabel
+//                    self.lblLoginStatusMessage.textColor = UIColor.white
+//                }
             }
         } else {
             print("No email and password provided! ")
