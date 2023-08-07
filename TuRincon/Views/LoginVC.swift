@@ -289,36 +289,7 @@ class LoginVC: DefaultViewController{
                         self.lblLoginStatusMessage.textColor = UIColor.white
                     }
                 }
-//                if let unwrapped_status = result_dict["status"] {
-//                    let tempLabel = UILabel()
-//                    tempLabel.text = unwrapped_status as? String
-//                    self.lblLoginStatusMessage = tempLabel
-//                    self.lblLoginStatusMessage.textColor = UIColor.white
-//                }
-//                else if let user_response = result_dict["user"] as? User {
-//                    print("user_response: \(user_response)")
-//                    self.userStore.user.id = user_response.id
-//                    self.userStore.user.token = user_response.token
-//                    self.userStore.user.email = self.txtEmail.text
-//                    self.userStore.user.password = self.txtPassword.text
-//                    self.userStore.user.user_rincons = user_response.user_rincons
-//                    self.userStore.user.username = user_response.username
-//
-////                    for rincon in self.userStore.user.user_rincons!{
-////                        print("----------------")
-////                        print("rincon name: \(rincon.name!) (id: \(rincon.id!)")
-////                        print("permission_post: \(rincon.permission_post)")
-////                    }
-//
-//                    self.lblLoginStatusMessage.text = ""
-//                    self.token = user_response.token!
-//                }
-//                else {
-//                    let tempLabel = UILabel()
-//                    tempLabel.text = "Failed To Login"
-//                    self.lblLoginStatusMessage = tempLabel
-//                    self.lblLoginStatusMessage.textColor = UIColor.white
-//                }
+
             }
         } else {
             print("No email and password provided! ")

@@ -30,6 +30,7 @@ enum EndPoint: String {
     case search_rincons = "search_rincons"
     case rincon_membership = "rincon_membership"
     case create_a_rincon="create_a_rincon"
+    case get_user_rincons="get_user_rincons"
 }
 
 class URLStore {

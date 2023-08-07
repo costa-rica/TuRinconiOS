@@ -17,6 +17,7 @@ enum RinconStoreError: Error {
     case failedToCreateRincon
     case failedToCreatePost
     case failedToReturnPostsArrayForRincon
+    case failedToReturnRinconArray
 }
 
 class RinconStore {
@@ -445,6 +446,30 @@ class RinconStore {
                     print("- rinconStore.requestCreateNewRincon Error receiving response")
                     OperationQueue.main.addOperation {
                         completion(.failure(RinconStoreError.failedToCreateRincon))
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    func requestUserRincons(completion:@escaping(Result<[Rincon],Error>) -> Void){
+        print("- RinconStore.requestUserRincons")
+        
+        let request = requestStore.createRequestWithToken(endpoint: .get_user_rincons)
+        
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let arryRincon = try jsonDecoder.decode([Rincon].self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(.success(arryRincon))
+                    }
+                } catch {
+                    print("- rinconStore.requestUserRincons Error receiving response")
+                    OperationQueue.main.addOperation {
+                        completion(.failure(RinconStoreError.failedToReturnRinconArray))
                     }
                 }
             }

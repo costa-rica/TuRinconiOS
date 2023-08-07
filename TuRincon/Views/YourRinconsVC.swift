@@ -116,6 +116,20 @@ class YourRinconsVC: DefaultViewController{
     
     @objc private func refreshData(_ sender: UIRefreshControl) {
         
+        self.rinconStore.requestUserRincons { responseResultRincons in
+            switch responseResultRincons {
+            case let .success(arryRincons):
+                self.userStore.user.user_rincons = arryRincons
+                self.tblYourRincons.reloadData()
+                sender.endRefreshing()
+            case let .failure(error):
+                print("Error updating rincon array: \(error)")
+
+                self.alertYourRinconsVcRefresh(alertMessage: "Failed to update rincon list", sender: sender)
+                
+            }
+            
+        }
         
 //        self.rinconStore.requestRinconPosts(rincon: rincon) { responseForRinconPostsArray in
 //            switch responseForRinconPostsArray{
@@ -152,7 +166,33 @@ class YourRinconsVC: DefaultViewController{
         self.present(alert, animated: true, completion: nil)
     }
     
+    func alertYourRinconsVcRefresh(alertMessage:String, sender: UIRefreshControl) {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: alertMessage, preferredStyle: .alert)
+        
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+            // End refresh stay on YourRinconVC
+            sender.endRefreshing()
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+        
+
+    }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        print("* override func prepare(for segue")
+        print("segue.identifier: \(segue.identifier!)")
+        
         if (segue.identifier == "goToRinconVC") {
             print("- going to a Rincon")
             let rinconVC = segue.destination as! RinconVC

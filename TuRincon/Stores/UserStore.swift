@@ -121,11 +121,7 @@ class UserStore {
             
             print("UserStore.requestLoginUser request status code : \(unwrapped_response.statusCode)")
             
-//            if unwrapped_response.statusCode == 401 {
-//                OperationQueue.main.addOperation {
-//                    completion(["status":"Invalid email/password"])
-//                }
-//            }
+
         }
         task.resume()
     }
