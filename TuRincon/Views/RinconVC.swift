@@ -137,7 +137,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
 
     @objc func onRinconOptions() {
         // Create an action sheet
-        let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         // Add the "Post to Rincon" action if the user has permission
         if rincon.permission_post! {
@@ -147,30 +147,23 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             }))
         }
 
-        // Add the "Rincon Options" action if the user has permission
-        if rincon.permission_admin! {
-            actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
-                // Create a new RinconOptionsVC
-                let rinconOptionsVC = RinconOptionsVC()
 
-                // Set the modal presentation style
-                rinconOptionsVC.modalPresentationStyle = .overCurrentContext
-                rinconOptionsVC.modalTransitionStyle = .crossDissolve
+        actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
+            // Create a new RinconOptionsVC
+            let rinconOptionsVC = RinconOptionsVC()
 
-                // Present the RinconOptionsVC
-                self.present(rinconOptionsVC, animated: true, completion: nil)
-                
-                
-//                let createRinconVC = CreateRinconVC()
-//                createRinconVC.modalPresentationStyle = .overCurrentContext
-//                createRinconVC.modalTransitionStyle = .crossDissolve
-//                createRinconVC.rinconStore = self.rinconStore
-//                createRinconVC.searchRinconVcDelegate = self
-//                present(createRinconVC, animated: true, completion: nil)
-                
-                
-            }))
-        }
+            // Set the modal presentation style
+            rinconOptionsVC.modalPresentationStyle = .overCurrentContext
+            rinconOptionsVC.modalTransitionStyle = .crossDissolve
+            rinconOptionsVC.rincon = self.rincon
+            rinconOptionsVC.rinconStore = self.rinconStore
+
+            // Present the RinconOptionsVC
+            self.present(rinconOptionsVC, animated: true, completion: nil)
+            
+            
+        }))
+
 
         // Add the "Cancel" action
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -179,10 +172,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(actionSheet, animated: true, completion: nil)
     }
 
-//    @objc func postToRinconNew() {
-//        // Print the name of the postToRincon() function to the console
-//        print("postToRincon()")
-//    }
     
     
     
