@@ -10,6 +10,7 @@
 		014EFD442A78F031008414E9 /* YourRinconsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFD432A78F031008414E9 /* YourRinconsVC.swift */; };
 		014EFD882A7BB081008414E9 /* SearchRinconsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */; };
 		015621BE2A7650CE000DCB5B /* RinconsDirectoriesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */; };
+		017140CD2A821B7E00641F26 /* RinconOptionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */; };
 		01E7EC7B2A6524A4002EC4BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7A2A6524A4002EC4BF /* AppDelegate.swift */; };
 		01E7EC7D2A6524A4002EC4BF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7C2A6524A4002EC4BF /* SceneDelegate.swift */; };
 		01E7EC7F2A6524A4002EC4BF /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7E2A6524A4002EC4BF /* HomeVC.swift */; };
@@ -65,6 +66,7 @@
 		014EFD432A78F031008414E9 /* YourRinconsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourRinconsVC.swift; sourceTree = "<group>"; };
 		014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRinconsVC.swift; sourceTree = "<group>"; };
 		015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RinconsDirectoriesVC.swift; sourceTree = "<group>"; };
+		017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RinconOptionsVC.swift; sourceTree = "<group>"; };
 		01E7EC772A6524A4002EC4BF /* TuRincon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TuRincon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E7EC7A2A6524A4002EC4BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01E7EC7C2A6524A4002EC4BF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */,
 				014EFD432A78F031008414E9 /* YourRinconsVC.swift */,
 				014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */,
+				017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 			files = (
 				01E7ED992A672445002EC4BF /* LikeView.swift in Sources */,
 				01E7ED902A66B5AA002EC4BF /* PostCell.swift in Sources */,
+				017140CD2A821B7E00641F26 /* RinconOptionsVC.swift in Sources */,
 				014EFD442A78F031008414E9 /* YourRinconsVC.swift in Sources */,
 				01E7EC7F2A6524A4002EC4BF /* HomeVC.swift in Sources */,
 				01E7ECC62A657493002EC4BF /* RegisterVC.swift in Sources */,

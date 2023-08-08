@@ -133,9 +133,9 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
         
         // MARK: Rincon shows up with "Join" button suggesting user isn't already member ---> fix this :)
         
-        print("rincon memebverisp: \(rincon.member)")
+        print("rincon memebership: \(rincon.member)")
         tblRincons.reloadData()
-//        tblRincons.reloadRows(at: arryRincons.count - 1, with: <#T##UITableView.RowAnimation#>)
+
     }
     
     

@@ -27,12 +27,13 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var btnSubmitPost = UIButton()
     var btnAddPhotos = UIButton()
     var vwPostSpacer = UIView()
+    var btnHidePostPrompt = UIButton()
     //    var selectedImageURLs: [URL] = []
     var arryNewPostImages = [UIImage]()
     var arryNewPostImageFilenames: [String]?
     var dictNewImages:[String:UIImage]?
     
-    var btnCreatePost: UIBarButtonItem!
+    var btnRinconOptions: UIBarButtonItem?
     var newPost:Post!
     /* new post critical path #2 */
     var newPostId = String() {// <-- get's set by @objc func btnSubmitPostTouchUpInside(_ sender: UIButton)
@@ -58,7 +59,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         
         setup_vwVCHeaderOrange()
         setup_stckVwRinconPosts()
-        setupRightBarButtonItem()
+        setup_btnRinconOptions()
+//        setupRightBarButtonItem()
         // Register for keyboard notifications
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -119,20 +121,136 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         tblRincon.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(tblRincon)
     }
-    func setupRightBarButtonItem() {
-        
-        if (rincon.permission_post!) {
-            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleRightButtonTap))
-        } else {
-            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name)"
-            btnCreatePost = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
+    
+    
+    func setup_btnRinconOptions() {
+        // If the user has permission to post or admin then create the button
+        if rincon.permission_post! || rincon.permission_admin! {
+            btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
         }
-        self.navigationItem.rightBarButtonItem = btnCreatePost
+
+        // If the button exists then add it to the navigation bar
+        if let btnRinconOptions = btnRinconOptions {
+            navigationItem.rightBarButtonItem = btnRinconOptions
+        }
     }
+
+    @objc func onRinconOptions() {
+        // Create an action sheet
+        let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
+
+        // Add the "Post to Rincon" action if the user has permission
+        if rincon.permission_post! {
+            actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
+                // Call the postToRincon() function
+                self.postToRincon()
+            }))
+        }
+
+        // Add the "Rincon Options" action if the user has permission
+        if rincon.permission_admin! {
+            actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
+                // Create a new RinconOptionsVC
+                let rinconOptionsVC = RinconOptionsVC()
+
+                // Set the modal presentation style
+                rinconOptionsVC.modalPresentationStyle = .overCurrentContext
+                rinconOptionsVC.modalTransitionStyle = .crossDissolve
+
+                // Present the RinconOptionsVC
+                self.present(rinconOptionsVC, animated: true, completion: nil)
+                
+                
+//                let createRinconVC = CreateRinconVC()
+//                createRinconVC.modalPresentationStyle = .overCurrentContext
+//                createRinconVC.modalTransitionStyle = .crossDissolve
+//                createRinconVC.rinconStore = self.rinconStore
+//                createRinconVC.searchRinconVcDelegate = self
+//                present(createRinconVC, animated: true, completion: nil)
+                
+                
+            }))
+        }
+
+        // Add the "Cancel" action
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        // Show the action sheet
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+
+//    @objc func postToRinconNew() {
+//        // Print the name of the postToRincon() function to the console
+//        print("postToRincon()")
+//    }
     
     
     
-    @objc func handleRightButtonTap() {
+    
+    
+    
+    
+//    func setupRightBarButtonItem(){
+//        // Set up the action sheet
+//        let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
+//
+//        if rincon.permission_post! {
+//            // Add the "Post to Rincon" action
+//            actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
+//                // Call the postToRincon() function
+//                self.postToRincon()
+//            }))
+//        }
+//
+//        if rincon.permission_admin! {
+//            // Add the "Rincon Options" action
+//            actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
+//                // Create a new RinconOptionsVC
+//                let rinconOptionsVC = RinconOptionsVC()
+//
+//                // Set the modal presentation style
+//                rinconOptionsVC.modalPresentationStyle = .overCurrentContext
+//
+//                // Present the RinconOptionsVC
+//                self.present(rinconOptionsVC, animated: true, completion: nil)
+//            }))
+//        }
+//
+//        // Add the "Cancel" action
+//        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+//
+//        // Only show the action sheet if the user has permission to do something
+//        if rincon.permission_post! || rincon.permission_admin! {
+//            self.present(actionSheet, animated: true, completion: nil)
+//        } else {
+//            btnRinconOptions = nil
+//        }
+//    }
+    
+//    func setupRightBarButtonItem() {
+//
+//        if (rincon.permission_post!) {
+//            btnRinconOptions  = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postToRincon))
+//        } else {
+//            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name)"
+//            btnRinconOptions  = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
+//        }
+//
+//        if (rincon.permission_admin!) {
+//            // Set up the action sheet
+//            let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
+//            // Add the "Post to Rincon" action
+//            actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
+//                // Call the postToRincon() function
+//                self.postToRincon()
+//            }))
+//        }
+//        self.navigationItem.rightBarButtonItem = btnRinconOptions
+//    }
+    
+    
+    
+    @objc func postToRincon() {
         stckVwSubmitPostTxtAndBtn.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(stckVwSubmitPostTxtAndBtn)
         
@@ -179,7 +297,14 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         vwPostSpacer.translatesAutoresizingMaskIntoConstraints=false
         vwPostSpacer.backgroundColor = UIColor(named: "gray-400")
         vwPostSpacer.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 5)).isActive=true
+        
+        btnHidePostPrompt.setTitle("Hide", for: .normal)
+        btnHidePostPrompt.translatesAutoresizingMaskIntoConstraints=false
+        vwPostSpacer.addSubview(btnHidePostPrompt)
         stckVwRincon.addArrangedSubview(vwPostSpacer)
+        btnHidePostPrompt.leadingAnchor.constraint(equalTo: vwPostSpacer.leadingAnchor, constant: widthFromPct(percent: 25)).isActive=true
+        btnHidePostPrompt.topAnchor.constraint(equalTo: vwPostSpacer.topAnchor, constant: heightFromPct(percent: 1)).isActive=true
+        btnHidePostPrompt.addTarget(self, action: #selector(hideStckVwSubmitPostTxtAndBtn), for: .touchUpInside)
     }
     @objc func btnSubmitPostTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
@@ -209,13 +334,14 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }
     }
     
-    private func hideStckVwSubmitPostTxtAndBtn(){
+    @objc private func hideStckVwSubmitPostTxtAndBtn(){
         stckVwSubmitPostTxtAndBtn.removeFromSuperview()
         txtPost.removeFromSuperview()
         stckVwSubmitBtns.removeFromSuperview()
         btnSubmitPost.removeFromSuperview()
         btnAddPhotos.removeFromSuperview()
         vwPostSpacer.removeFromSuperview()
+        btnHidePostPrompt.removeFromSuperview()
     }
     
     /* new post critical path #3 */
@@ -449,7 +575,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         
         self.present(alertController, animated: true, completion: nil)
     }
-    
     
     
 }
