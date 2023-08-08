@@ -13,12 +13,41 @@ import UIKit
 //}
 
 enum RinconStoreError: Error {
+    case noServerResponse
     case imageCreationError
     case failedToCreateRincon
     case failedToCreatePost
     case failedToReturnPostsArrayForRincon
     case failedToReturnRinconArray
+    case failedToClaimAPost
+    
+    var localizedDescription: String {
+        switch self {
+        case .noServerResponse: return "Tu Rincón main server is not responding."
+        case .imageCreationError: return "server error"
+        case .failedToCreateRincon,
+             .failedToCreatePost,
+             .failedToReturnPostsArrayForRincon,
+             .failedToReturnRinconArray:
+            return "server error"
+        case .failedToClaimAPost: return "Unable to connect with server to create a post"
+        }
+    }
 }
+//extension RinconStoreError: RawRepresentable {
+//    var rawValue: String{
+//        switch self {
+//
+//        case .imageCreationError: return "Unable to connect with server"
+//        case .failedToCreateRincon: return "Unable to connect with server"
+//        case .failedToCreatePost: return "Unable to connect with server"
+//        case .failedToReturnPostsArrayForRincon: return "Unable to connect with server"
+//        case .failedToReturnRinconArray: return "Unable to connect with server"
+//
+//        case .failedToClaimAPost: return  "Unable to connect with server to create a post"
+//        }
+//    }
+//}
 
 class RinconStore {
     var token: String!
@@ -289,7 +318,8 @@ class RinconStore {
         task.resume()
     }
     
-    func claimAPostId(rincon_id:String,completion:@escaping([String:String])->Void){
+    func claimAPostId(rincon_id:String,completion:@escaping(Result<[String:String],Error>)->Void){
+        print("----> RinconStore.claimAPostId")
         let request = requestStore.createRequestWithTokenAndQueryString(endpoint: .claim_a_post_id, queryString: [rincon_id])
         let task = requestStore.session.dataTask(with: request) { data, response, error in
             do {
@@ -297,20 +327,23 @@ class RinconStore {
                     
                     if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
                         OperationQueue.main.addOperation {
-                            completion(jsonResult)
+                            completion(.success(jsonResult))
                             print("claimAPostId result: \(jsonResult)")
                         }
                     }
                 }
             } catch {
-                print("Error receiving response: most likely something wrong with API because should be a json dict response with just a new id")
+                OperationQueue.main.addOperation {
+                    completion(.failure(RinconStoreError.failedToClaimAPost))
+                }
+                print("RinconStore.claimAPostId error: \(RinconStoreError.failedToClaimAPost)")
             }
-            guard let unwrapped_resp = response as? HTTPURLResponse else{
-                print("no response (getLastPostId)")
-                return
+            if response == nil {
+                print("--- Got NO response ---")
+                OperationQueue.main.addOperation {
+                    completion(.failure(RinconStoreError.noServerResponse))
+                }
             }
-            print("getLastPostId response status: \(unwrapped_resp.statusCode)")
-            return
         }
         task.resume()
     }

@@ -31,6 +31,7 @@ class HomeVC: DefaultViewController {
     private var stckVwHome=UIStackView()
     let btnToLogin = UIButton()
     let btnToRegister = UIButton()
+    var arryEnvironment=Environment.allCases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -288,14 +289,18 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_pickerApi(){
-        let btnToWebsite = UIButton(type: .system)
-//        btnToWebsite.frame = CGRect(x: 20, y: 100, width: 300, height: 50)
-        btnToWebsite.setTitle("Tu Rincón Website", for: .normal)
-        btnToWebsite.addTarget(self, action: #selector(goToWebsite), for: .touchUpInside)
-//        if let unwp_font = UIFont(name: "Rockwell_tu", size: 20) {
-        btnToWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-//        }
-        stckVwHome.addArrangedSubview(btnToWebsite)
+//        let btnToWebsite = UIButton(type: .system)
+//        btnToWebsite.setTitle("Tu Rincón Website", for: .normal)
+//        btnToWebsite.addTarget(self, action: #selector(goToWebsite), for: .touchUpInside)
+//        btnToWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
+//        stckVwHome.addArrangedSubview(btnToWebsite)
+        
+        let btnToDevWebsite = UIButton(type: .system)
+        btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
+        btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
+        btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
+//        btnToDevWebsite.setTitleColor(.gray, for: .normal)
+        stckVwHome.addArrangedSubview(btnToDevWebsite)
         
         
         let stckVwApi = UIStackView()
@@ -311,17 +316,32 @@ class HomeVC: DefaultViewController {
         lblApi.sizeToFit()
         print("lblApi.frame.size: \(lblApi.frame.size)")
         stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
-//        lblApi.textAlignment = .
-        
-        
-        urlStore.baseString = "http://127.0.0.1:5001/"
-        let indexDict = ["http://127.0.0.1:5001/":0,"https://dev.api.tu-rincon.com/":1,"https://api.tu-rincon.com/":2]
-        
-        let segmentedControl = UISegmentedControl(items: Environment.allCases.map { $0.rawValue })
+
+//        var arrayEnvRawValues = Environment.allCases.map { $0.rawValue }
+
+//        var dictEnvBaseValues = ["local": 0, "dev": 1, "prod": 2]
+//        var environments = Environment.allCases
+        if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
+            urlStore.baseString = Environment.local.baseString
+//            arrayEnvRawValues = Environment.allCases.map { $0.rawValue }
+//            dictEnvBaseValues = ["local": 0, "dev": 1, "prod": 2]
+//            environmentBaseString = Environment.allCases.map { $0.baseString }
+        } else {
+            print("*** Are we in the else case????? ")
+            urlStore.baseString = Environment.dev.baseString
+//            arrayEnvRawValues.remove(at: 0)
+//            dictEnvBaseValues.removeValue(forKey: "local")
+            arryEnvironment.remove(at: 0)
+        }
+
+        //            indexDict = ["http://127.0.0.1:5001/":0,Environment.dev.baseString:1,"https://api.tu-rincon.com/":2]
+//        let segmentedControl = UISegmentedControl(items: arrayEnvRawValues)
+        let segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         
         // Set initial selected segment
-        segmentedControl.selectedSegmentIndex = indexDict[urlStore.baseString] ?? 0
+//        segmentedControl.selectedSegmentIndex = arryEnvironment[urlStore.baseString] ?? 0
+        segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.baseString == urlStore.baseString }) ?? 0
         stckVwApi.addArrangedSubview(segmentedControl)
         
 
@@ -349,12 +369,17 @@ class HomeVC: DefaultViewController {
     
     
     @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        let selectedEnvironment = Environment.allCases[sender.selectedSegmentIndex]
+        let selectedEnvironment = arryEnvironment[sender.selectedSegmentIndex]
         urlStore.baseString = selectedEnvironment.baseString
+        print("** Environment selected by user: \(urlStore.baseString!)")
     }
     
-    @objc func goToWebsite() {
-        guard let url = URL(string: "https://tu-rincon.com") else { return }
+//    @objc func goToWebsite() {
+//        guard let url = URL(string: "https://tu-rincon.com") else { return }
+//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//    }
+    @objc func goToDevWebsite() {
+        guard let url = URL(string: "https://dev.tu-rincon.com") else { return }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 

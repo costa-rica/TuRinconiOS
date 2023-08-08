@@ -396,8 +396,8 @@ class LoginVC: DefaultViewController{
             let yourRinconsVC = segue.destination as! YourRinconsVC
             yourRinconsVC.userStore = self.userStore
             yourRinconsVC.urlStore = self.urlStore
-            print("LoginVC segue to YourRinconsVC")
-            print("userStore objc: \(self.userStore.user.username)")
+//            print("LoginVC segue to YourRinconsVC")
+//            print("userStore objc: \(self.userStore.user.username)")
             yourRinconsVC.rinconStore = self.rinconStore
         }   else if (segue.identifier == "goToAdminVC"){
             let adminVC = segue.destination as! AdminVC

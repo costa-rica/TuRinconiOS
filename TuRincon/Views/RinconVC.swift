@@ -130,6 +130,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.navigationItem.rightBarButtonItem = btnCreatePost
     }
     
+    
+    
     @objc func handleRightButtonTap() {
         stckVwSubmitPostTxtAndBtn.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(stckVwSubmitPostTxtAndBtn)
@@ -192,8 +194,18 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }, completion: nil)
         
         /* Send Post Critical Path: phase 2 */
-        rinconStore.claimAPostId(rincon_id: rincon.id) { jsonDictResponse in
-            self.newPostId = jsonDictResponse["new_post_id"] ?? "no_post_id_found_see:rinconStore.claimAPostId"
+        rinconStore.claimAPostId(rincon_id: rincon.id) { resultResponseClaimAPostId in
+            switch resultResponseClaimAPostId{
+            case let .success(jsonDict):
+                self.newPostId = jsonDict["new_post_id"] ?? "no_post_id_found_see:rinconStore.claimAPostId"
+            case let .failure(error):
+                print("*** failed to make a post")
+                print(error)
+                print(error.localizedDescription)
+//                self.rinconVcAlertMessage = error.localizedDescription
+                print("self.rinconVcAlertMessage: \(self.rinconVcAlertMessage)")
+                self.rinconAlert(message: error.localizedDescription)
+            }
         }
     }
     
@@ -249,15 +261,15 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                         self.posts = arryRinconPosts
                         self.tblRincon.reloadData()
                         DispatchQueue.main.async {
-                            self.rinconVcAlertMessage = "Post successfully sent"
-                            self.rinconAlert()
+//                            self.rinconVcAlertMessage = "Post successfully sent"
+                            self.rinconAlert(message: "Post successfully sent")
                         }
                         self.hideStckVwSubmitPostTxtAndBtn()
                     case let .failure(error):
                         print("Failed to get posts from api: \(error)")
                         DispatchQueue.main.async {
-                            self.rinconVcAlertMessage = "Didn't send, something went wrong"
-                            self.rinconAlert()
+//                            self.rinconVcAlertMessage = "Didn't send, something went wrong"
+                            self.rinconAlert(message: "Didn't send, something went wrong")
                         }
                         
                     }
@@ -353,10 +365,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }
     }
     
-    @objc func rinconAlert() {
+    @objc func rinconAlert(message:String) {
         // Create an alert
-        let alert = UIAlertController(title: nil, message: rinconVcAlertMessage, preferredStyle: .alert)
-        
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+//        print("rinconVcAlertMessage: \(rinconVcAlertMessage)")
         // Create an OK button
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
             // Dismiss the alert when the OK button is tapped
