@@ -119,4 +119,12 @@ func rinconImageFolderName(rincon:Rincon)->String{
     "\(rincon.id)_\(rincon.name_no_spaces)"
 }
 
+func isValidEmail(_ textField: UITextField) -> Bool {
+    // The regex pattern ensures that the email has the common structure of [name]@[domain].[TLD]
+    let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+    
+    let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+    return emailPredicate.evaluate(with: textField.text)
+}
+
 

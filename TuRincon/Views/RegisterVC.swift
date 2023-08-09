@@ -9,7 +9,7 @@ import UIKit
 
 class RegisterVC: DefaultViewController{
     var userStore:UserStore!
-    
+    var rinconStore:RinconStore!
     
     let vwVCHeaderOrange = UIView()
     let vwVCHeaderOrangeTitle = UIView()
@@ -231,7 +231,7 @@ class RegisterVC: DefaultViewController{
                 print("\(userRegDict["username"]!)")
                 self.registerSuccessMessage = "Succesfully Registered!"
                 self.alertConfirmRegister()
-                
+                self.rinconStore.checkInviteJson()
 
             }
             else {

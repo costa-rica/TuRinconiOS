@@ -125,9 +125,9 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     
     func setup_btnRinconOptions() {
         // If the user has permission to post or admin then create the button
-        if rincon.permission_post! || rincon.permission_admin! {
-            btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
-        }
+//        if rincon.permission_post! || rincon.permission_admin! {
+        btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
+//        }
 
         // If the button exists then add it to the navigation bar
         if let btnRinconOptions = btnRinconOptions {
@@ -148,21 +148,37 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }
 
 
-        actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
+        actionSheet.addAction(UIAlertAction(title: "Invite a Friend", style: .default, handler: { action in
             // Create a new RinconOptionsVC
-            let rinconOptionsVC = RinconOptionsVC()
+            let rinconOptionsInviteVC = RinconOptionsInviteVC()
 
             // Set the modal presentation style
-            rinconOptionsVC.modalPresentationStyle = .overCurrentContext
-            rinconOptionsVC.modalTransitionStyle = .crossDissolve
-            rinconOptionsVC.rincon = self.rincon
-            rinconOptionsVC.rinconStore = self.rinconStore
+            rinconOptionsInviteVC.modalPresentationStyle = .overCurrentContext
+            rinconOptionsInviteVC.modalTransitionStyle = .crossDissolve
+            rinconOptionsInviteVC.rincon = self.rincon
+            rinconOptionsInviteVC.rinconStore = self.rinconStore
 
             // Present the RinconOptionsVC
-            self.present(rinconOptionsVC, animated: true, completion: nil)
+            self.present(rinconOptionsInviteVC, animated: true, completion: nil)
             
             
         }))
+        if rincon.permission_admin!{
+            actionSheet.addAction(UIAlertAction(title: "Delete Rincón", style: .destructive, handler: { action in
+                // Create a new RinconOptionsVC
+                let rinconOptionsDeleteVC = RinconOptionsDeleteVC()
+                
+                // Set the modal presentation style
+                rinconOptionsDeleteVC.modalPresentationStyle = .overCurrentContext
+                rinconOptionsDeleteVC.modalTransitionStyle = .crossDissolve
+                rinconOptionsDeleteVC.rincon = self.rincon
+                rinconOptionsDeleteVC.rinconStore = self.rinconStore
+                
+                // Present the RinconOptionsVC
+                self.present(rinconOptionsDeleteVC, animated: true, completion: nil)
+
+            }))
+        }
 
 
         // Add the "Cancel" action
@@ -172,70 +188,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(actionSheet, animated: true, completion: nil)
     }
 
-    
-    
-    
-    
-    
-    
-    
-//    func setupRightBarButtonItem(){
-//        // Set up the action sheet
-//        let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
-//
-//        if rincon.permission_post! {
-//            // Add the "Post to Rincon" action
-//            actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
-//                // Call the postToRincon() function
-//                self.postToRincon()
-//            }))
-//        }
-//
-//        if rincon.permission_admin! {
-//            // Add the "Rincon Options" action
-//            actionSheet.addAction(UIAlertAction(title: "Rincon Options", style: .default, handler: { action in
-//                // Create a new RinconOptionsVC
-//                let rinconOptionsVC = RinconOptionsVC()
-//
-//                // Set the modal presentation style
-//                rinconOptionsVC.modalPresentationStyle = .overCurrentContext
-//
-//                // Present the RinconOptionsVC
-//                self.present(rinconOptionsVC, animated: true, completion: nil)
-//            }))
-//        }
-//
-//        // Add the "Cancel" action
-//        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-//
-//        // Only show the action sheet if the user has permission to do something
-//        if rincon.permission_post! || rincon.permission_admin! {
-//            self.present(actionSheet, animated: true, completion: nil)
-//        } else {
-//            btnRinconOptions = nil
-//        }
-//    }
-    
-//    func setupRightBarButtonItem() {
-//
-//        if (rincon.permission_post!) {
-//            btnRinconOptions  = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postToRincon))
-//        } else {
-//            rinconVcAlertMessage = "\(userStore.user.username!) does not have post privileges for \(rincon.name)"
-//            btnRinconOptions  = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(rinconAlert))
-//        }
-//
-//        if (rincon.permission_admin!) {
-//            // Set up the action sheet
-//            let actionSheet = UIAlertController(title: "Rincon Options", message: nil, preferredStyle: .actionSheet)
-//            // Add the "Post to Rincon" action
-//            actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
-//                // Call the postToRincon() function
-//                self.postToRincon()
-//            }))
-//        }
-//        self.navigationItem.rightBarButtonItem = btnRinconOptions
-//    }
     
     
     

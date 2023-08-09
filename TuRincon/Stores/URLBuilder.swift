@@ -31,6 +31,8 @@ enum EndPoint: String {
     case rincon_membership = "rincon_membership"
     case create_a_rincon="create_a_rincon"
     case get_user_rincons="get_user_rincons"
+    case invite_user="invite_user"
+    case check_invite_json="check_invite_json"
 }
 
 class URLStore {
@@ -119,6 +121,48 @@ class RequestStore {
         }
         return request
     }
+    
+    func createRequestWithTokenAndRinconAndBodyTwo(endpoint:EndPoint,rincon:Rincon,dictBody:[String:String]?, filename:String?)->URLRequest{
+        print("- createRequestWithTokenAndRinconAndBodyTwo")
+
+        let url = urlStore.callEndpoint(endPoint: endpoint)
+        var request = URLRequest(url:url)
+        request.httpMethod = "POST"
+        request.addValue("application/json",forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json",forHTTPHeaderField: "Accept")
+        request.setValue( self.token, forHTTPHeaderField: "x-access-token")
+        
+        var combinedDict: [String: Any] = [:]
+        if let dictBody = dictBody {
+            for (key, value) in dictBody {
+                combinedDict[key] = value
+            }
+        }
+        // Encode the Rincon instance and add it to combinedDict
+        do {
+            let jsonData = try JSONEncoder().encode(rincon)
+            if let jsonDict = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
+                for (key, value) in jsonDict {
+                    combinedDict[key] = value
+                }
+            }
+        } catch {
+            print("Failed to encode Rincon:", error)
+        }
+        // Convert combinedDict to JSON and assign it as the httpBody
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: combinedDict, options: [])
+            request.httpBody = jsonData
+        } catch {
+            print("Failed to convert combinedDict to JSON:", error)
+        }
+
+        return request
+        
+        
+        
+    }
+    
     
     func createRequestSendTokenAndPost(post:Post) -> URLRequest{
         print("- createRequestSendPost")
@@ -231,7 +275,7 @@ class RequestStore {
     }
     
     func createRequestWithTokenAndBody(endPoint: EndPoint, dict_body:[String:String])->URLRequest {
-
+        print("- createRequestWithTokenAndBody")
         let url = urlStore.callEndpoint(endPoint: endPoint)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -244,10 +288,10 @@ class RequestStore {
             let jsonData = try encoder.encode(dict_body)
             request.httpBody = jsonData
         } catch {
-            print("Failed to encode Rincon: \(error)")
+            print("Failed to encode dict_body: \(error)")
 
         }
-        
+        print("built request: \(request)")
         return request
     }
     
@@ -270,6 +314,10 @@ class RequestStore {
         
         return request
     }
+    
+//    func createRequestWithBody(endpoint:EndPoint,bodyDict:[String:String]->URLRequest){
+//
+//    }
     
 }
 

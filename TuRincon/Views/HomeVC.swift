@@ -394,6 +394,7 @@ class HomeVC: DefaultViewController {
         }   else if (segue.identifier == "goToRegisterVC"){
             let RegisterVC = segue.destination as! RegisterVC
             RegisterVC.userStore = self.userStore
+            RegisterVC.rinconStore = self.rinconStore
 
         }
     }

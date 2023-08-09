@@ -14,23 +14,22 @@ import UIKit
 
 enum RinconStoreError: Error {
     case noServerResponse
+    case unknownServerResponse
     case imageCreationError
     case failedToCreateRincon
     case failedToCreatePost
     case failedToReturnPostsArrayForRincon
     case failedToReturnRinconArray
     case failedToClaimAPost
+    case failedToInviteUser
     
     var localizedDescription: String {
         switch self {
         case .noServerResponse: return "Tu Rincón main server is not responding."
-        case .imageCreationError: return "server error"
-        case .failedToCreateRincon,
-             .failedToCreatePost,
-             .failedToReturnPostsArrayForRincon,
-             .failedToReturnRinconArray:
-            return "server error"
+        case .unknownServerResponse: return "Server responded but Tu Rincón iOS has no way of handling response."
         case .failedToClaimAPost: return "Unable to connect with server to create a post"
+        default: return "Tu Rincón main server is not responding."
+            
         }
     }
 }
@@ -510,6 +509,38 @@ class RinconStore {
         task.resume()
     }
     
+    func requestInviteToRincon(rincon:Rincon,email:String,completion:@escaping(Result<[String:String],Error>)->Void){
+        let request = requestStore.createRequestWithTokenAndRinconAndBodyTwo(endpoint: .invite_user, rincon: rincon, dictBody: ["new_user_email":email], filename: nil)
+        let task = requestStore.session.dataTask(with: request) { data, resp, error in
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let jsonDictInvite = try jsonDecoder.decode([String:String].self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(.success(jsonDictInvite))
+                    }
+                } catch {
+                    print("- rinconStore.requestUserRincons Error receiving response")
+                    OperationQueue.main.addOperation {
+                        completion(.failure(RinconStoreError.failedToInviteUser))
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
     
+    func checkInviteJson(){
+        print("-- checkInviteJson")
+        let request = requestStore.createRequestWithTokenAndBody(endPoint: .check_invite_json, dict_body: ["TR_VERIFICATION_PASSWORD":"sudo_let_me_in"])
+        
+        print("request: \(request)")
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let resp = response{
+                print("checkInviteJson response: \(resp)")
+            }
+        }
+        task.resume()
+    }
 }
 
