@@ -136,11 +136,26 @@ class RinconOptionsInviteVC: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
+//    @objc private func handleTap(_ sender: UITapGestureRecognizer) {
+//        let tapLocation = sender.location(in: view)
+//        let tapLocationInView = view.convert(tapLocation, to: stckVwRinconOptions)
+//        print("tapLocation: \(tapLocation)")
+//        if !stckVwRinconOptions.bounds.contains(tapLocationInView) {
+//            dismiss(animated: true, completion: nil)
+//        } else {
+//
+//        }
+//    }
     @objc private func handleTap(_ sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: view)
         let tapLocationInView = view.convert(tapLocation, to: stckVwRinconOptions)
-        print("tapLocation: \(tapLocation)")
-        if !stckVwRinconOptions.bounds.contains(tapLocationInView) {
+        
+        if let activeTextField = findActiveTextField(),
+           activeTextField.isFirstResponder {
+            // If a text field is active and the keyboard is visible, dismiss the keyboard
+            activeTextField.resignFirstResponder()
+        } else {
+            // If no text field is active or the keyboard is not visible, dismiss the VC
             dismiss(animated: true, completion: nil)
         }
     }
@@ -210,6 +225,16 @@ class RinconOptionsInviteVC: UIViewController {
         
         // Present the alert
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func findActiveTextField() -> UITextField? {
+        // Iterate through your UIStackView's subviews to find the active text field
+        for subview in stckVwRinconOptions.subviews {
+            if let textField = subview as? UITextField, textField.isFirstResponder {
+                return textField
+            }
+        }
+        return nil
     }
     
 }
