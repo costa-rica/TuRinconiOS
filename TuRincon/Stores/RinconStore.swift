@@ -22,6 +22,7 @@ enum RinconStoreError: Error {
     case failedToReturnRinconArray
     case failedToClaimAPost
     case failedToInviteUser
+    case failedToDeleteRincon
     
     var localizedDescription: String {
         switch self {
@@ -33,20 +34,6 @@ enum RinconStoreError: Error {
         }
     }
 }
-//extension RinconStoreError: RawRepresentable {
-//    var rawValue: String{
-//        switch self {
-//
-//        case .imageCreationError: return "Unable to connect with server"
-//        case .failedToCreateRincon: return "Unable to connect with server"
-//        case .failedToCreatePost: return "Unable to connect with server"
-//        case .failedToReturnPostsArrayForRincon: return "Unable to connect with server"
-//        case .failedToReturnRinconArray: return "Unable to connect with server"
-//
-//        case .failedToClaimAPost: return  "Unable to connect with server to create a post"
-//        }
-//    }
-//}
 
 class RinconStore {
     var token: String!
@@ -368,7 +355,6 @@ class RinconStore {
         task.resume()
     }
     
-    
     func sendImagesThree(dictNewImages:[String: UIImage], completion:@escaping([String:String])->Void){
         print("- in sendImagesThree")
         print("filenames: \(dictNewImages.keys)")
@@ -440,7 +426,7 @@ class RinconStore {
     
     func requestRinconMembership(rincon:Rincon,completion:@escaping([String:String])->Void){
         print("-requestRinconMembership")
-        let request = requestStore.createRequestWithTokenAndRincon(rincon: rincon)
+        let request = requestStore.createRequestWithTokenAndRincon(endpoint:.rincon_membership ,rincon: rincon)
         let task = requestStore.session.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
@@ -534,13 +520,23 @@ class RinconStore {
         print("-- checkInviteJson")
         let request = requestStore.createRequestWithTokenAndBody(endPoint: .check_invite_json, dict_body: ["TR_VERIFICATION_PASSWORD":"sudo_let_me_in"])
         
-        print("request: \(request)")
         let task = requestStore.session.dataTask(with: request) { data, response, error in
             if let resp = response{
                 print("checkInviteJson response: \(resp)")
             }
         }
         task.resume()
+    }
+    
+    func deleteRincon(rincon:Rincon,completion:@escaping(Result<[String:String],Error>)->Void){
+        let request = requestStore.createRequestWithTokenAndRincon(endpoint:.delete_rincon, rincon: rincon)
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let resp = response{
+                print("checkInviteJson response: \(resp)")
+            }
+        }
+        task.resume()
+        
     }
 }
 

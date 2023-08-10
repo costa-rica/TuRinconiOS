@@ -127,4 +127,14 @@ func isValidEmail(_ textField: UITextField) -> Bool {
     return emailPredicate.evaluate(with: textField.text)
 }
 
+func findActiveTextField(uiStackView: UIStackView) -> UITextField? {
+    // Iterate through your UIStackView's subviews to find the active text field
+    for subview in uiStackView.subviews {
+        if let textField = subview as? UITextField, textField.isFirstResponder {
+            return textField
+        }
+    }
+    return nil
+}
+
 

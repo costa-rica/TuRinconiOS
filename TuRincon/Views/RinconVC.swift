@@ -18,21 +18,16 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     let vwVCHeaderOrange = UIView()
     var stckVwRincon=UIStackView()
     var tblRincon = UITableView()
-    //    var backgroundColor: CGColor!
-    
     var stckVwSubmitPostTxtAndBtn = UIStackView()
     var stckVwSubmitBtns = UIStackView()
-    
     var txtPost = UITextView()
     var btnSubmitPost = UIButton()
     var btnAddPhotos = UIButton()
     var vwPostSpacer = UIView()
     var btnHidePostPrompt = UIButton()
-    //    var selectedImageURLs: [URL] = []
     var arryNewPostImages = [UIImage]()
     var arryNewPostImageFilenames: [String]?
     var dictNewImages:[String:UIImage]?
-    
     var btnRinconOptions: UIBarButtonItem?
     var newPost:Post!
     /* new post critical path #2 */
@@ -124,15 +119,9 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     
     
     func setup_btnRinconOptions() {
-        // If the user has permission to post or admin then create the button
-//        if rincon.permission_post! || rincon.permission_admin! {
         btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
-//        }
+        navigationItem.rightBarButtonItem = btnRinconOptions
 
-        // If the button exists then add it to the navigation bar
-        if let btnRinconOptions = btnRinconOptions {
-            navigationItem.rightBarButtonItem = btnRinconOptions
-        }
     }
 
     @objc func onRinconOptions() {
@@ -173,6 +162,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                 rinconOptionsDeleteVC.modalTransitionStyle = .crossDissolve
                 rinconOptionsDeleteVC.rincon = self.rincon
                 rinconOptionsDeleteVC.rinconStore = self.rinconStore
+                rinconOptionsDeleteVC.rinconVcDelegate = self
                 
                 // Present the RinconOptionsVC
                 self.present(rinconOptionsDeleteVC, animated: true, completion: nil)
@@ -516,7 +506,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         
         self.present(alertController, animated: true, completion: nil)
     }
-    
+    func goBackToYourRincons(){
+        print("-...? --->  RinconVC.goBackToYourRincons ")
+        self.navigationController?.popViewController(animated: true)
+    }
     
 }
 
@@ -560,4 +553,5 @@ protocol RinconVCDelegate{
     func customUpdatePostsAndReloadCell(posts:[Post], indexPath:IndexPath)
     func deleteCommentAreYouSure(sender:DeleteCommentButton, indexPath:IndexPath)
     func deletePostAreYouSure(indexPath:IndexPath)
+    func goBackToYourRincons()
 }

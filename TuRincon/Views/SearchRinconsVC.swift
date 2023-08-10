@@ -298,15 +298,13 @@ class CreateRinconVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        addTapGestureRecognizer()
     }
     
     func setupView() {
         // The semi-transparent background
         view.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.6)
         
-        // The white alert view
-//        let alertView = UIView()
-//        vwCreateRincon.backgroundColor = UIColor(named: "gray-500")
         vwCreateRincon.backgroundColor = UIColor.systemBackground
         vwCreateRincon.layer.cornerRadius = 12
         vwCreateRincon.layer.borderColor = UIColor(named: "gray-500")?.cgColor
@@ -318,8 +316,7 @@ class CreateRinconVC: UIViewController {
         NSLayoutConstraint.activate([
             vwCreateRincon.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             vwCreateRincon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            vwCreateRincon.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
-//            vwCreateRincon.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
+
         ])
         
         setupInputsInView()
@@ -417,6 +414,7 @@ class CreateRinconVC: UIViewController {
             alert.dismiss(animated: true, completion: nil)
             // Go back to HomeVC
             self.navigationController?.popViewController(animated: true)
+//            self.unwindToViewController(sender: alert)
         }
         
         // Add the OK button to the alert
@@ -424,6 +422,27 @@ class CreateRinconVC: UIViewController {
         
         // Present the alert
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func addTapGestureRecognizer() {
+        // Create a tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+
+        // Add the gesture recognizer to the view
+        view.addGestureRecognizer(tapGesture)
+    }
+    @objc private func handleTap(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: view)
+        let tapLocationInView = view.convert(tapLocation, to: stckVwCreateRincon)
+        
+        if let activeTextField = findActiveTextField(uiStackView: stckVwCreateRincon),
+           activeTextField.isFirstResponder {
+            // If a text field is active and the keyboard is visible, dismiss the keyboard
+            activeTextField.resignFirstResponder()
+        } else {
+            // If no text field is active or the keyboard is not visible, dismiss the VC
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     

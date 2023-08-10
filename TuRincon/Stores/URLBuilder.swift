@@ -33,6 +33,7 @@ enum EndPoint: String {
     case get_user_rincons="get_user_rincons"
     case invite_user="invite_user"
     case check_invite_json="check_invite_json"
+    case delete_rincon = "delete_rincon"
 }
 
 class URLStore {
@@ -296,8 +297,8 @@ class RequestStore {
     }
     
     
-    func createRequestWithTokenAndRincon(rincon:Rincon)->URLRequest {
-        let url = urlStore.callEndpoint(endPoint: .rincon_membership)
+    func createRequestWithTokenAndRincon(endpoint:EndPoint, rincon:Rincon)->URLRequest {
+        let url = urlStore.callEndpoint(endPoint: endpoint)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

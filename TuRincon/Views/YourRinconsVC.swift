@@ -89,9 +89,9 @@ class YourRinconsVC: DefaultViewController{
         stckVwYourRincons.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
         stckVwYourRincons.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive=true
         
-        lblTitle.text = "Your Rincons"
-        lblTitle.translatesAutoresizingMaskIntoConstraints = false
-        stckVwYourRincons.addArrangedSubview(lblTitle)
+//        lblTitle.text = "Your Rincons"
+//        lblTitle.translatesAutoresizingMaskIntoConstraints = false
+//        stckVwYourRincons.addArrangedSubview(lblTitle)
         
         tblYourRincons.translatesAutoresizingMaskIntoConstraints=false
         stckVwYourRincons.addArrangedSubview(tblYourRincons)
@@ -105,13 +105,9 @@ class YourRinconsVC: DefaultViewController{
     }
     
     @objc func findRincon(){
-//        print("- let's go find a Rincon! ")
         self.rinconStore.getRinconsForSearch { jsonRinconArray in
-            print("- getting rincons")
-//            print(jsonRinconArray)
             self.segue_rincons_array = jsonRinconArray
         }
-        print("-- doen getting rincons")
     }
     
     @objc private func refreshData(_ sender: UIRefreshControl) {
@@ -130,20 +126,6 @@ class YourRinconsVC: DefaultViewController{
             }
             
         }
-        
-//        self.rinconStore.requestRinconPosts(rincon: rincon) { responseForRinconPostsArray in
-//            switch responseForRinconPostsArray{
-//            case let .success(arryRinconPosts):
-//                for p in arryRinconPosts{
-//                    p.rincon_dir_path = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
-//                }
-//                self.posts = arryRinconPosts
-//                self.tblRincon.reloadData()
-//                sender.endRefreshing()
-//            case let .failure(error):
-//                print("FAiled to communicate with API for posts: \(error)")
-//            }
-//        }
     }
     
     
@@ -177,21 +159,12 @@ class YourRinconsVC: DefaultViewController{
             // End refresh stay on YourRinconVC
             sender.endRefreshing()
         }
-        
-        // Add the OK button to the alert
         alert.addAction(okAction)
-        
-        // Present the alert
         self.present(alert, animated: true, completion: nil)
-        
-
     }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        print("* override func prepare(for segue")
-        print("segue.identifier: \(segue.identifier!)")
         
         if (segue.identifier == "goToRinconVC") {
             print("- going to a Rincon")
@@ -200,10 +173,8 @@ class YourRinconsVC: DefaultViewController{
             rinconVC.rinconStore = self.rinconStore
             rinconVC.rinconStore.token = self.userStore.user.token!
             rinconVC.posts = self.segue_rincon_posts
-//            print("Rincon obj: \(self.segue_rincon.name), \(self.segue_rincon.permission_post)")
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
-//            print("UserStore.user objec: \(self.userStore.user.username!)")
         }
         else if (segue.identifier == "goToSearchRinconsVC"){
             

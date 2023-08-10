@@ -26,9 +26,6 @@ class RinconOptionsInviteVC: UIViewController {
         setup_vwRinconOptions()
         setup_stckVwRinconOptions()
         
-        // Add a gesture recognizer to the view that dismisses the view controller when the user taps outside of the UIStackView
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onTap))
-//        view.addGestureRecognizer(tapGestureRecognizer)
         addTapGestureRecognizer()
     }
     
@@ -97,23 +94,6 @@ class RinconOptionsInviteVC: UIViewController {
         stckVwRinconOptions.addArrangedSubview(btnInviteEmail)
         
         
-
-//        let submitButton = UIButton(type: .system)
-//        submitButton.setTitle("Submit", for: .normal)
-////        submitButton.addTarget(self, action: #selector(submit), for: .touchUpInside)
-//
-//        let cancelButton = UIButton(type: .system)
-//        cancelButton.setTitle("Cancel", for: .normal)
-////        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-//
-//
-//        let stckVwButtons = UIStackView(arrangedSubviews: [submitButton,cancelButton])
-//        stckVwButtons.translatesAutoresizingMaskIntoConstraints=false
-        
-
-//        preferredContentSize = stckVwRinconOptions.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//        // Update the view's preferredContentSize to match the content's intrinsic size
-//       preferredContentSize = stckVwRinconOptions.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
     
@@ -150,7 +130,7 @@ class RinconOptionsInviteVC: UIViewController {
         let tapLocation = sender.location(in: view)
         let tapLocationInView = view.convert(tapLocation, to: stckVwRinconOptions)
         
-        if let activeTextField = findActiveTextField(),
+        if let activeTextField = findActiveTextField(uiStackView: stckVwRinconOptions),
            activeTextField.isFirstResponder {
             // If a text field is active and the keyboard is visible, dismiss the keyboard
             activeTextField.resignFirstResponder()
@@ -227,15 +207,15 @@ class RinconOptionsInviteVC: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    private func findActiveTextField() -> UITextField? {
-        // Iterate through your UIStackView's subviews to find the active text field
-        for subview in stckVwRinconOptions.subviews {
-            if let textField = subview as? UITextField, textField.isFirstResponder {
-                return textField
-            }
-        }
-        return nil
-    }
+//    private func findActiveTextField() -> UITextField? {
+//        // Iterate through your UIStackView's subviews to find the active text field
+//        for subview in stckVwRinconOptions.subviews {
+//            if let textField = subview as? UITextField, textField.isFirstResponder {
+//                return textField
+//            }
+//        }
+//        return nil
+//    }
     
 }
 
@@ -243,15 +223,16 @@ class RinconOptionsInviteVC: UIViewController {
 class RinconOptionsDeleteVC: UIViewController {
     var rincon:Rincon!
     var rinconStore:RinconStore!
+    var rinconVcDelegate:RinconVCDelegate!
     var vwRinconOptions = UIView()
     var stckVwRinconOptions:UIStackView!
-    var lblTitle = UILabel()
-    var lblInvite = UILabel()
-    var txtEmail = UITextField()
-    var btnInviteEmail = UIButton()
-    var lblDelete: UILabel?
-    var txtDeleteConfirm:UITextField?
-    var btnDeleteRincon:UIButton?
+    var lblDelete = UILabel()
+//    var lblInvite = UILabel()
+    var txtDeleteConfirm = UITextField()
+    var btnDeleteRincon = UIButton()
+//    var lblDelete: UILabel?
+//    var txtDeleteConfirm:UITextField?
+//    var btnDeleteRincon:UIButton?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -264,6 +245,7 @@ class RinconOptionsDeleteVC: UIViewController {
         if rincon.permission_admin!{
             setup_deleteRincon()
         }
+        addTapGestureRecognizer()
     }
     
     func setup_vwRinconOptions() {
@@ -294,70 +276,6 @@ class RinconOptionsDeleteVC: UIViewController {
         stckVwRinconOptions .bottomAnchor.constraint(lessThanOrEqualTo: vwRinconOptions .bottomAnchor, constant: heightFromPct(percent: -2)).isActive=true
         
         
-        lblTitle.translatesAutoresizingMaskIntoConstraints = false
-//        txtNewRinconName.translatesAutoresizingMaskIntoConstraints = false
-//        btnPublic.translatesAutoresizingMaskIntoConstraints = false
-
-        lblTitle.text = "Delete Rincón"
-        lblTitle.font = UIFont(name: "Rockwell_tu", size: 20)
-        stckVwRinconOptions.addArrangedSubview(lblTitle)
-        
-        let imgVwLine01 = createDividerLine(thicknessOfLine: 2)
-        imgVwLine01.translatesAutoresizingMaskIntoConstraints=false
-        stckVwRinconOptions.addArrangedSubview(imgVwLine01)
-        
-        lblInvite.text = "Email to invite:"
-        lblInvite.translatesAutoresizingMaskIntoConstraints=false
-        stckVwRinconOptions.addArrangedSubview(lblInvite)
-        
-        txtEmail.translatesAutoresizingMaskIntoConstraints=false
-        txtEmail.layer.borderWidth = 2
-        txtEmail.layer.borderColor = CGColor(gray: 0.8, alpha: 1.0)
-        txtEmail.layer.cornerRadius = 2
-        txtEmail.placeholder = "your_friend@email.com"
-        stckVwRinconOptions.addArrangedSubview(txtEmail)
-        
-        btnInviteEmail.translatesAutoresizingMaskIntoConstraints=false
-        btnInviteEmail.setTitle("Send Invite", for: .normal)
-        btnInviteEmail.layer.borderColor = UIColor.systemBlue.cgColor
-        btnInviteEmail.layer.borderWidth = 2
-        btnInviteEmail.layer.cornerRadius=10
-        btnInviteEmail.setTitleColor(.systemBlue, for: .normal)
-        stckVwRinconOptions.addArrangedSubview(btnInviteEmail)
-        
-
-        
-        
-        
-        
-        
-//        txtNewRinconName.placeholder = " Enter Rincon Name"
-//
-//        txtNewRinconName.layer.borderWidth = 2
-//        txtNewRinconName.layer.borderColor = CGColor(gray: 0.5, alpha: 1.0)
-//        txtNewRinconName.layer.cornerRadius = 2
-//        txtNewRinconName.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 80)).isActive=true
-//
-//        btnPublic.setTitle(" Make public", for: .normal)
-//        btnPublic.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-//        btnPublic.contentHorizontalAlignment = .left
-//        btnPublic.addTarget(self, action: #selector(toggleCheckbox), for: .touchUpInside)
-
-        
-
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit", for: .normal)
-//        submitButton.addTarget(self, action: #selector(submit), for: .touchUpInside)
-
-        let cancelButton = UIButton(type: .system)
-        cancelButton.setTitle("Cancel", for: .normal)
-//        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        
-        
-        let stckVwButtons = UIStackView(arrangedSubviews: [submitButton,cancelButton])
-        stckVwButtons.translatesAutoresizingMaskIntoConstraints=false
-        
-
 
     }
     
@@ -367,28 +285,137 @@ class RinconOptionsDeleteVC: UIViewController {
         imgVwLine02.translatesAutoresizingMaskIntoConstraints=false
         stckVwRinconOptions.addArrangedSubview(imgVwLine02)
         
-        lblDelete=UILabel()
-        lblDelete?.text = "Delete Rincon"
-        lblDelete?.translatesAutoresizingMaskIntoConstraints=false
-        stckVwRinconOptions.addArrangedSubview(lblDelete!)
+//        lblDelete=UILabel()
+        lblDelete.text = "Delete Rincon"
+        lblDelete.translatesAutoresizingMaskIntoConstraints=false
+        stckVwRinconOptions.addArrangedSubview(lblDelete)
         
-        txtDeleteConfirm=UITextField()
-        txtDeleteConfirm?.placeholder = "Enter Rincón Name"
-        txtDeleteConfirm?.translatesAutoresizingMaskIntoConstraints=false
-        txtDeleteConfirm?.layer.borderWidth = 2
-        txtDeleteConfirm?.layer.borderColor = CGColor(gray: 0.8, alpha: 1.0)
-        txtDeleteConfirm?.layer.cornerRadius = 2
-        stckVwRinconOptions.addArrangedSubview(txtDeleteConfirm!)
+//        txtDeleteConfirm=UITextField()
+        txtDeleteConfirm.placeholder = "Enter Rincón Name"
+        txtDeleteConfirm.translatesAutoresizingMaskIntoConstraints=false
+        txtDeleteConfirm.layer.borderWidth = 2
+        txtDeleteConfirm.layer.borderColor = CGColor(gray: 0.8, alpha: 1.0)
+        txtDeleteConfirm.layer.cornerRadius = 2
+        stckVwRinconOptions.addArrangedSubview(txtDeleteConfirm)
         
-        btnDeleteRincon=UIButton()
-        btnDeleteRincon?.setTitle("Delete Rincón", for: .normal)
-        btnDeleteRincon?.translatesAutoresizingMaskIntoConstraints=false
-        btnDeleteRincon?.layer.borderColor = UIColor(named: "redDelete")?.cgColor
-        btnDeleteRincon?.layer.borderWidth = 2
-        btnDeleteRincon?.layer.cornerRadius=10
-        btnDeleteRincon?.setTitleColor(UIColor(named: "redDelete"), for: .normal)
-        stckVwRinconOptions.addArrangedSubview(btnDeleteRincon!)
+//        btnDeleteRincon=UIButton()
+        btnDeleteRincon.setTitle("Delete Rincón", for: .normal)
+        btnDeleteRincon.translatesAutoresizingMaskIntoConstraints=false
+        btnDeleteRincon.layer.borderColor = UIColor(named: "redDelete")?.cgColor
+        btnDeleteRincon.layer.borderWidth = 2
+        btnDeleteRincon.layer.cornerRadius=10
+        btnDeleteRincon.setTitleColor(UIColor(named: "redDelete"), for: .normal)
         
+        btnDeleteRincon.addTarget(self, action: #selector(touchDownBtnDeleteRincon(_:)), for: .touchDown)
+        btnDeleteRincon.addTarget(self, action: #selector(touchUpInsideBtnDeleteRincon(_:)), for: .touchUpInside)
         
+        stckVwRinconOptions.addArrangedSubview(btnDeleteRincon)
     }
+    
+    @objc func touchDownBtnDeleteRincon(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: nil)
+
+    }
+
+    @objc func touchUpInsideBtnDeleteRincon(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        print("- inviting user")
+        
+        if txtDeleteConfirm.text ==  rincon.name{
+            print("- email is valid -")
+            areYouSureAlert()
+            
+        }
+        else {
+            rinconOptionsDeleteAlert(message:"Incorrectly entered rincon name", dismissParent:false)
+        }
+    }
+    
+    func areYouSureAlert(){
+        
+        let alertController = UIAlertController(title: "Are you sure?", message: "This will delete all data associated with the rincon", preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "OK", style: .default) { action in
+            // Do something when the user clicks OK
+            self.rinconStore.deleteRincon(rincon: self.rincon) { resultDelete in
+                print("- rinconStore.deleteRincon request sent")
+                switch resultDelete{
+                case let .success(jsonDictDelete):
+                    print(jsonDictDelete)
+                    if jsonDictDelete["status"]=="deleted rincon"{
+                        let messageSuccess = "Successfully deleted \(self.rincon.name)"
+                        self.rinconOptionsDeleteAlert(message: messageSuccess,dismissParent: true)
+
+                    }else {
+
+                        self.rinconOptionsDeleteAlert(message: RinconStoreError.unknownServerResponse.localizedDescription,dismissParent: false)
+                    }
+                case let .failure(error):
+                    print("Error: \(error)")
+                    self.rinconOptionsDeleteAlert(message: error.localizedDescription,dismissParent: false)
+                }
+            }
+            alertController.dismiss(animated: true, completion: nil)//dismiss alert
+            self.dismiss(animated: true, completion: nil)//dismiss RinconOptionsDeleteVC
+//            self.navigationController?.popViewController(animated: true)// Go back to HomeVC
+//            self.unwindToViewController(sender: alertController)
+            self.rinconVcDelegate.goBackToYourRincons()
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { action in
+            // Do something when the user clicks Cancel
+            alertController.dismiss(animated: true, completion: nil)
+        }
+
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true)
+    }
+    
+    func rinconOptionsDeleteAlert(message:String, dismissParent:Bool) {
+        // Create an alert
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+//        print("rinconVcAlertMessage: \(rinconVcAlertMessage)")
+        // Create an OK button
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // Dismiss the alert when the OK button is tapped
+            alert.dismiss(animated: true, completion: nil)
+            if dismissParent {
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+        
+        // Add the OK button to the alert
+        alert.addAction(okAction)
+        
+        // Present the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func addTapGestureRecognizer() {
+        // Create a tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+
+        // Add the gesture recognizer to the view
+        view.addGestureRecognizer(tapGesture)
+    }
+    @objc private func handleTap(_ sender: UITapGestureRecognizer) {
+        let tapLocation = sender.location(in: view)
+        let tapLocationInView = view.convert(tapLocation, to: stckVwRinconOptions)
+        
+        if let activeTextField = findActiveTextField(uiStackView: stckVwRinconOptions),
+           activeTextField.isFirstResponder {
+            // If a text field is active and the keyboard is visible, dismiss the keyboard
+            activeTextField.resignFirstResponder()
+        } else {
+            // If no text field is active or the keyboard is not visible, dismiss the VC
+            dismiss(animated: true, completion: nil)
+        }
+    }
+    
 }

@@ -13,15 +13,11 @@ class HomeVC: DefaultViewController {
     var user: User?
     var urlStore: URLStore!
     var rinconStore: RinconStore!
-    
     let vwVCHeaderOrange = UIView()
     let vwVCHeaderOrangeTitle = UIView()
     let imgVwIconNoName = UIImageView()
     let lblHeaderTitle = UILabel()
-    
     let vwEtymologyBackground = UIView()
-
-    
     let cardInteriorPadding = Float(5.0)
     let cardTopSpacing = Float(2.5)
     
@@ -141,17 +137,10 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_vwEtymology(){
-
-        
         vwEtymologyBackground.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(vwEtymologyBackground)
         stckVwHome.insertArrangedSubview(vwEtymologyBackground, at: 0)
         vwEtymologyBackground.accessibilityIdentifier = "vwEtymologyBackground"
         vwEtymologyBackground.backgroundColor = UIColor(named: "gray-500")
-//        vwEtymologyBackground.topAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.bottomAnchor, constant: heightFromPct(percent: cardTopSpacing)).isActive=true
-//        vwEtymologyBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-//        vwEtymologyBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
-//        vwEtymologyBackground.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 52)).isActive=true
         vwEtymologyBackground.layer.cornerRadius = 10
         
         let stckVwEtymologyBackground = UIStackView()
@@ -172,8 +161,6 @@ class HomeVC: DefaultViewController {
         stckVwEtymologyBackground.addArrangedSubview(lblEtymologyTitle)
         lblEtymologyTitle.accessibilityIdentifier = "lblEtymologyTitle"
         lblEtymologyTitle.translatesAutoresizingMaskIntoConstraints=false
-//        lblEtymologyTitle.topAnchor.constraint(equalTo: vwEtymologyBackground.topAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        lblEtymologyTitle.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
         
         let lblEtymology = UILabel()
         lblEtymology.text = "Etymology"
@@ -182,91 +169,59 @@ class HomeVC: DefaultViewController {
         stckVwEtymologyBackground.addArrangedSubview(lblEtymology)
         lblEtymology.accessibilityIdentifier = "lblEtymology"
         lblEtymology.translatesAutoresizingMaskIntoConstraints=false
-//        lblEtymology.topAnchor.constraint(equalTo: lblEtymologyTitle.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        lblEtymology.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-        
-        
+
         let imgVwLine01 = createDividerLine(thicknessOfLine: 2)
-//        vwEtymologyBackground.addSubview(imgVwLine01)
         stckVwEtymologyBackground.addArrangedSubview(imgVwLine01)
         imgVwLine01.translatesAutoresizingMaskIntoConstraints=false
-        imgVwLine01.topAnchor.constraint(equalTo: lblEtymology.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        imgVwLine01.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-//        imgVwLine01.trailingAnchor.constraint(equalTo: vwEtymologyBackground.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
-        
+//        imgVwLine01.topAnchor.constraint(equalTo: lblEtymology.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
+
         
         let lblEtymologyDef = UILabel()
         lblEtymologyDef.text = "Spanish rincón, literally, corner, nook, alteration of recón, rencón from Arabic dialect (Spain) rukun (Arabic rukn)"
         lblEtymologyDef.numberOfLines=0
         lblEtymologyDef.lineBreakMode = .byWordWrapping
         lblEtymologyDef.font = UIFont(name: "Rockwell_tu", size: 20)
-//        vwEtymologyBackground.addSubview(lblEtymologyDef)
         stckVwEtymologyBackground.addArrangedSubview(lblEtymologyDef)
         lblEtymologyDef.translatesAutoresizingMaskIntoConstraints=false
-//        lblEtymologyDef.topAnchor.constraint(equalTo: imgVwLine01.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        lblEtymologyDef.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-//        lblEtymologyDef.trailingAnchor.constraint(equalTo: vwEtymologyBackground.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
         
         
         let lblFirstKnown = UILabel()
         lblFirstKnown.text = "First Known Use"
         lblFirstKnown.font = UIFont(name: "Rockwell-Bold_tu", size: 20)
-//        vwEtymologyBackground.addSubview(lblFirstKnown)
         stckVwEtymologyBackground.addArrangedSubview(lblFirstKnown)
         lblFirstKnown.translatesAutoresizingMaskIntoConstraints=false
-//        lblFirstKnown.topAnchor.constraint(equalTo: lblEtymologyDef.bottomAnchor, constant: heightFromPct(percent: 5)).isActive=true
-//        lblFirstKnown.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
+
         
         let imgVwLine02 = createDividerLine(thicknessOfLine: 2)
 //        vwEtymologyBackground.addSubview(imgVwLine02)
         stckVwEtymologyBackground.addArrangedSubview(imgVwLine02)
         imgVwLine02.translatesAutoresizingMaskIntoConstraints=false
-//        imgVwLine02.topAnchor.constraint(equalTo: lblFirstKnown.bottomAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        imgVwLine02.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-//        imgVwLine02.trailingAnchor.constraint(equalTo: vwEtymologyBackground.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
+
         
         let lblDate = UILabel()
         lblDate.text = "1589"
         lblDate.font = UIFont(name: "Rockwell_tu", size: 20)
-//        vwEtymologyBackground.addSubview(lblDate)
         stckVwEtymologyBackground.addArrangedSubview(lblDate)
         lblDate.translatesAutoresizingMaskIntoConstraints=false
-//        lblDate.topAnchor.constraint(equalTo: imgVwLine02.topAnchor, constant: heightFromPct(percent: 2.5)).isActive=true
-//        lblDate.leadingAnchor.constraint(equalTo: vwEtymologyBackground.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
     }
     
-    
-    
     func setup_btnToRegister(){
-        
         btnToRegister.setTitle("Register", for: .normal)
         btnToRegister.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
         btnToRegister.backgroundColor = UIColor(named: "orangePrimary")
-                
         btnToRegister.layer.cornerRadius = 10
-        
         btnToRegister.translatesAutoresizingMaskIntoConstraints=false
         stckVwHome.addArrangedSubview(btnToRegister)
         btnToRegister.sizeToFit()
-
-//        print("btnToRegister.size: \(btnToRegister.frame.size)")
         btnToRegister.heightAnchor.constraint(equalToConstant: btnToRegister.frame.size.height + 30).isActive=true
-//        view.addSubview(btnToRegister)
-//        btnToRegister.topAnchor.constraint(equalTo: vwEtymologyBackground.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
-//        btnToRegister.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
-//        btnToRegister.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
-                
         btnToRegister.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToRegister.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
 
-
-        
     }
 
     func setup_btnToLogin(){
         btnToLogin.setTitle("Login", for: .normal)
         btnToLogin.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-//        btnToLogin.backgroundColor = UIColor(named: "orangePrimary")
         btnToLogin.setTitleColor(UIColor(named: "orangePrimary"), for: .normal)
         btnToLogin.layer.borderColor = UIColor(named: "orangePrimary")?.cgColor
         btnToLogin.layer.cornerRadius = 10
@@ -275,17 +230,8 @@ class HomeVC: DefaultViewController {
         stckVwHome.addArrangedSubview(btnToLogin)
         btnToLogin.sizeToFit()
         btnToLogin.heightAnchor.constraint(equalToConstant: btnToLogin.frame.size.height + 30).isActive=true
-//        view.addSubview(btnToLogin)
-//        btnToLogin.topAnchor.constraint(equalTo: btnToRegister.bottomAnchor, constant: widthFromPct(percent: 5)).isActive=true
-//        btnToLogin.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 5)).isActive=true
-//        btnToLogin.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -5)).isActive=true
-        
-//        btnToLogin.addTarget(self, action: #selector(goToLoginVC), for: .touchUpInside)
-        
         btnToLogin.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
         btnToLogin.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
-
-        
     }
     
     func setup_pickerApi(){
@@ -374,10 +320,6 @@ class HomeVC: DefaultViewController {
         print("** Environment selected by user: \(urlStore.baseString!)")
     }
     
-//    @objc func goToWebsite() {
-//        guard let url = URL(string: "https://tu-rincon.com") else { return }
-//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-//    }
     @objc func goToDevWebsite() {
         guard let url = URL(string: "https://dev.tu-rincon.com") else { return }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -398,7 +340,5 @@ class HomeVC: DefaultViewController {
 
         }
     }
-
-
 }
 
