@@ -8,8 +8,9 @@
 
 import UIKit
 
-class YourRinconsVC: DefaultViewController{
+class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
     
+    var loginVcDelegate: LoginVCDelegate!
     var userStore: UserStore!
     var rinconStore: RinconStore!
     var urlStore: URLStore!
@@ -51,7 +52,7 @@ class YourRinconsVC: DefaultViewController{
     var stckVwYourRincons=UIStackView()
     
     var tblYourRincons = UITableView()
-    var btnFindRincon: UIBarButtonItem!
+    var btnYourRinconOptions: UIBarButtonItem!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,15 +65,18 @@ class YourRinconsVC: DefaultViewController{
         tblYourRincons.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
 
         setup_stckVwYourRincons()
-        setup_btnFindRincon()
+        setup_btnYourRinconOptions()
         
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblYourRincons.refreshControl = refreshControl
+        
+        print("- YourRinconVC viewDidLoad() end")
+
     }
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -89,26 +93,36 @@ class YourRinconsVC: DefaultViewController{
         stckVwYourRincons.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
         stckVwYourRincons.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive=true
         
-//        lblTitle.text = "Your Rincons"
-//        lblTitle.translatesAutoresizingMaskIntoConstraints = false
-//        stckVwYourRincons.addArrangedSubview(lblTitle)
-        
         tblYourRincons.translatesAutoresizingMaskIntoConstraints=false
         stckVwYourRincons.addArrangedSubview(tblYourRincons)
                 
     }
     
-    func setup_btnFindRincon() {
-        btnFindRincon = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(findRincon))
-
-        self.navigationItem.rightBarButtonItem = btnFindRincon
-    }
     
-    @objc func findRincon(){
-        self.rinconStore.getRinconsForSearch { jsonRinconArray in
-            self.segue_rincons_array = jsonRinconArray
-        }
+    func setup_btnYourRinconOptions() {
+        btnYourRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onYourRinconOptions))
+        navigationItem.rightBarButtonItem = btnYourRinconOptions
     }
+
+    @objc func onYourRinconOptions() {
+        // Create an action sheet
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Search/Create Rincón", style: .default, handler: { action in
+            // Get rincons availible to user
+            self.rinconStore.getRinconsForSearch { jsonRinconArray in
+                self.segue_rincons_array = jsonRinconArray
+            }
+        }))
+        // Send user to User Options
+        actionSheet.addAction(UIAlertAction(title: "Manage User", style: .default, handler: { action in
+            self.performSegue(withIdentifier: "goToManageUserVC", sender: self)
+        }))
+        // Add the "Cancel" action
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        // Show the action sheet
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+
     
     @objc private func refreshData(_ sender: UIRefreshControl) {
         
@@ -120,11 +134,8 @@ class YourRinconsVC: DefaultViewController{
                 sender.endRefreshing()
             case let .failure(error):
                 print("Error updating rincon array: \(error)")
-
                 self.alertYourRinconsVcRefresh(alertMessage: "Failed to update rincon list", sender: sender)
-                
             }
-            
         }
     }
     
@@ -165,9 +176,7 @@ class YourRinconsVC: DefaultViewController{
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         if (segue.identifier == "goToRinconVC") {
-            print("- going to a Rincon")
             let rinconVC = segue.destination as! RinconVC
             rinconVC.navigationItem.title = self.segue_rincon.name
             rinconVC.rinconStore = self.rinconStore
@@ -175,13 +184,37 @@ class YourRinconsVC: DefaultViewController{
             rinconVC.posts = self.segue_rincon_posts
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
+            rinconVC.urlStore = self.urlStore
         }
         else if (segue.identifier == "goToSearchRinconsVC"){
-            
             let searchRinconsVC = segue.destination as! SearchRinconsVC
             searchRinconsVC.arryRincons = segue_rincons_array
             searchRinconsVC.rinconStore = rinconStore
-            print("- Leaving YourRinconsVC ")
+            searchRinconsVC.urlStore = self.urlStore
+            
+        } else if (segue.identifier == "goToManageUserVC"){
+            let manageUserVc = segue.destination as! ManageUserVC
+            manageUserVc.userStore = self.userStore
+            manageUserVc.rinconStore = self.rinconStore
+            manageUserVc.navigationItem.title = self.userStore.user.username
+            manageUserVc.yourRinconsVcDelegate = self
+            manageUserVc.urlStore = self.urlStore
+        }
+    }
+    
+    /* Delegate functions */
+    
+    func goBackToLogin(){
+        print("- in YourRinconsVC delegate method")
+        if let unwp_navController = self.navigationController{
+
+            print("self.navigationController: \(unwp_navController)")
+            print("viewControllers: \(unwp_navController.viewControllers)")
+            print("visibleViewController: \(unwp_navController.visibleViewController!)")
+            
+            self.navigationController?.popViewController(animated: true)
+            self.loginVcDelegate.clearUser()
+
         }
     }
     
@@ -227,5 +260,9 @@ extension YourRinconsVC: UITableViewDataSource {
         }
         return cell
     }
+}
+
+protocol YourRinconsVCDelegate{
+    func goBackToLogin()
 }
 

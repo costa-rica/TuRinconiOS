@@ -10,6 +10,7 @@ import UIKit
 class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
     
     var rinconStore:RinconStore!
+    var urlStore:URLStore!
     
     let vwVCHeaderOrange = UIView()
     let lblTitle = UILabel()
@@ -48,7 +49,7 @@ class SearchRinconsVC:DefaultViewController, SearchRinconVCDelegate{
     
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true

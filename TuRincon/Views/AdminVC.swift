@@ -45,7 +45,7 @@ class AdminVC: DefaultViewController{
     }
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -242,7 +242,7 @@ class AdminVC: DefaultViewController{
         if (segue.identifier == "goToRinconsDirectoriesVC") {
             let rinconsDirectriesVc = segue.destination as! RinconsDirectoriesVC
             rinconsDirectriesVc.arryRinconDirs = arryRinconDirs
-
+            rinconsDirectriesVc.urlStore = self.urlStore
         }
     }
 }

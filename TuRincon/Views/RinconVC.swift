@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 
 class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate {
-    
+    var urlStore:URLStore!
     var userStore: UserStore!
     var rinconStore: RinconStore!
     var imageStore: ImageStore!
@@ -96,7 +96,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -114,6 +114,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         bottomConstraint = stckVwRincon.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         bottomConstraint.isActive=true
         tblRincon.translatesAutoresizingMaskIntoConstraints=false
+        tblRincon.accessibilityIdentifier="tblRincon"
         stckVwRincon.addArrangedSubview(tblRincon)
     }
     
@@ -439,7 +440,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alert, animated: true, completion: nil)
     }
     
-    /* Delegat functions */
+    /* Delegate functions */
     func customReloadCell(indexPath:IndexPath){
         tblRincon.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
         print("- customReloadCell from RinconVC")
@@ -507,10 +508,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alertController, animated: true, completion: nil)
     }
     func goBackToYourRincons(){
-        print("-...? --->  RinconVC.goBackToYourRincons ")
-        self.navigationController?.popViewController(animated: true)
+        if let unwp_navController = self.navigationController{
+            self.navigationController?.popViewController(animated: true)
+        }
     }
-    
 }
 
 
@@ -531,6 +532,7 @@ extension RinconVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
         
+        
         let this_post = posts[indexPath.row]
         cell.rinconStore = self.rinconStore
         cell.imageStore = self.imageStore
@@ -542,6 +544,7 @@ extension RinconVC: UITableViewDataSource {
             this_post.image_files_array = imageFileNameParser(unwrapped_image_filenames)
         }
         cell.configure(with: this_post)
+        cell.accessibilityIdentifier = "PostCell\(this_post.post_id!)"
         
         return cell
     }

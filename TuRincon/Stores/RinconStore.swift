@@ -23,6 +23,7 @@ enum RinconStoreError: Error {
     case failedToClaimAPost
     case failedToInviteUser
     case failedToDeleteRincon
+    case failedToDeleteUser
     
     var localizedDescription: String {
         switch self {
@@ -536,7 +537,29 @@ class RinconStore {
             }
         }
         task.resume()
-        
     }
+    
+    func deleteUser(completion:@escaping(Result<[String:String],Error>)->Void){
+        let request = requestStore.createRequestWithToken(endpoint: .delete_user)
+        let task = requestStore.session.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let jsonDictDeleteUser = try jsonDecoder.decode([String:String].self, from:data)
+                    OperationQueue.main.addOperation {
+                        completion(.success(jsonDictDeleteUser))
+                    }
+                } catch {
+                    print("- rinconStore.deleteUser Error receiving response")
+                    OperationQueue.main.addOperation {
+                        completion(.failure(RinconStoreError.failedToDeleteUser))
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    
 }
 

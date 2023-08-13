@@ -138,3 +138,38 @@ func findActiveTextField(uiStackView: UIStackView) -> UITextField? {
 }
 
 
+extension UIColor {
+    
+    /// Initialize UIColor from hex string
+    ///
+    /// - Parameters:
+    ///   - hex: hex string, e.g. "8ea202"
+    ///   - alpha: alpha value (optional, default is 1.0)
+    convenience init(hex: String, alpha: CGFloat = 1.0) {
+        var hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        if hex.hasPrefix("#") {
+            hex.remove(at: hex.startIndex)
+        }
+        
+        var rgb: UInt64 = 0
+        
+        Scanner(string: hex).scanHexInt64(&rgb)
+        let red = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+        let green = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+        let blue = CGFloat(rgb & 0x0000FF) / 255.0
+        
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}
+
+func environmentColor(urlStore:URLStore) -> UIColor{
+    if urlStore.apiBase == .prod{
+        return UIColor(named: "orangePrimary") ?? UIColor.cyan
+    } else if urlStore.apiBase == .dev{
+        return UIColor(named: "orangePrimaryDev") ?? UIColor.cyan
+    } else if urlStore.apiBase == .local{
+        return UIColor(hex: "#8ea202")
+    }
+    return UIColor.cyan
+}
+

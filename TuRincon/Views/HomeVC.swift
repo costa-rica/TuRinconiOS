@@ -27,14 +27,15 @@ class HomeVC: DefaultViewController {
     private var stckVwHome=UIStackView()
     let btnToLogin = UIButton()
     let btnToRegister = UIButton()
-    var arryEnvironment=Environment.allCases
+    var arryEnvironment=APIBase.allCases
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         userStore = UserStore()
         urlStore = URLStore()
-        urlStore.baseString = "https://dev.api.tu-rincon.com/"
+//        urlStore.apiBase = APIBase.dev
+        
         userStore.urlStore = self.urlStore
         rinconStore = RinconStore()
         rinconStore.requestStore = RequestStore()
@@ -61,8 +62,7 @@ class HomeVC: DefaultViewController {
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
         vwVCHeaderOrange.accessibilityIdentifier = "vwVCHeaderOrange"
-        
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 //        vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -safeAreaTopAdjustment).isActive = true
@@ -235,19 +235,12 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_pickerApi(){
-//        let btnToWebsite = UIButton(type: .system)
-//        btnToWebsite.setTitle("Tu Rincón Website", for: .normal)
-//        btnToWebsite.addTarget(self, action: #selector(goToWebsite), for: .touchUpInside)
-//        btnToWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-//        stckVwHome.addArrangedSubview(btnToWebsite)
         
         let btnToDevWebsite = UIButton(type: .system)
         btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
         btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
         btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-//        btnToDevWebsite.setTitleColor(.gray, for: .normal)
         stckVwHome.addArrangedSubview(btnToDevWebsite)
-        
         
         let stckVwApi = UIStackView()
         stckVwApi.translatesAutoresizingMaskIntoConstraints=false
@@ -263,20 +256,11 @@ class HomeVC: DefaultViewController {
         print("lblApi.frame.size: \(lblApi.frame.size)")
         stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
 
-//        var arrayEnvRawValues = Environment.allCases.map { $0.rawValue }
-
-//        var dictEnvBaseValues = ["local": 0, "dev": 1, "prod": 2]
-//        var environments = Environment.allCases
         if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
-            urlStore.baseString = Environment.local.baseString
-//            arrayEnvRawValues = Environment.allCases.map { $0.rawValue }
-//            dictEnvBaseValues = ["local": 0, "dev": 1, "prod": 2]
-//            environmentBaseString = Environment.allCases.map { $0.baseString }
+            urlStore.apiBase = APIBase.local
+
         } else {
-            print("*** Are we in the else case????? ")
-            urlStore.baseString = Environment.dev.baseString
-//            arrayEnvRawValues.remove(at: 0)
-//            dictEnvBaseValues.removeValue(forKey: "local")
+            urlStore.apiBase = APIBase.dev
             arryEnvironment.remove(at: 0)
         }
 
@@ -287,9 +271,11 @@ class HomeVC: DefaultViewController {
         
         // Set initial selected segment
 //        segmentedControl.selectedSegmentIndex = arryEnvironment[urlStore.baseString] ?? 0
-        segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.baseString == urlStore.baseString }) ?? 0
+        segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
         stckVwApi.addArrangedSubview(segmentedControl)
-        
+        print("APIBase is set to: \(urlStore.apiBase.rawValue)")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
+
 
     }
     
@@ -316,8 +302,9 @@ class HomeVC: DefaultViewController {
     
     @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         let selectedEnvironment = arryEnvironment[sender.selectedSegmentIndex]
-        urlStore.baseString = selectedEnvironment.baseString
-        print("** Environment selected by user: \(urlStore.baseString!)")
+        urlStore.apiBase = selectedEnvironment
+        print("API base changed by user to: \(urlStore.apiBase.urlString)")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
     }
     
     @objc func goToDevWebsite() {
@@ -337,7 +324,7 @@ class HomeVC: DefaultViewController {
             let RegisterVC = segue.destination as! RegisterVC
             RegisterVC.userStore = self.userStore
             RegisterVC.rinconStore = self.rinconStore
-
+            RegisterVC.urlStore = self.urlStore
         }
     }
 }

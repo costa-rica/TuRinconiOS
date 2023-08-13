@@ -17,7 +17,7 @@ class ImageStore {
         // Create full URL for image
         //        let url = imageURL(forKey: key)
         let rinconUrl = rinconImageURL(rincon: rincon, forKey: key)
-        print("*** setImage url: \(rinconUrl)")
+//        print("- setImage url: \(rinconUrl)")
         
         // Turn image into JPEG data
         if let data = image.jpegData(compressionQuality: 0.5) {

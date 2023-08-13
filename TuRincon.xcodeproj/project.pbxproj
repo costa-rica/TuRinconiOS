@@ -11,6 +11,7 @@
 		014EFD882A7BB081008414E9 /* SearchRinconsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */; };
 		015621BE2A7650CE000DCB5B /* RinconsDirectoriesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */; };
 		017140CD2A821B7E00641F26 /* RinconOptionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */; };
+		01D73A8E2A877AD800993564 /* ManageUserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D73A8D2A877AD800993564 /* ManageUserVC.swift */; };
 		01E7EC7B2A6524A4002EC4BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7A2A6524A4002EC4BF /* AppDelegate.swift */; };
 		01E7EC7D2A6524A4002EC4BF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7C2A6524A4002EC4BF /* SceneDelegate.swift */; };
 		01E7EC7F2A6524A4002EC4BF /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7E2A6524A4002EC4BF /* HomeVC.swift */; };
@@ -67,6 +68,7 @@
 		014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRinconsVC.swift; sourceTree = "<group>"; };
 		015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RinconsDirectoriesVC.swift; sourceTree = "<group>"; };
 		017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RinconOptionsVC.swift; sourceTree = "<group>"; };
+		01D73A8D2A877AD800993564 /* ManageUserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUserVC.swift; sourceTree = "<group>"; };
 		01E7EC772A6524A4002EC4BF /* TuRincon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TuRincon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E7EC7A2A6524A4002EC4BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01E7EC7C2A6524A4002EC4BF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				014EFD432A78F031008414E9 /* YourRinconsVC.swift */,
 				014EFD872A7BB081008414E9 /* SearchRinconsVC.swift */,
 				017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */,
+				01D73A8D2A877AD800993564 /* ManageUserVC.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -413,6 +416,7 @@
 				01E7EC7D2A6524A4002EC4BF /* SceneDelegate.swift in Sources */,
 				01E7ED942A66EB8F002EC4BF /* ImageStore.swift in Sources */,
 				014EFD882A7BB081008414E9 /* SearchRinconsVC.swift in Sources */,
+				01D73A8E2A877AD800993564 /* ManageUserVC.swift in Sources */,
 				01E7ED922A66D6AA002EC4BF /* UtilitiesMisc.swift in Sources */,
 				01E7ED962A672118002EC4BF /* PostCellVideoView.swift in Sources */,
 				01E7ED9B2A672566002EC4BF /* CommentView.swift in Sources */,

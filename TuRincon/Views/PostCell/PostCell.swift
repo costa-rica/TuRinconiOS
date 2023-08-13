@@ -116,10 +116,11 @@ class PostCell: UITableViewCell, PostCellDelegate {
         setup_line03()
         setup_commentsView()
 
-        if post.image_files_array != nil{
-            print("post.image names: \(post.image_files_array! )")
-        } else {print("post.image names: no post.image_files_array ")}
-        print("post.image names: \(post.image_filenames_ios ?? "no image_filenames_ios")")
+//        if post.image_files_array != nil{
+//            print("post.image names: \(post.image_files_array! )")
+//        } else {print("post.image names: no post.image_files_array ")}
+//        
+//        print("post.image names: \(post.image_filenames_ios ?? "no image_filenames_ios")")
         
 
     }
@@ -190,6 +191,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
                     imgDict![image_file_string] = (image:UIImage(named: "blackScreen")!, downloaded:false)
                     let spinner = UIActivityIndicatorView(style: .large)
                     spinner.translatesAutoresizingMaskIntoConstraints = false
+                    spinner.accessibilityIdentifier = "spinner-\(image_file_string)"
                     spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
                     spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
                     spinner.startAnimating()
@@ -221,6 +223,19 @@ class PostCell: UITableViewCell, PostCellDelegate {
             } // for image_file_string in
             let imgArraySorted = resizeImagesInDictionary(imgDict!)
             let stackViewImagesResult = generateStackView(with: imgArraySorted)
+            
+//            for element in stackViewImagesResult.stackViewImageParent.arrangedSubviews{
+//                print("element: \(element)")
+//                if element is UIStackView{
+//                    if let unwp_stack = element as? UIStackView{
+//                        for sub_element in unwp_stack.arrangedSubviews{
+//                            print("sub_element: \(sub_element)")
+//                        }
+//                    }
+//                } else{
+//                    print("element: \(element)")
+//                }
+//            }
 //            let stackViewImagesResult = generateStackViewSimple(with: imgArraySorted)
             stackViewImages = stackViewImagesResult.0
 
@@ -363,13 +378,10 @@ class PostCell: UITableViewCell, PostCellDelegate {
             commentsVw!.post = self.post
             commentsVw!.rinconVCDelegate = self.rinconVCDelegate
             commentsVw!.indexPath = self.indexPath
-//            print("commentsVw size: \(commentsVw!.frame.size)")
-        
             stckVwPostCell.addArrangedSubview(commentsVw!)
-//            layoutIfNeeded()
-//            print("commentsVw size (layoutIfNeeded): \(commentsVw!.frame.size)")
+            // verified necessary constraint
             commentsVw!.heightAnchor.constraint(equalToConstant: commentsVw!.stckVwComments!.frame.size.height).isActive=true
-//            print("commentsVw size (commentsVw!.heightAnchor.constraint): \(commentsVw!.frame.size)")
+
         }
         
     }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoginVC: DefaultViewController{
+class LoginVC: DefaultViewController, LoginVCDelegate{
     
     var userStore: UserStore!
 //    var user: User?
@@ -94,42 +94,33 @@ class LoginVC: DefaultViewController{
                 self.txtEmail.text = user.email
                 self.txtPassword.text = user.password
                 self.userStore.user = user
-                if user.email == "nrodrig1@gmail.com"{
-                    setup_btnAdmin()
-                    
-                }
+//                if user.email == "nrodrig1@gmail.com"{
+//                    setup_btnAdmin()
+//
+//                }
             case let .failure(error):
                 print(error)
             }
         })
     }
-    
-    func setup_btnAdmin(){
-        btnAdmin=UIButton()
-        btnAdmin!.setTitle("Login To Developer Screen", for: .normal)
-        btnAdmin!.layer.borderColor = UIColor(named: "gray-400")?.cgColor
-        btnAdmin!.layer.borderWidth = 2
-        btnAdmin!.setTitleColor(.gray, for: .normal)
-        btnAdmin!.layer.cornerRadius = 10
-        btnAdmin!.translatesAutoresizingMaskIntoConstraints = false
-        stckVwAdmin.addArrangedSubview(btnAdmin!)
-        btnAdmin!.addTarget(self, action: #selector(touchDownAdmin(_:)), for: .touchDown)
-        btnAdmin!.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
-    }
+
     
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
+        vwVCHeaderOrange.accessibilityIdentifier = "vwVCHeaderOrange"
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         vwVCHeaderOrange.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive=true
         vwVCHeaderOrange.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
+        
     }
     func setup_vwVCHeaderOrangeTitle(){
         view.addSubview(vwVCHeaderOrangeTitle)
         vwVCHeaderOrangeTitle.backgroundColor = UIColor(named: "orangePrimary")
         vwVCHeaderOrangeTitle.translatesAutoresizingMaskIntoConstraints = false
+        vwVCHeaderOrangeTitle.accessibilityIdentifier = "vwVCHeaderOrangeTitle"
         vwVCHeaderOrangeTitle.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         vwVCHeaderOrangeTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive=true
         vwVCHeaderOrangeTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
@@ -139,6 +130,7 @@ class LoginVC: DefaultViewController{
             vwVCHeaderOrangeTitle.heightAnchor.constraint(equalToConstant: imgVwIconNoName.image!.size.height + 10).isActive=true
         }
         imgVwIconNoName.translatesAutoresizingMaskIntoConstraints = false
+        imgVwIconNoName.accessibilityIdentifier = "imgVwIconNoName"
         vwVCHeaderOrangeTitle.addSubview(imgVwIconNoName)
         imgVwIconNoName.topAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.topAnchor).isActive=true
         imgVwIconNoName.leadingAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.centerXAnchor, constant: widthFromPct(percent: -35) ).isActive = true
@@ -147,11 +139,13 @@ class LoginVC: DefaultViewController{
         lblHeaderTitle.font = UIFont(name: "Rockwell_tu", size: 35)
         vwVCHeaderOrangeTitle.addSubview(lblHeaderTitle)
         lblHeaderTitle.translatesAutoresizingMaskIntoConstraints=false
+        lblHeaderTitle.accessibilityIdentifier = "lblHeaderTitle"
         lblHeaderTitle.leadingAnchor.constraint(equalTo: imgVwIconNoName.trailingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
         lblHeaderTitle.centerYAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.centerYAnchor).isActive=true
     }
     func setup_vwBackgroundCard(){
         vwBackgroundCard.translatesAutoresizingMaskIntoConstraints = false
+        vwBackgroundCard.accessibilityIdentifier="vwBackgroundCard"
         view.addSubview(vwBackgroundCard)
         vwBackgroundCard.backgroundColor = UIColor(named: "gray-500")
         vwBackgroundCard.topAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.bottomAnchor, constant: heightFromPct(percent: 5)).isActive=true
@@ -165,6 +159,7 @@ class LoginVC: DefaultViewController{
         lblTitle.text = "Login"
         lblTitle.font = UIFont(name: "Rockwell_tu", size: 30)
         lblTitle.translatesAutoresizingMaskIntoConstraints = false
+        lblTitle.accessibilityIdentifier="lblTitle"
         view.addSubview(lblTitle)
         lblTitle.topAnchor.constraint(equalTo: vwBackgroundCard.topAnchor, constant: heightFromPct(percent: cardInteriorPadding)).isActive=true
         lblTitle.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor, constant: widthFromPct(percent: 2.5)).isActive=true
@@ -181,6 +176,14 @@ class LoginVC: DefaultViewController{
         txtPassword.translatesAutoresizingMaskIntoConstraints = false
         lblEmail.translatesAutoresizingMaskIntoConstraints = false
         lblPassword.translatesAutoresizingMaskIntoConstraints = false
+        
+        stckVwLogin.accessibilityIdentifier="stckVwLogin"
+        stckVwEmailRow.accessibilityIdentifier="stckVwEmailRow"
+        stckVwPasswordRow.accessibilityIdentifier = "stckVwPasswordRow"
+        txtEmail.accessibilityIdentifier = "txtEmail"
+        txtPassword.accessibilityIdentifier = "txtPassword"
+        lblEmail.accessibilityIdentifier = "lblEmail"
+        lblPassword.accessibilityIdentifier = "lblPassword"
 
         txtPassword.isSecureTextEntry = true
         btnShowPassword.setImage(UIImage(systemName: "eye.slash"), for: .normal)
@@ -314,10 +317,10 @@ class LoginVC: DefaultViewController{
         stckVwRememberMe.translatesAutoresizingMaskIntoConstraints = false
         lblRememberMe.translatesAutoresizingMaskIntoConstraints = false
         swRememberMe.translatesAutoresizingMaskIntoConstraints = false
-        
-//        stckVwRememberMe.topAnchor.constraint(equalTo: btnLogin.bottomAnchor, constant: heightFromPct(percent: cardInteriorPadding)).isActive=true
-//        stckVwRememberMe.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
-        stckVwRememberMe.widthAnchor.constraint(equalToConstant: stckVwLogin.frame.size.width).isActive=true
+        stckVwRememberMe.accessibilityIdentifier = "stckVwRememberMe"
+        lblRememberMe.accessibilityIdentifier = "lblRememberMe"
+        swRememberMe.accessibilityIdentifier = "swRememberMe"
+
         
         swRememberMe.isOn = true
     }
@@ -367,24 +370,6 @@ class LoginVC: DefaultViewController{
     }
     
     
-    private func setupSegmentedPicker() {
-        
-        urlStore.baseString = "https://dev.api.tu-rincon.com/"
-        let indexDict = ["http://127.0.0.1:5001/":0,"https://dev.api.tu-rincon.com/":1,"https://api.tu-rincon.com/":2]
-        
-        let segmentedControl = UISegmentedControl(items: Environment.allCases.map { $0.rawValue })
-        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        
-        // Set initial selected segment
-        segmentedControl.selectedSegmentIndex = indexDict[urlStore.baseString] ?? 0
-        stckVwAdmin.addArrangedSubview(segmentedControl)
-    }
-    
-    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        let selectedEnvironment = Environment.allCases[sender.selectedSegmentIndex]
-        urlStore.baseString = selectedEnvironment.baseString
-    }
-    
     private func setup_lblMachineName(){
         lblMachineName.text = ProcessInfo.processInfo.hostName
         lblMachineName.textAlignment = .center
@@ -398,15 +383,27 @@ class LoginVC: DefaultViewController{
             yourRinconsVC.urlStore = self.urlStore
             yourRinconsVC.rinconStore = self.rinconStore
             yourRinconsVC.navigationItem.title = "Your Rincóns"
-        }   else if (segue.identifier == "goToAdminVC"){
+            yourRinconsVC.loginVcDelegate = self
+
+        }
+        else if (segue.identifier == "goToAdminVC"){
             let adminVC = segue.destination as! AdminVC
             adminVC.userStore = self.userStore
             adminVC.urlStore = self.urlStore
-//            adminVC.user = self.userStore.user
             adminVC.rinconStore = self.rinconStore
         }
     }
     
+    func clearUser(){
+        print("- LoginVC deleage method")
+        txtEmail.text = nil
+        txtPassword.text = nil
+        userStore.deleteUserJsonFile()
+        print("-finisehd Loginv VC deleaget method")
+    }
+    
 }
 
-
+protocol LoginVCDelegate{
+    func clearUser()
+}

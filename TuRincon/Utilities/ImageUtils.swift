@@ -124,6 +124,7 @@ func generateStackViewSimple(with imgArraySorted: [(image: UIImage, width: CGFlo
         // Create a UIImageView with the image and aspectRatio
         let imageView = UIImageView(image: info.image)
         imageView.translatesAutoresizingMaskIntoConstraints=false
+        
         imageView.contentMode = .scaleAspectFit
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: info.aspectRatio).isActive = true
 
@@ -154,8 +155,8 @@ func generateStackViewSimple(with imgArraySorted: [(image: UIImage, width: CGFlo
 }
 
 func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, height:CGFloat, aspectRatio:CGFloat, downloaded:Bool)]) -> (stackViewImageParent:UIStackView, stackViewWidth:CGFloat, stackViewHeight:CGFloat) {
-    print("- generateStackView")
-    print(imgArraySorted)
+//    print("- generateStackView")
+//    print(imgArraySorted)
     
     let screenWidth = UIScreen.main.bounds.width
     let stackViewParent = UIStackView()

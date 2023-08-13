@@ -8,6 +8,19 @@
 import Foundation
 import UIKit
 
+enum APIBase:String, CaseIterable {
+    case local = "localhost"
+    case dev = "dev"
+    case prod = "prod"
+    var urlString:String {
+        switch self{
+        case .local: return "http://127.0.0.1:5001/"
+        case .dev: return "https://dev.api.tu-rincon.com/"
+        case .prod: return "https://api.tu-rincon.com/"
+        }
+    }
+}
+
 enum EndPoint: String {
     case are_we_running = "are_we_running"
     case user = "user"
@@ -34,31 +47,33 @@ enum EndPoint: String {
     case invite_user="invite_user"
     case check_invite_json="check_invite_json"
     case delete_rincon = "delete_rincon"
+    case delete_user = "delete_user"
 }
 
 class URLStore {
     
-    var baseString:String!
+//    var baseString:String!
+    var apiBase:APIBase!
 //    var baseString = Environment.dev.rawValue
 //    var baseString = "http://127.0.0.1:5001/"
 //    var baseString = "https://dev.api.tu-rincon.com/"
     func callEndpoint(endPoint: EndPoint) -> URL{
-        let baseURLString = baseString + endPoint.rawValue
+        let baseURLString = apiBase.urlString + endPoint.rawValue
         let components = URLComponents(string:baseURLString)!
         return components.url!
     }
     func callRinconEndpoint(endPoint: EndPoint, rincon_id: String) -> URL{
-        let baseURLString = baseString + endPoint.rawValue + "/\(rincon_id)"
+        let baseURLString = apiBase.urlString + endPoint.rawValue + "/\(rincon_id)"
         let components = URLComponents(string:baseURLString)!
         return components.url!
     }
     func callRinconFileEndpoint(endPoint:EndPoint, file_name:String) -> URL{
-        let baseURLString = baseString + endPoint.rawValue + "/\(file_name)"
+        let baseURLString = apiBase.urlString + endPoint.rawValue + "/\(file_name)"
         let components = URLComponents(string:baseURLString)!
         return components.url!
     }
     func callApiQueryStrings(endPoint:EndPoint, queryStringArray:[String]) -> URL {
-        var urlString = baseString + endPoint.rawValue
+        var urlString = apiBase.urlString + endPoint.rawValue
         for queryString in queryStringArray {
             urlString = urlString + "/\(queryString)"
         }

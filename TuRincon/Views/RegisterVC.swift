@@ -10,6 +10,7 @@ import UIKit
 class RegisterVC: DefaultViewController{
     var userStore:UserStore!
     var rinconStore:RinconStore!
+    var urlStore:URLStore!
     
     let vwVCHeaderOrange = UIView()
     let vwVCHeaderOrangeTitle = UIView()
@@ -54,7 +55,7 @@ class RegisterVC: DefaultViewController{
     
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
-        vwVCHeaderOrange.backgroundColor = UIColor(named: "orangePrimary")
+        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
         vwVCHeaderOrange.translatesAutoresizingMaskIntoConstraints = false
         vwVCHeaderOrange.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
