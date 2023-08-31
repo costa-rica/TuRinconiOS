@@ -43,7 +43,7 @@ class ImageStore {
         }
         
         cache.setObject(imageFromDisk, forKey: key as NSString)
-        print("-returning image from imageStore - imageRinconUrl: \(rinconUrl)")
+//        print("-returning image from imageStore - imageRinconUrl: \(rinconUrl)")
         return imageFromDisk
     }
     

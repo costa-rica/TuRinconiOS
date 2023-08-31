@@ -57,6 +57,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
 //    var txtNewComment: UITextField?
     var txtNewComment: UITextView?
     var btnTxtNewComment: UIButton?
+
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -174,70 +175,61 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_images(){
         if let unwrapped_images = post.image_files_array{
-            print("Post: \(post.post_id!) has images: \(unwrapped_images)")
+//            print("Post: \(post.post_id!) has images: \(unwrapped_images)")
             imgViewDict = [String:UIImageView]()
             imgDict = [String:(image:UIImage,downloaded:Bool)]()
             spinnerViewDict = [String: UIActivityIndicatorView]()
             
             for image_file_string in unwrapped_images{
                 if let unwrapped_uiimage = imageStore.image(forKey: image_file_string, rincon:rincon){
-                    print("-succussfully unwrapped got image from image store")
+//                    print("-succussfully unwrapped got image from image store")
                     
                     imgDict![image_file_string] = (unwrapped_uiimage, true)
                     
                 } else {
-                    print("* FAiled to unwrap image from imageStore *")
+//                    print("* Filed to unwrap image from imageStore *")
                     /* setup a defualt photo*/
                     imgDict![image_file_string] = (image:UIImage(named: "blackScreen")!, downloaded:false)
-                    let spinner = UIActivityIndicatorView(style: .large)
-                    spinner.translatesAutoresizingMaskIntoConstraints = false
-                    spinner.accessibilityIdentifier = "spinner-\(image_file_string)"
-                    spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
-                    spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
-                    spinner.startAnimating()
-                    self.spinnerViewDict![image_file_string] = spinner
+//                    let spinner = UIActivityIndicatorView(style: .large)
+//                    spinner.translatesAutoresizingMaskIntoConstraints = false
+//                    spinner.accessibilityIdentifier = "spinner-\(image_file_string)"
+//                    spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
+//                    spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
+//                    spinner.startAnimating()
+                    
+                    // add spinner to image
+                    
+//                    self.spinnerViewDict![image_file_string] = spinner
                     
                     /* try to replace default photo with downloaded photo */
                     self.rinconStore.requestPostPhoto(rincon_id: post.rincon_id, image_file_name: image_file_string) { result in
-                        if case let .success(image) = result {
+//                        if case let .success(image) = result {
+                        switch result{
+                        case let .success(image):
                             self.imageStore.setImage(image, forKey: image_file_string, rincon: self.rincon)
                             OperationQueue.main.addOperation  {
-                                
                                 self.imgDict![image_file_string] = (image,true)
 //                                self.rinconVCDelegate?.customReloadCell(indexPath: self.indexPath)
                                 // Inform the tableView about the changes to update cell's height
                                 guard let tblVwRinconVC = self.superview as? UITableView else { return }
                                 tblVwRinconVC.reloadRows(at: [self.indexPath], with: UITableView.RowAnimation.none)
-                                
                             }
-                        }
-                        if case let .failure(failure) = result { // failed photo in place of photo
-
+//                        }
+//                        if case let .failure(failure) = result { // failed photo in place of photo
+                        case let .failure(error):
+                            OperationQueue.main.addOperation  {
                                 self.imgDict![image_file_string] = (UIImage(named: "failedToDownload01")!, true)
-                                
-                                print("- Failed to download image: \(failure)")
-
+                            }
+                                print("- Failed to download image: \(error)")
                         }
                     }
                 }
             } // for image_file_string in
-            let imgArraySorted = resizeImagesInDictionary(imgDict!)
-            let stackViewImagesResult = generateStackView(with: imgArraySorted)
-            
-//            for element in stackViewImagesResult.stackViewImageParent.arrangedSubviews{
-//                print("element: \(element)")
-//                if element is UIStackView{
-//                    if let unwp_stack = element as? UIStackView{
-//                        for sub_element in unwp_stack.arrangedSubviews{
-//                            print("sub_element: \(sub_element)")
-//                        }
-//                    }
-//                } else{
-//                    print("element: \(element)")
-//                }
-//            }
-//            let stackViewImagesResult = generateStackViewSimple(with: imgArraySorted)
-            stackViewImages = stackViewImagesResult.0
+            let imgArraySorted = resizeImagesInDictionary(imgDict!,postId: post.post_id)
+//            print("- sorted images (PostCell) -")
+//            print(imgArraySorted)
+            stackViewImages = generateStackViewTwo(from: imgArraySorted)
+
 
             stckVwPostCell.addArrangedSubview(stackViewImages!)
             stackViewImages?.accessibilityIdentifier = "stackViewImages"
@@ -266,7 +258,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
                 spinner.startAnimating()
                 self.spinnerViewDict![unwrapped_video_filename] = spinner
                 
-                let imgArraySorted = resizeImagesInDictionary(imgDict!)
+                let imgArraySorted = resizeImagesInDictionary(imgDict!,postId:post.post_id)
                 let stackViewImagesResult = generateStackView(with: imgArraySorted)
                 stackViewImages = stackViewImagesResult.0
 //                let stackViewImagesHeight = stackViewImagesResult.2
@@ -339,7 +331,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
         likeView.setup_view()
         likeView.post = self.post
 
-        
         commentView = CommentView()
         commentView.post = post
         commentView.configSfSymbolSizeUserInteraction = configSfSymbolSizeUserInteraction
@@ -360,10 +351,15 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stckVwPostCell.addArrangedSubview(stckVwUserInteraction)
         stckVwUserInteraction.accessibilityIdentifier = "stckVwUserInteraction"
         
-//        print("---commentView: \(commentView.frame.size)")
+        print("---commentView: \(commentView.frame.size)")
 //        print("---->commentView.buttonComment size: \(commentView.btnComment.frame.size)")
-//        print("---->commentView.viewHeight: \(commentView.viewHeight)")
-        stckVwUserInteraction.heightAnchor.constraint(equalToConstant: commentView.viewHeight + 20).isActive=true
+        print("---->commentView.viewHeight: \(commentView.viewHeight)")
+//        stckVwUserInteraction.heightAnchor.constraint(equalToConstant: commentView.viewHeight + 20).isActive=true
+        print("stckVwUserInteraction.size: \(stckVwUserInteraction.frame.size)")
+        var newFrame = stckVwUserInteraction.frame
+        newFrame.size.height = stckVwUserInteraction.frame.height + commentView.viewHeight + 20
+        stckVwUserInteraction.frame = newFrame
+        print("stckVwUserInteraction.size (new) : \(stckVwUserInteraction.frame.size)")
     }
     
     func setup_line02(){
@@ -403,7 +399,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
     @objc func btnCommentTestPressed(){
         print("btnCommentTestPressed, post: \(post.post_id!)")
     }
-    
     
     func expandNewComment(){
         print("- accessed expandNewComment(): post: \(post.post_id!) ")
@@ -480,7 +475,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
         }
     }
     
-    
     @objc func btnDeletePostTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -497,7 +491,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
             self.rinconVCDelegate.deletePostAreYouSure(indexPath: self.indexPath)
         }
     }
-    
     
 }
 

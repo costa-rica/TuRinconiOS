@@ -7,6 +7,10 @@
 
 import UIKit
 
+class ImageViewWithName: UIImageView {
+    var imageName: String?
+}
+
 extension UIImage {
     func scaleImage(toSize newSize: CGSize) -> UIImage? {
         var newImage: UIImage?
@@ -75,16 +79,16 @@ func createDividerLine(thicknessOfLine:CGFloat) -> UIImageView{
 
 
 
-func resizeImagesInDictionary(_ imgDict: [String: (image:UIImage, downloaded:Bool)]) -> [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat,downloaded:Bool)] {
+func resizeImagesInDictionary(_ imgDict: [String: (image:UIImage, downloaded:Bool)], postId:String) -> [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat,downloaded:Bool,imageFileName:String,postId:String)] {
     
-    print("- resizeImagesInDictionary")
-    print(imgDict)
+//    print("- resizeImagesInDictionary")
+//    print(imgDict)
     
     
     let screenSize = UIScreen.main.bounds.size
-    var resizedImages: [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat, downloaded:Bool)] = []
+    var resizedImages: [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat, downloaded:Bool, imageFileName:String, postId:String)] = []
 
-    for (_, imageTuple) in imgDict {
+    for (image_file_name, imageTuple) in imgDict {
         
         let aspectRatio = imageTuple.image.size.width / imageTuple.image.size.height
         let newWidth = screenSize.width
@@ -93,68 +97,26 @@ func resizeImagesInDictionary(_ imgDict: [String: (image:UIImage, downloaded:Boo
         let newSize = CGSize(width: newWidth, height: newHeight)
         UIGraphicsBeginImageContextWithOptions(newSize, false, UIScreen.main.scale)
         imageTuple.image.draw(in: CGRect(origin: .zero, size: newSize))
+        
         let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
         if let resizedImage = resizedImage {
-            let imageTuple = (image: resizedImage, width: newWidth, height: newHeight, aspectRatio: aspectRatio,downloaded:imageTuple.downloaded)
+            let imageTuple = (image: resizedImage, width: newWidth, height: newHeight, aspectRatio: aspectRatio,downloaded:imageTuple.downloaded, imageFileName: image_file_name, postId: postId)
             resizedImages.append(imageTuple)
         }
     }
     
     let sortedImages = resizedImages.sorted(by: { $0.aspectRatio < $1.aspectRatio })
+//    print("- sortedImages")
+//    print(sortedImages)
     return sortedImages
 }
 
-func generateStackViewSimple(with imgArraySorted: [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat, downloaded: Bool)]) -> UIStackView {
-    let stackViewParent = UIStackView()
-    stackViewParent.axis = .vertical
-    stackViewParent.distribution = .fillEqually
-    stackViewParent.spacing = 10
-    let screenWidth = UIScreen.main.bounds.width
-    
-    var tempStackView: UIStackView? = nil
-    
-    for (index, info) in imgArraySorted.enumerated() {
-        // If the image is not downloaded, we continue to the next tuple
-        if !info.downloaded {
-            continue
-        }
-        print("-----> Is there an image? ")
-        // Create a UIImageView with the image and aspectRatio
-        let imageView = UIImageView(image: info.image)
-        imageView.translatesAutoresizingMaskIntoConstraints=false
-        
-        imageView.contentMode = .scaleAspectFit
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: info.aspectRatio).isActive = true
 
-        // If it's the first item or an odd item, we create a new horizontal stack view
-        if index % 2 == 0 {
-            tempStackView = UIStackView()
-            tempStackView?.axis = .horizontal
-            tempStackView?.distribution = .fillEqually
-            tempStackView?.spacing = 10
-        }
-        
-        // Add the imageView to the temporary stack view
-        tempStackView?.addArrangedSubview(imageView)
-        if let unwp_stckVw = tempStackView{
-//            printStackViewContents(stackView: unwp_stckVw)
-            unwp_stckVw.frame = CGRect(x: 0, y: 0, width: screenWidth, height: 100)
-//            unwp_stckVw.heightAnchor.constraint(equalToConstant: 100).isActive=true
-        }
-        // If it's an even item or the last item, we add the temporary stack view to the parent stack view
-        if index % 2 != 0 || index == imgArraySorted.count - 1 {
-            if let stackView = tempStackView {
-                stackViewParent.addArrangedSubview(stackView)
-            }
-        }
-    }
-    stackViewParent.frame = CGRect(x: 0, y: 0, width: screenWidth, height: 100)
-    return stackViewParent
-}
 
-func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, height:CGFloat, aspectRatio:CGFloat, downloaded:Bool)]) -> (stackViewImageParent:UIStackView, stackViewWidth:CGFloat, stackViewHeight:CGFloat) {
+
+func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, height:CGFloat, aspectRatio:CGFloat, downloaded:Bool,imageFileName:String,postId:String)]) -> (stackViewImageParent:UIStackView, stackViewWidth:CGFloat, stackViewHeight:CGFloat) {
 //    print("- generateStackView")
 //    print(imgArraySorted)
     
@@ -182,6 +144,8 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
         
         let firstImageView = UIImageView(image: firstImage.0)
         let secondImageView = UIImageView(image: secondImage.0)
+        firstImageView.accessibilityIdentifier = "firstImageView_\(firstImage.imageFileName)"
+        secondImageView.accessibilityIdentifier = "secondImageView_\(secondImage.imageFileName)"
         
         let firstAspectRatio = firstImage.2 / firstImage.1
         let secondAspectRatio = secondImage.2 / secondImage.1
@@ -197,6 +161,8 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
         
         firstImageView.contentMode = .scaleAspectFit
         secondImageView.contentMode = .scaleAspectFit
+        
+        
         
         firstImageView.widthAnchor.constraint(equalToConstant: firstImageWidth).isActive = true
 //        firstImageView.heightAnchor.constraint(equalToConstant: firstImageHeight).isActive = true
@@ -218,6 +184,7 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
             spinner.startAnimating()
             firstImageView.addSubview(spinner)
             spinner.translatesAutoresizingMaskIntoConstraints = false
+            spinner.accessibilityIdentifier = "spinner_\(firstImage.imageFileName)_post: \(firstImage.postId)"
             spinner.centerXAnchor.constraint(equalTo: firstImageView.centerXAnchor).isActive=true
             spinner.centerYAnchor.constraint(equalTo: firstImageView.centerYAnchor).isActive=true
         }
@@ -234,6 +201,7 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
         
         let imageView = UIImageView(image: image.0)
         imageView.contentMode = .scaleAspectFit
+        imageView.accessibilityIdentifier = "RI-\(image.imageFileName)"
         
         let maxImageWidth = screenWidth
         let imageWidth = min(maxImageWidth, image.1)
@@ -251,6 +219,7 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
             spinner.startAnimating()
             imageView.addSubview(spinner)
             spinner.translatesAutoresizingMaskIntoConstraints = false
+            spinner.accessibilityIdentifier = "spinner2_for_post_\(imgArraySorted[0].postId)"
             spinner.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive=true
             spinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive=true
         }
@@ -258,6 +227,7 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
     
     // Provide explicit constraints and perform a layout pass
     stackViewParent.translatesAutoresizingMaskIntoConstraints = false
+    stackViewParent.accessibilityIdentifier = "stackViewParent_for_post_\(imgArraySorted[0].postId)"
     stackViewParent.widthAnchor.constraint(equalToConstant: screenWidth).isActive = true
     stackViewParent.setNeedsLayout()
     stackViewParent.layoutIfNeeded()
@@ -269,6 +239,150 @@ func generateStackView(with imgArraySorted: [(image:UIImage, width:CGFloat, heig
 //    print("- returning above stackViewParent -")
     return (stackViewParent, stackViewWidth, stackViewHeight)
 }
+
+
+func generateStackViewTwo(from images: [(image: UIImage, width: CGFloat, height: CGFloat, aspectRatio: CGFloat, downloaded: Bool, imageFileName: String, postId: String)]) -> UIStackView {
+    if images[0].postId == "71" {
+    print("--- Showing Post 71 ----")
+    }
+//    print("* generateStackViewTwo")
+    // Create a main stack view
+    let mainStackView = UIStackView()
+    mainStackView.axis = .vertical
+    mainStackView.spacing = 5 // Adjust spacing as needed
+    mainStackView.accessibilityIdentifier = "mainStckVw" + images[0].postId
+
+    // Pre-calculate imageView widths based on the number of images per row
+    var imageViewWidths: [Int: CGFloat] = [:]
+    let totalWidth = UIScreen.main.bounds.width - (mainStackView.spacing * CGFloat(images.count - 1)) // adjust for spacing
+//    for i in 0..<images.count {
+//        let itemsInRow = (i % 2) + 1
+//        imageViewWidths[i] = totalWidth / CGFloat(itemsInRow)
+//        if images[0].postId == "71" {
+//            print("** Post71 --> itemsInRow: \(itemsInRow)")
+//        }
+//    }
+    switch images.count{
+    case 1:
+        imageViewWidths[0]=totalWidth
+    case 2:
+        imageViewWidths[0]=totalWidth / 2
+//        imageViewWidths[1]=totalWidth / 2
+    case 3:
+        imageViewWidths[0]=totalWidth / 2
+        imageViewWidths[1]=totalWidth
+//        imageViewWidths[2]=totalWidth
+    default:
+        imageViewWidths[0]=totalWidth / 2
+        imageViewWidths[1]=totalWidth / 2
+//        imageViewWidths[2]=totalWidth / 2
+//        imageViewWidths[3]=totalWidth / 2
+    }
+    
+    
+    
+    
+    if images[0].postId == "71" {
+        print("** Post71 --> imageViewWidths: \(imageViewWidths)")
+    }
+
+    // Loop through the rows
+    let numberOfRows = (images.count + 1) / 2 // Adjusted logic here for odd numbers
+    for i in 0..<numberOfRows {
+//        print("* for i in 0..<numberOfRows")
+        let horizontalStack = UIStackView()
+        horizontalStack.axis = .horizontal
+        horizontalStack.spacing = 5 // Adjust spacing as needed
+        horizontalStack.accessibilityIdentifier = "hStckVw\(i+1)" + images[0].postId
+        horizontalStack.distribution = .fill
+
+        let startIdx = i * 2
+        let endIdx = min(startIdx + 2, images.count)
+        for j in startIdx..<endIdx {
+            
+            
+//            // Fetch the width from the dictionary
+//            var imageViewWidth = imageViewWidths[j] ?? totalWidth
+//
+//            // Adjust height based on image's aspect ratio and imageView's actual width
+//            var imageHeight = imageViewWidth / images[j].aspectRatio
+            
+//            if numberOfRows == 2 {
+//                    imageViewWidth
+//            }
+//            print("imageViewWidth: \(imageViewWidth)")
+//            print("imageHeight: \(imageHeight)")
+
+            
+//            let resizedUiImage = images[j].image.scaleImage(toSize:CGSize(width: 393.0, height: 851.0))
+            let resizedUiImage = resizeImage(images[j].image, toWidth: imageViewWidths[i] ?? totalWidth)
+            
+
+            
+            let imageView = UIImageView(image: resizedUiImage)
+
+            imageView.contentMode = .scaleAspectFit
+            imageView.accessibilityIdentifier = images[j].imageFileName
+            
+            
+            
+//            horizontalStack.addArrangedSubview(imageView)
+
+//            imageView.heightAnchor.constraint(equalToConstant: imageHeight).isActive = true
+//            // Ensure equal distribution in the stack for width
+//            imageView.widthAnchor.constraint(equalToConstant: imageViewWidth).isActive = true
+//            let resizedImageView = imageView
+            
+            // resize UIImage
+//            let resizedImageView = resizeImageViewToFitImage(image: resizedUiImage ?? images[j].image)
+//            let resizedImageView = resizeImageViewToFitImageTwo(image: resizedUiImage ?? images[j].image,height: images[j].height, width:images[j].width)
+//            resizedImageView.accessibilityIdentifier = images[j].imageFileName
+            
+            
+            horizontalStack.addArrangedSubview(imageView)
+            horizontalStack.accessibilityIdentifier = "hzStck" + String(j) + "_for_\(images[j].postId)"
+            
+            if !images[j].downloaded{
+                let spinner = UIActivityIndicatorView(style: .large)
+                spinner.translatesAutoresizingMaskIntoConstraints = false
+                spinner.accessibilityIdentifier = "spinner-\(images[j].imageFileName)"
+                spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
+                spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
+                spinner.startAnimating()
+                imageView.addSubview(spinner)
+                spinner.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive=true
+                spinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive=true
+            }
+            if images[0].postId == "71" {
+                print("--- \(images[j].imageFileName) ----")
+//                print("images[j].image.size: \(images[j].image.size)")
+//                print("imageViewWidths[i]: \(imageViewWidths[i]!)")
+//                print("images[j].width: \(images[j].width)")
+//                print("images[j].height: \(images[j].height)")
+//                print("resizedUiImage.size: \(resizedUiImage!.size)")
+//                print("resizedImageView: \(resizedImageView.frame.size)")
+//                print("resizedImageView.image: \(resizedImageView.image!.size)")
+                
+//                print("imageView.size: \(imageView!.size)")
+                print("imageView: \(imageView.frame.size)")
+                print("imageView.image: \(imageView.image!.size)")
+            }
+        }
+
+        if images[0].postId == "71" {
+            print("horizontalStack.frame.size: \(horizontalStack.frame.size)")
+            print("---- END Post 71 ----")
+        }
+        mainStackView.addArrangedSubview(horizontalStack)
+    }
+
+    return mainStackView
+}
+
+
+
+
+
 
 func imageFileNameParser(_ input: String) -> [String] {
     let components = input.components(separatedBy: ",")
@@ -288,4 +402,48 @@ func getImageFrom(url: URL) -> UIImage? {
         print("Error while getting image: \(error)")
         return nil
     }
+}
+
+
+//func resizeImageViewToFitImage(image: UIImage) -> UIImageView {
+//    let imageView = UIImageView()
+//    // Calculate the new frame size for the UIImageView
+//    let imageSize = image.size
+//    let aspectRatio = imageSize.width / imageSize.height
+//    let newWidth = imageView.frame.size.height * aspectRatio
+//    let newFrame = CGRect(x: 0, y: 0, width: newWidth, height: imageView.frame.size.height)
+//
+//    // Update the UIImageView's frame
+//    imageView.frame = newFrame
+//    imageView.image = image
+//    return imageView
+//}
+
+
+func resizeImageViewToFitImageTwo(image: UIImage, height:Double, width:Double) -> UIImageView {
+    let imageView = UIImageView()
+    // Calculate the new frame size for the UIImageView
+//    let imageSize = image.size
+    let aspectRatio = width / height
+    let newWidth = imageView.frame.size.height * aspectRatio
+    let newFrame = CGRect(x: 0, y: 0, width: newWidth, height: height)
+    
+    // Update the UIImageView's frame
+    imageView.frame = newFrame
+    imageView.image = image
+    return imageView
+}
+
+
+func resizeImage(_ image: UIImage, toWidth width: CGFloat) -> UIImage? {
+    let aspectRatio = image.size.width / image.size.height
+    let newHeight = width / aspectRatio
+    let newSize = CGSize(width: width, height: newHeight)
+    
+    UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+    image.draw(in: CGRect(origin: .zero, size: newSize))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    
+    return newImage
 }

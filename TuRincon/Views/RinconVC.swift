@@ -50,7 +50,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         // Register a UITableViewCell
         tblRincon.register(PostCell.self, forCellReuseIdentifier: "PostCell")
         tblRincon.rowHeight = UITableView.automaticDimension
-        tblRincon.estimatedRowHeight = 100 // Provide an estimate here
+        tblRincon.estimatedRowHeight = 100
         
         setup_vwVCHeaderOrange()
         setup_stckVwRinconPosts()
@@ -64,19 +64,19 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblRincon.refreshControl = refreshControl
     }
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        print("txtPost size: \(txtPost.frame.size)")
-        print("btnAddPhotos.size.frame: \(btnAddPhotos.frame.size)")
-        print("btnSubmitPost: \(btnSubmitPost.frame.size)")
-    }
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        print("txtPost size: \(txtPost.frame.size)")
+//        print("btnAddPhotos.size.frame: \(btnAddPhotos.frame.size)")
+//        print("btnSubmitPost: \(btnSubmitPost.frame.size)")
+//    }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        print("-keyboardWillShow")
-        if let unwp_array = self.arryNewPostImageFilenames{
-            print("* --- arryNewPostImageFilenames ----*")
-            print(unwp_array)
-        }
+//        print("-keyboardWillShow")
+//        if let unwp_array = self.arryNewPostImageFilenames{
+//            print("* --- arryNewPostImageFilenames ----*")
+//            print(unwp_array)
+//        }
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if self.view.frame.origin.y == 0 {
                 bottomConstraint.constant = -keyboardSize.height
@@ -87,7 +87,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }
     }
     @objc func keyboardWillHide(notification: NSNotification) {
-        print("-keyboardWillHide")
+//        print("-keyboardWillHide")
         bottomConstraint.constant = 0
         UIView.animate(withDuration: 0.25) {
             self.view.layoutIfNeeded()
@@ -118,11 +118,9 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         stckVwRincon.addArrangedSubview(tblRincon)
     }
     
-    
     func setup_btnRinconOptions() {
         btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
         navigationItem.rightBarButtonItem = btnRinconOptions
-
     }
 
     @objc func onRinconOptions() {
@@ -178,9 +176,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         // Show the action sheet
         self.present(actionSheet, animated: true, completion: nil)
     }
-
-    
-    
     
     @objc func postToRincon() {
         stckVwSubmitPostTxtAndBtn.translatesAutoresizingMaskIntoConstraints=false
@@ -404,7 +399,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         print("- end picker ---")
     }
     
-    
     @objc private func refreshData(_ sender: UIRefreshControl) {
         
         
@@ -508,7 +502,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         self.present(alertController, animated: true, completion: nil)
     }
     func goBackToYourRincons(){
-        if let unwp_navController = self.navigationController{
+        if let _ = self.navigationController{
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -517,9 +511,36 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
 
 extension RinconVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("cell is tapped")
+        
+        let post = posts[indexPath.row]
+        print("cell is tapped for post: \(post.post_id!)")
         // Hide keyboard
         self.view.endEditing(true)
+        if let cell = tableView.cellForRow(at: indexPath) as? PostCell {
+            // Replace `YourCustomTableViewCellClass` with the actual class of your cell
+            
+                // Print accessibilityIdentifiers
+            if let unwp_stackViewImages = cell.stackViewImages{
+                for element in unwp_stackViewImages.arrangedSubviews{
+//                    print("element: \(element)")
+                    print("\(element.accessibilityIdentifier!): \(element)")
+                    if element is UIStackView{
+                        if let unwp_stack = element as? UIStackView{
+                            for sub_element in unwp_stack.arrangedSubviews{
+//                                print("sub_element: \(sub_element.accessibilityIdentifier ?? "no accessibilityIdentifier")")
+                                if let sub_element_image = sub_element as? UIImageView{
+                                    print("\(sub_element_image.accessibilityIdentifier!): \(sub_element_image)")
+                                    print("\(sub_element_image.accessibilityIdentifier!).image: \(sub_element_image.image!)")
+                                }
+                            }
+                        }
+                    } else{
+                        print("element: \(element.accessibilityIdentifier ?? "no accessibilityIdentifier")")
+                    }
+                }
+            }
+        }
+        print("---- End Cell Tap -----")
     }
 }
 

@@ -18,7 +18,7 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
     var segue_rincon_posts = [Post](){
         didSet{
             if segue_rincon_posts.count > 0{
-                print("- segue_rincon_posts set an ready to segue to RinconVC -")
+//                print("- segue_rincon_posts set an ready to segue to RinconVC -")
                 
                 // Does rincon folder exist?
                 let rincon_folder_exists = rinconStore.rinconPhotosFolderExists(rincon: segue_rincon)
@@ -28,7 +28,6 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
     
                 // 1) make json posts,
                 self.rinconStore.writePostsToJson(rincon: segue_rincon, posts: segue_rincon_posts)
-                
                 performSegue(withIdentifier: "goToRinconVC", sender: self)
             }
         }
@@ -36,14 +35,7 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
     var segue_rincons_array = [Rincon](){
         didSet{
             if segue_rincons_array.count > 0 {
-                print("--- segue_rincons_array.count > 0")
-                for rincon in segue_rincons_array{
-                    print(rincon.name)
-                }
-                
-                
                 performSegue(withIdentifier: "goToSearchRinconsVC", sender: self)
-                
             }
         }
     }
@@ -70,10 +62,8 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblYourRincons.refreshControl = refreshControl
-        
-        print("- YourRinconVC viewDidLoad() end")
-
     }
+    
     func setup_vwVCHeaderOrange(){
         view.addSubview(vwVCHeaderOrange)
         vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
@@ -205,12 +195,11 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
     /* Delegate functions */
     
     func goBackToLogin(){
-        print("- in YourRinconsVC delegate method")
         if let unwp_navController = self.navigationController{
 
-            print("self.navigationController: \(unwp_navController)")
-            print("viewControllers: \(unwp_navController.viewControllers)")
-            print("visibleViewController: \(unwp_navController.visibleViewController!)")
+//            print("self.navigationController: \(unwp_navController)")
+//            print("viewControllers: \(unwp_navController.viewControllers)")
+//            print("visibleViewController: \(unwp_navController.visibleViewController!)")
             
             self.navigationController?.popViewController(animated: true)
             self.loginVcDelegate.clearUser()

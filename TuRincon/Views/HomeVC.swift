@@ -50,9 +50,9 @@ class HomeVC: DefaultViewController {
 //        setup_btnToRegister()
 //        setup_btnToLogin()
         print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
-        print("finished loading HomeVC")
-        let computerName = ProcessInfo.processInfo.hostName
-        print("Computer name: \(computerName)")
+//        print("finished loading HomeVC")
+//        let computerName = ProcessInfo.processInfo.hostName
+//        print("Computer name: \(computerName)")
 //        for family in UIFont.familyNames.sorted() {
 //            let names = UIFont.fontNames(forFamilyName: family)
 //            print("Family: \(family) Font names: \(names)")
@@ -104,7 +104,7 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_stckVwHome(){
-        print("- setup_stckVwHome")
+//        print("- setup_stckVwHome")
         scrllVwHome.translatesAutoresizingMaskIntoConstraints=false
         view.addSubview(scrllVwHome)
         scrllVwHome.accessibilityIdentifier="scrllVwHome"
@@ -118,7 +118,7 @@ class HomeVC: DefaultViewController {
 //        scrllVwAdmin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor).isActive=true
         
         view.layoutIfNeeded()
-        print("scrllVwHome width: \(scrllVwHome.frame.size)")
+//        print("scrllVwHome width: \(scrllVwHome.frame.size)")
         
         stckVwHome.translatesAutoresizingMaskIntoConstraints=false
         scrllVwHome.addSubview(stckVwHome)
@@ -253,7 +253,7 @@ class HomeVC: DefaultViewController {
         lblApi.translatesAutoresizingMaskIntoConstraints=false
         stckVwApi.addArrangedSubview(lblApi)
         lblApi.sizeToFit()
-        print("lblApi.frame.size: \(lblApi.frame.size)")
+//        print("lblApi.frame.size: \(lblApi.frame.size)")
         stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
 
         if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
@@ -273,7 +273,7 @@ class HomeVC: DefaultViewController {
 //        segmentedControl.selectedSegmentIndex = arryEnvironment[urlStore.baseString] ?? 0
         segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
         stckVwApi.addArrangedSubview(segmentedControl)
-        print("APIBase is set to: \(urlStore.apiBase.rawValue)")
+//        print("APIBase is set to: \(urlStore.apiBase.rawValue)")
         vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
 
 
@@ -291,10 +291,10 @@ class HomeVC: DefaultViewController {
             sender.transform = .identity
         }, completion: nil)
         if sender === btnToRegister {
-            print("btnToRegister")
+//            print("btnToRegister")
             performSegue(withIdentifier: "goToRegisterVC", sender: self)
         } else if sender === btnToLogin {
-            print("btnToLogin")
+//            print("btnToLogin")
             performSegue(withIdentifier: "goToLoginVC", sender: self)
         }
     }
@@ -303,7 +303,7 @@ class HomeVC: DefaultViewController {
     @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         let selectedEnvironment = arryEnvironment[sender.selectedSegmentIndex]
         urlStore.apiBase = selectedEnvironment
-        print("API base changed by user to: \(urlStore.apiBase.urlString)")
+//        print("API base changed by user to: \(urlStore.apiBase.urlString)")
         vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
     }
     

@@ -10,6 +10,15 @@ import Foundation
 enum UserStoreError: Error {
     case failedDecode
     case failedToLogin
+    case failedToRecieveServerResponse
+    var localizedDescription: String {
+        switch self {
+        case .failedDecode: return "Failed to decode response."
+
+        default: return "Tu Rincón main server is not responding."
+            
+        }
+    }
 }
 
 class UserStore {
@@ -20,10 +29,10 @@ class UserStore {
     var user = User() {
         didSet {
             counter+=1
-            guard
-                let unwrap_user_id = user.id,
-                let unwrap_user_email = user.email else {return}
-            print("\(counter) User is set: \(unwrap_user_id), \(unwrap_user_email)")
+//            guard
+//                let unwrap_user_id = user.id,
+//                let unwrap_user_email = user.email else {return}
+//            print("\(counter) User is set: \(unwrap_user_id), \(unwrap_user_email)")
             if rememberMe {
                 writeUserJson()
             }
@@ -98,17 +107,25 @@ class UserStore {
         }
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-
-        
-        
         
         let task = session.dataTask(with: request) {(data,response,error) in
-            guard let unwrapped_data = data else {print("no data response"); return}
+//            guard let unwrapped_data = data else {print("no data response"); return}
+            guard let unwrapped_data = data else {
+                print("no data response, server might be down")
+                OperationQueue.main.addOperation {
+                    completion(.failure(UserStoreError.failedToRecieveServerResponse))
+                    
+                }
+                return
+            }
+            
+            
+            
 
             do {
                 let jsonDecoder = JSONDecoder()
                 let jsonUser = try jsonDecoder.decode(User.self, from: unwrapped_data)
-                print("- successsfull response: \(jsonUser)")
+//                print("- successsfull response: \(jsonUser)")
                 OperationQueue.main.addOperation {
                     completion(.success(jsonUser))
                 }
@@ -119,7 +136,7 @@ class UserStore {
             
             guard let unwrapped_response = response  as? HTTPURLResponse else { return}
             
-            print("UserStore.requestLoginUser request status code : \(unwrapped_response.statusCode)")
+//            print("UserStore.requestLoginUser request status code : \(unwrapped_response.statusCode)")
             
 
         }
@@ -145,7 +162,7 @@ class UserStore {
     }
 
     func checkUserJson(completion: (Result<User,Error>) -> Void){
-        print("- checking for user.json")
+//        print("- checking for user.json")
         
         let userJsonFile = documentsURL.appendingPathComponent("user.json")
         

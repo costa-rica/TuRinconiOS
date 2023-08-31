@@ -62,7 +62,7 @@ class RinconStore {
                 print("no response")
                 return
             }
-            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
+//            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
         }
         task.resume()
     }
@@ -82,7 +82,7 @@ class RinconStore {
         } catch {
             print("Error: \(error)")
         }
-        print("- finished writePostsToJson: posts_for_\(rincon.id).json -")
+//        print("- finished writePostsToJson: posts_for_\(rincon.id).json -")
         
     }
     func rinconFolderUrl(rincon:Rincon) -> URL {
@@ -144,7 +144,6 @@ class RinconStore {
             if data == nil {
                 return .failure(error!)
             } else {
-//                return .failure(PhotoError.imageCreationError)
                 return .failure(RinconStoreError.imageCreationError)
             }
         }
@@ -216,7 +215,7 @@ class RinconStore {
                 print("no response")
                 return
             }
-            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
+//            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
             return
         }
         task.resume()
@@ -244,7 +243,7 @@ class RinconStore {
                 print("no response")
                 return
             }
-            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
+//            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
             return
         }
         task.resume()
@@ -269,7 +268,7 @@ class RinconStore {
                 print("no response")
                 return
             }
-            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
+//            print("requestRinconPosts response status: \(unwrapped_resp.statusCode)")
             return
         }
         task.resume()

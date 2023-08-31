@@ -114,7 +114,6 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         vwVCHeaderOrange.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         vwVCHeaderOrange.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive=true
         vwVCHeaderOrange.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
-        
     }
     func setup_vwVCHeaderOrangeTitle(){
         view.addSubview(vwVCHeaderOrangeTitle)
@@ -274,7 +273,7 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
             userStore.requestLoginUser(email: unwrapped_email, password: unwrapped_pw) { responseResultLogin in
                 switch responseResultLogin{
                 case let .success(user_obj):
-                    print("user_response: \(user_obj)")
+//                    print("user_response: \(user_obj)")
                     self.userStore.user.id = user_obj.id
                     self.userStore.user.token = user_obj.token
                     self.userStore.user.email = self.txtEmail.text
@@ -286,18 +285,20 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
                 case let .failure(error):
                     print("Login error: \(error)")
                     OperationQueue.main.addOperation {
+                        self.lblLoginStatusMessage = UILabel()
                         let tempLabel = UILabel()
-                        tempLabel.text = "Failed To Login"
+                        if error as! UserStoreError == UserStoreError.failedToRecieveServerResponse{
+                            tempLabel.text = "Server down ... probably :/"
+                        } else {
+                            tempLabel.text = "Failed To Login"
+                        }
                         self.lblLoginStatusMessage = tempLabel
-                        self.lblLoginStatusMessage.textColor = UIColor.white
                     }
                 }
-
             }
         } else {
             print("No email and password provided! ")
         }
-
     }
     
     func setup_stckVwRememberMe() {
@@ -327,7 +328,8 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
 
     func setup_vwFailedToLogin(){
         let vwFailedToLogin = UIView()
-        vwFailedToLogin.backgroundColor = UIColor(red: 0.8, green: 0.2, blue: 0.4, alpha: 1.0)
+//        vwFailedToLogin.backgroundColor = UIColor(red: 0.8, green: 0.2, blue: 0.4, alpha: 1.0)
+        vwFailedToLogin.backgroundColor = UIColor(named: "gray-500")
         vwFailedToLogin.translatesAutoresizingMaskIntoConstraints=false
         view.addSubview(vwFailedToLogin)
         lblLoginStatusMessage.translatesAutoresizingMaskIntoConstraints=false
@@ -395,11 +397,11 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
     }
     
     func clearUser(){
-        print("- LoginVC deleage method")
+//        print("- LoginVC deleage method")
         txtEmail.text = nil
         txtPassword.text = nil
         userStore.deleteUserJsonFile()
-        print("-finisehd Loginv VC deleaget method")
+//        print("-finisehd Loginv VC deleaget method")
     }
     
 }
