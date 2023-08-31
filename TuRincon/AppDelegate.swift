@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Sentry
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,20 +18,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Access the Font
         UIFont.overrideDefaultTypography()
         
-//        window = UIWindow(frame: UIScreen.main.bounds)
-//
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomeVC") as? HomeVC {
-//            let navigationController = UINavigationController(rootViewController: homeVC)
-//
-//            window?.rootViewController = navigationController
-//            window?.makeKeyAndVisible()
-//
-//            return true
-//        } else {
-//            print("HomeVC is nil. Please check the identifier")
-//            return false
-//        }
+        SentrySDK.start { options in
+            options.dsn = "https://81d3fc0b331ce6b4c503b2c56175d0e7@o4505798987284480.ingest.sentry.io/4505798991347712"
+            options.debug = true // Enabled debug when first installing is always helpful
+
+            // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+            // We recommend adjusting this value in production.
+            options.tracesSampleRate = 1.0
+            
+            // Set up beforeSend event
+            options.beforeSend = { event in
+//                // Attach breadcrumbs to provide context
+//                SentrySDK.addBreadcrumb("App launched")
+//                SentrySDK.addBreadcrumb("User performed action XYZ")
+//                
+//                // Example: Attach additional data to the event
+//                event.extra["customKey"] = "Custom Value"
+                
+                return event // Send the modified event
+            }
+            
+            
+        }
         return true
     }
 

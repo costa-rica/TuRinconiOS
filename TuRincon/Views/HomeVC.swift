@@ -6,6 +6,7 @@
 //
 // For github
 import UIKit
+import Sentry
 
 class HomeVC: DefaultViewController {
     
@@ -32,6 +33,14 @@ class HomeVC: DefaultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        SentrySDK.capture(message: "- Nick custom message from inside HomeVC viewDidLoad() -")
+        
+        let crumb = Breadcrumb()
+        crumb.level = SentryLevel.info
+        crumb.category = "test"
+        crumb.message = "Testing out breadcrumb"
+        SentrySDK.addBreadcrumb(crumb)
+        
         userStore = UserStore()
         urlStore = URLStore()
 //        urlStore.apiBase = APIBase.dev
@@ -46,6 +55,7 @@ class HomeVC: DefaultViewController {
         setup_vwVCHeaderOrangeTitle()
         setup_stckVwHome()
         setup_vwEtymology()
+        setup_SentryTestError()
         
 //        setup_btnToRegister()
 //        setup_btnToLogin()
@@ -57,6 +67,21 @@ class HomeVC: DefaultViewController {
 //            let names = UIFont.fontNames(forFamilyName: family)
 //            print("Family: \(family) Font names: \(names)")
 //        }
+    }
+    
+    func setup_SentryTestError(){
+        print("**** craeted setup_SentryTestError")
+        let button = UIButton(type: .roundedRect)
+        button.frame = CGRect(x: 20, y: 50, width: 100, height: 30)
+        button.setTitle("Break the world", for: [])
+        button.addTarget(self, action: #selector(self.breakTheWorld(_:)), for: .touchUpInside)
+        stckVwHome.insertArrangedSubview(button, at: 1)
+    }
+    
+    @objc func breakTheWorld(_ sender: AnyObject) {
+        print("- inside breakThWorld")
+        fatalError("Break the world")
+
     }
 
     func setup_vwVCHeaderOrange(){

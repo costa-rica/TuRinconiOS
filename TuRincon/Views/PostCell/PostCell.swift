@@ -377,9 +377,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
             stckVwPostCell.addArrangedSubview(commentsVw!)
             // verified necessary constraint
             commentsVw!.heightAnchor.constraint(equalToConstant: commentsVw!.stckVwComments!.frame.size.height).isActive=true
-
         }
-        
     }
     
     func setup_line03(){

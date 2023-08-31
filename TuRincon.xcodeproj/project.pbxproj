@@ -12,6 +12,7 @@
 		015621BE2A7650CE000DCB5B /* RinconsDirectoriesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015621BD2A7650CE000DCB5B /* RinconsDirectoriesVC.swift */; };
 		017140CD2A821B7E00641F26 /* RinconOptionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017140CC2A821B7E00641F26 /* RinconOptionsVC.swift */; };
 		01D73A8E2A877AD800993564 /* ManageUserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D73A8D2A877AD800993564 /* ManageUserVC.swift */; };
+		01D73BCE2AA0A68500993564 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 01D73BCD2AA0A68500993564 /* Sentry */; };
 		01E7EC7B2A6524A4002EC4BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7A2A6524A4002EC4BF /* AppDelegate.swift */; };
 		01E7EC7D2A6524A4002EC4BF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7C2A6524A4002EC4BF /* SceneDelegate.swift */; };
 		01E7EC7F2A6524A4002EC4BF /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E7EC7E2A6524A4002EC4BF /* HomeVC.swift */; };
@@ -112,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01D73BCE2AA0A68500993564 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +277,9 @@
 			dependencies = (
 			);
 			name = TuRincon;
+			packageProductDependencies = (
+				01D73BCD2AA0A68500993564 /* Sentry */,
+			);
 			productName = TuRincon;
 			productReference = 01E7EC772A6524A4002EC4BF /* TuRincon.app */;
 			productType = "com.apple.product-type.application";
@@ -347,6 +352,9 @@
 				Base,
 			);
 			mainGroup = 01E7EC6E2A6524A4002EC4BF;
+			packageReferences = (
+				01D73BCC2AA0A68400993564 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+			);
 			productRefGroup = 01E7EC782A6524A4002EC4BF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -768,6 +776,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		01D73BCC2AA0A68400993564 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		01D73BCD2AA0A68500993564 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01D73BCC2AA0A68400993564 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 01E7EC6F2A6524A4002EC4BF /* Project object */;
 }
