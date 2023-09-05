@@ -33,19 +33,20 @@ class HomeVC: DefaultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        SentrySDK.capture(message: "- Nick custom message from inside HomeVC viewDidLoad() -")
+//        SentrySDK.capture(message: "- Nick custom message from inside HomeVC viewDidLoad() -")
         
-        let crumb = Breadcrumb()
-        crumb.level = SentryLevel.info
-        crumb.category = "test"
-        crumb.message = "Testing out breadcrumb"
-        SentrySDK.addBreadcrumb(crumb)
+//        let crumb = Breadcrumb()
+//        crumb.level = SentryLevel.info
+//        crumb.category = "test"
+//        crumb.message = "Testing out breadcrumb"
+//        SentrySDK.addBreadcrumb(crumb)
         
         userStore = UserStore()
         urlStore = URLStore()
 //        urlStore.apiBase = APIBase.dev
         
         userStore.urlStore = self.urlStore
+        urlStore.apiBase = APIBase.dev
         rinconStore = RinconStore()
         rinconStore.requestStore = RequestStore()
         rinconStore.requestStore.urlStore = self.urlStore
@@ -129,7 +130,6 @@ class HomeVC: DefaultViewController {
     }
     
     func setup_stckVwHome(){
-//        print("- setup_stckVwHome")
         scrllVwHome.translatesAutoresizingMaskIntoConstraints=false
         view.addSubview(scrllVwHome)
         scrllVwHome.accessibilityIdentifier="scrllVwHome"
@@ -137,13 +137,8 @@ class HomeVC: DefaultViewController {
         scrllVwHome.topAnchor.constraint(equalTo: vwVCHeaderOrangeTitle.bottomAnchor, constant: heightFromPct(percent: cardTopSpacing)).isActive=true
         scrllVwHome.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: cardInteriorPadding)).isActive=true
         scrllVwHome.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)).isActive=true
-//        scrllVwAdmin.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
         scrllVwHome.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: heightFromPct(percent: -10)).isActive=true
-        
-//        scrllVwAdmin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor).isActive=true
-        
         view.layoutIfNeeded()
-//        print("scrllVwHome width: \(scrllVwHome.frame.size)")
         
         stckVwHome.translatesAutoresizingMaskIntoConstraints=false
         scrllVwHome.addSubview(stckVwHome)
@@ -151,10 +146,7 @@ class HomeVC: DefaultViewController {
         stckVwHome.axis = .vertical
         stckVwHome.topAnchor.constraint(equalTo: scrllVwHome.topAnchor).isActive=true
         stckVwHome.widthAnchor.constraint(equalToConstant: scrllVwHome.frame.size.width).isActive=true
-//        stckVwHome.leadingAnchor.constraint(equalTo: scrllVwHome.leadingAnchor).isActive=true
-//        stckVwHome.trailingAnchor.constraint(equalTo: scrllVwHome.trailingAnchor).isActive=true
         stckVwHome.bottomAnchor.constraint(equalTo: scrllVwHome.bottomAnchor).isActive=true
-//        stckVwHome.backgroundColor = .black
         stckVwHome.spacing = 20
         setup_btnToRegister()
         setup_btnToLogin()
@@ -278,29 +270,36 @@ class HomeVC: DefaultViewController {
         lblApi.translatesAutoresizingMaskIntoConstraints=false
         stckVwApi.addArrangedSubview(lblApi)
         lblApi.sizeToFit()
-//        print("lblApi.frame.size: \(lblApi.frame.size)")
         stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
-
-        if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
-            urlStore.apiBase = APIBase.local
-
-        } else {
-            urlStore.apiBase = APIBase.dev
-            arryEnvironment.remove(at: 0)
-        }
-
-        //            indexDict = ["http://127.0.0.1:5001/":0,Environment.dev.baseString:1,"https://api.tu-rincon.com/":2]
-//        let segmentedControl = UISegmentedControl(items: arrayEnvRawValues)
+        
         let segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         
-        // Set initial selected segment
-//        segmentedControl.selectedSegmentIndex = arryEnvironment[urlStore.baseString] ?? 0
+        // This doesn't execute right away... needs to be async
+        DispatchQueue.global(qos: .background).async {
+            if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
+                DispatchQueue.main.async {
+   
+                    self.urlStore.apiBase = APIBase.local
+                    print("**** updated self.urlStore.apiBase to \(self.urlStore.apiBase!) <---")
+                    segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
+                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+                }
+                
+            } else {
+                DispatchQueue.main.async {
+                    self.urlStore.apiBase = APIBase.dev
+                    self.arryEnvironment.remove(at: 0)
+                    segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
+                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+                }
+            }
+        }
+        
+        // Set initial selected segment -- prior to the async above finishing
         segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
         stckVwApi.addArrangedSubview(segmentedControl)
-//        print("APIBase is set to: \(urlStore.apiBase.rawValue)")
         vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
-
 
     }
     
@@ -316,10 +315,8 @@ class HomeVC: DefaultViewController {
             sender.transform = .identity
         }, completion: nil)
         if sender === btnToRegister {
-//            print("btnToRegister")
             performSegue(withIdentifier: "goToRegisterVC", sender: self)
         } else if sender === btnToLogin {
-//            print("btnToLogin")
             performSegue(withIdentifier: "goToLoginVC", sender: self)
         }
     }

@@ -26,6 +26,7 @@ class VideoView: UIView{
         super.init(coder: aDecoder)
         setupTapGesture()
     }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         // Update the frame of the playerLayer to match the view's bounds
@@ -34,6 +35,9 @@ class VideoView: UIView{
     
 
     private func setupPlayer() {
+        
+//        SentrySDK.capture(message: "- Nick custom message from inside HomeVC viewDidLoad() -")
+        
         if let videoURL = post.rincon_dir_path?.appendingPathComponent(post.video_file_name!){
 
             player = AVPlayer(url: videoURL)

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Sentry
 
 class PostCell: UITableViewCell, PostCellDelegate {
     
@@ -103,6 +104,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
     }
     func configure(with post: Post) {
         self.post = post
+        
+        
 
         setup_stckVwPostCell()
         setup_lblDate()
@@ -240,6 +243,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_video(){
         if let unwrapped_video_filename =  self.post.video_file_name{
+            SentrySDK.capture(message: "- in PostCell setup_video() for post: \(post.post_id!); post video: \(unwrapped_video_filename)-")
             
             if rinconStore.rinconFileExists(rincon: self.rincon, file_name: unwrapped_video_filename){
                 setup_videoPlayer(videoFilename: unwrapped_video_filename)

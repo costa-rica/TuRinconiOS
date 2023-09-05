@@ -35,6 +35,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                // Example: Attach additional data to the event
 //                event.extra["customKey"] = "Custom Value"
                 
+                
+                let crumb = Breadcrumb()
+                crumb.level = SentryLevel.info
+                crumb.category = "default"
+                crumb.message = "From AppDelegate didFinishLaunchingWithOptions"
+                SentrySDK.addBreadcrumb(crumb)
+                
+                
                 return event // Send the modified event
             }
             

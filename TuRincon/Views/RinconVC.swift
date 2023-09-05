@@ -393,10 +393,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                 }
             }
         }
-        
         picker.dismiss(animated: true, completion: nil)
-        
-        print("- end picker ---")
     }
     
     @objc private func refreshData(_ sender: UIRefreshControl) {
