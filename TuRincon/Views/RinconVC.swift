@@ -29,6 +29,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var arryNewPostImageFilenames: [String]?
     var dictNewImages:[String:UIImage]?
     var btnRinconOptions: UIBarButtonItem?
+    var boolPostDialogueVisible=false
     var newPost:Post!
     /* new post critical path #2 */
     var newPostId = String() {// <-- get's set by @objc func btnSubmitPostTouchUpInside(_ sender: UIButton)
@@ -64,19 +65,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblRincon.refreshControl = refreshControl
     }
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        print("txtPost size: \(txtPost.frame.size)")
-//        print("btnAddPhotos.size.frame: \(btnAddPhotos.frame.size)")
-//        print("btnSubmitPost: \(btnSubmitPost.frame.size)")
-//    }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-//        print("-keyboardWillShow")
-//        if let unwp_array = self.arryNewPostImageFilenames{
-//            print("* --- arryNewPostImageFilenames ----*")
-//            print(unwp_array)
-//        }
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if self.view.frame.origin.y == 0 {
                 bottomConstraint.constant = -keyboardSize.height
@@ -118,6 +108,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         stckVwRincon.addArrangedSubview(tblRincon)
     }
     
+
+    
     func setup_btnRinconOptions() {
         btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
         navigationItem.rightBarButtonItem = btnRinconOptions
@@ -132,6 +124,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
                 // Call the postToRincon() function
                 self.postToRincon()
+                
             }))
         }
 
@@ -178,6 +171,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     }
     
     @objc func postToRincon() {
+        
         stckVwSubmitPostTxtAndBtn.translatesAutoresizingMaskIntoConstraints=false
         stckVwRincon.addArrangedSubview(stckVwSubmitPostTxtAndBtn)
         
@@ -225,13 +219,13 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         vwPostSpacer.backgroundColor = UIColor(named: "gray-400")
         vwPostSpacer.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 5)).isActive=true
         
-        btnHidePostPrompt.setTitle("Hide", for: .normal)
-        btnHidePostPrompt.translatesAutoresizingMaskIntoConstraints=false
         vwPostSpacer.addSubview(btnHidePostPrompt)
+        let tgrVwPostSpacer = UITapGestureRecognizer(target: self, action: #selector(hideStckVwSubmitPostTxtAndBtn))
+        let tgrTblRincon = UITapGestureRecognizer(target: self, action: #selector(hideStckVwSubmitPostTxtAndBtn))
+        vwPostSpacer.addGestureRecognizer(tgrVwPostSpacer)
+        tblRincon.addGestureRecognizer(tgrTblRincon)
         stckVwRincon.addArrangedSubview(vwPostSpacer)
-        btnHidePostPrompt.leadingAnchor.constraint(equalTo: vwPostSpacer.leadingAnchor, constant: widthFromPct(percent: 25)).isActive=true
-        btnHidePostPrompt.topAnchor.constraint(equalTo: vwPostSpacer.topAnchor, constant: heightFromPct(percent: 1)).isActive=true
-        btnHidePostPrompt.addTarget(self, action: #selector(hideStckVwSubmitPostTxtAndBtn), for: .touchUpInside)
+        boolPostDialogueVisible=true
     }
     @objc func btnSubmitPostTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
@@ -244,7 +238,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-        
+
         /* Send Post Critical Path: phase 2 */
         rinconStore.claimAPostId(rincon_id: rincon.id) { resultResponseClaimAPostId in
             switch resultResponseClaimAPostId{
@@ -260,7 +254,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             }
         }
     }
-    
+
     @objc private func hideStckVwSubmitPostTxtAndBtn(){
         stckVwSubmitPostTxtAndBtn.removeFromSuperview()
         txtPost.removeFromSuperview()
@@ -269,6 +263,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         btnAddPhotos.removeFromSuperview()
         vwPostSpacer.removeFromSuperview()
         btnHidePostPrompt.removeFromSuperview()
+        boolPostDialogueVisible=false
     }
     
     /* new post critical path #3 */
@@ -362,7 +357,17 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         }, completion: nil)
         self.arryNewPostImageFilenames = []
         self.arryNewPostImages = []
-        openPhotoGallery()
+//        openPhotoGallery()
+        
+        
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title:"Add Photos", style:.default,handler: { _ in
+            self.openPhotoGallery()
+        }))
+        actionSheet.addAction(UIAlertAction(title:"Add Video", style: .default,handler: { _ in
+            print("Get a video")
+        }))
+        present(actionSheet, animated: true, completion: nil)
     }
     func openPhotoGallery() {
         var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
@@ -538,6 +543,9 @@ extension RinconVC: UITableViewDelegate {
             }
         }
         print("---- End Cell Tap -----")
+        if boolPostDialogueVisible == true{
+            hideStckVwSubmitPostTxtAndBtn()
+        }
     }
 }
 
