@@ -28,7 +28,8 @@ class HomeVC: DefaultViewController {
     private var stckVwHome=UIStackView()
     let btnToLogin = UIButton()
     let btnToRegister = UIButton()
-    var arryEnvironment=APIBase.allCases
+    var arryEnvironment:[APIBase]=[APIBase.dev, APIBase.prod]
+    var segmentedControl:UISegmentedControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -272,33 +273,41 @@ class HomeVC: DefaultViewController {
         lblApi.sizeToFit()
         stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
         
-        let segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
-        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+        self.segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
+        
         
         // This doesn't execute right away... needs to be async
         DispatchQueue.global(qos: .background).async {
             if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
                 DispatchQueue.main.async {
-   
+                    self.segmentedControl.removeFromSuperview()
+                    
+                    self.arryEnvironment=APIBase.allCases
+                    self.segmentedControl = UISegmentedControl(items: self.arryEnvironment.map { $0.rawValue })
                     self.urlStore.apiBase = APIBase.local
                     print("**** updated self.urlStore.apiBase to \(self.urlStore.apiBase!) <---")
-                    segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
+                    self.segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
                     self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+                    stckVwApi.addArrangedSubview(self.segmentedControl)
+                    self.segmentedControl.addTarget(self, action: #selector(self.segmentedControlValueChanged), for: .valueChanged)
                 }
                 
-            } else {
-                DispatchQueue.main.async {
-                    self.urlStore.apiBase = APIBase.dev
-                    self.arryEnvironment.remove(at: 0)
-                    segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
-                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
-                }
             }
+//            else {
+//                DispatchQueue.main.async {
+//                    self.urlStore.apiBase = APIBase.dev
+//                    self.arryEnvironment.remove(at: 0)
+//                    self.segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
+//                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+//                }
+//            }
         }
         
+        self.segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+        
         // Set initial selected segment -- prior to the async above finishing
-        segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
-        stckVwApi.addArrangedSubview(segmentedControl)
+        self.segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
+        stckVwApi.addArrangedSubview(self.segmentedControl)
         vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
 
     }
