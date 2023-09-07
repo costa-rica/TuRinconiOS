@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         SentrySDK.start { options in
             options.dsn = "https://81d3fc0b331ce6b4c503b2c56175d0e7@o4505798987284480.ingest.sentry.io/4505798991347712"
-            options.debug = true // Enabled debug when first installing is always helpful
+            //options.debug = true // Enabled debug when first installing is always helpful
 
             // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
             // We recommend adjusting this value in production.
@@ -36,11 +36,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                event.extra["customKey"] = "Custom Value"
                 
                 
-                let crumb = Breadcrumb()
-                crumb.level = SentryLevel.info
-                crumb.category = "default"
-                crumb.message = "From AppDelegate didFinishLaunchingWithOptions"
-                SentrySDK.addBreadcrumb(crumb)
+//                let crumb = Breadcrumb()
+//                crumb.level = SentryLevel.info
+//                crumb.category = "default"
+//                crumb.message = "From AppDelegate didFinishLaunchingWithOptions"
+//                SentrySDK.addBreadcrumb(crumb)
                 
                 
                 return event // Send the modified event

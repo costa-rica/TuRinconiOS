@@ -310,7 +310,6 @@ class RinconStore {
         let task = requestStore.session.dataTask(with: request) { data, response, error in
             do {
                 if let unwrapped_data = data  {
-                    
                     if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
                         OperationQueue.main.addOperation {
                             completion(.success(jsonResult))
@@ -559,6 +558,27 @@ class RinconStore {
         task.resume()
     }
     
-    
+    func sendVideo(videoName:String,videoURL:URL, completion:@escaping([String:String])->Void){
+     
+        let request_data = requestStore.createRequestSendVideoAndToken(videoName: videoName, videoURL: videoURL)
+        let task = requestStore.session.uploadTask(with:request_data.0,from: request_data.1){ data, response, error in
+            do {
+                if let unwrapped_data = data  {
+                    
+                    if let jsonResult = try JSONSerialization.jsonObject(with: unwrapped_data, options: .mutableContainers) as? [String: String] {
+                        OperationQueue.main.addOperation {
+                            completion(jsonResult)
+                        }
+                        print("getLastPostId resulst: \(jsonResult)")
+                    }
+                }
+                
+            } catch {
+                print("* (sendImageTwo) Error receiving response: most likely Post did not decode well")
+            }
+            
+        }
+        task.resume()
+    }
 }
 

@@ -7,8 +7,11 @@
 
 import UIKit
 import PhotosUI
+//import MobileCoreServices
+import UniformTypeIdentifiers
+import Sentry
 
-class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate {
+class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var urlStore:URLStore!
     var userStore: UserStore!
     var rinconStore: RinconStore!
@@ -27,6 +30,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
     var btnHidePostPrompt = UIButton()
     var arryNewPostImages = [UIImage]()
     var arryNewPostImageFilenames: [String]?
+    var newPostVideoURL:URL?
+    var newPostVideoName:String?
     var dictNewImages:[String:UIImage]?
     var btnRinconOptions: UIBarButtonItem?
     var boolPostDialogueVisible=false
@@ -64,6 +69,13 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         tblRincon.refreshControl = refreshControl
+        print("--- posts ---")
+//            print(rinconVC.posts[0].video_file_name!)
+        print(posts[0].post_id!)
+        print(posts[0].post_text_ios!)
+//        if  posts[0].video_file_name! != nil {
+//            print(posts[0].video_file_name!)
+//        }
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -108,8 +120,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         stckVwRincon.addArrangedSubview(tblRincon)
     }
     
-
-    
     func setup_btnRinconOptions() {
         btnRinconOptions = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onRinconOptions))
         navigationItem.rightBarButtonItem = btnRinconOptions
@@ -124,10 +134,8 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             actionSheet.addAction(UIAlertAction(title: "Post to Rincon", style: .default, handler: { action in
                 // Call the postToRincon() function
                 self.postToRincon()
-                
             }))
         }
-
 
         actionSheet.addAction(UIAlertAction(title: "Invite a Friend", style: .default, handler: { action in
             // Create a new RinconOptionsVC
@@ -161,7 +169,6 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
 
             }))
         }
-
 
         // Add the "Cancel" action
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -293,15 +300,25 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             self.newPost.image_filenames_ios = self.arryNewPostImageFilenames?.joined(separator: ",")
             
         }
+
         
         
         rinconStore.sendPostToApi(post: newPost) { jsonResponse in
             if jsonResponse["post_received_status"] == "success"{
-                self.posts.append(self.newPost)
+                
                 
                 if self.arryNewPostImageFilenames != nil  {
+                    print("* if self.arryNewPostImageFilenames")
                     self.sendNewPostImages(post_id: jsonResponse["new_post_id"]!)
                 }
+                else if self.newPostVideoURL != nil {
+                    print("***** else if self.newPostVideoURL")
+                    self.newPostVideoName = "post_"+self.newPost.post_id+"_video.MOV"
+                    self.sendNewPostVideo(post_id: jsonResponse["new_post_id"]!)
+                    self.newPost.video_file_name = self.newPostVideoName!
+                }
+                
+                self.posts.append(self.newPost)
                 
                 self.rinconStore.requestRinconPosts(rincon: self.rincon) { responseForRinconPostsArray in
                     switch responseForRinconPostsArray{
@@ -346,6 +363,28 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         arryNewPostImageFilenames = []
     }
     
+    private func sendNewPostVideo(post_id:String){
+        if let unwp_videoURL = self.newPostVideoURL{
+//            let videoName = self.newPostVideoName!
+            self.rinconStore.sendVideo(videoName: self.newPostVideoName!, videoURL: unwp_videoURL) { jsonDict in
+                if jsonDict["video_received_status"] == "Successfully send images and executed /receive_video endpoint" {
+//                    for (name, url) in unwp_videoURL {
+                    let fileManager = FileManager.default
+                    let rinconFolderPath = self.rinconStore.rinconFolderUrl(rincon: self.rincon)
+                    let destinationURL = rinconFolderPath.appendingPathComponent(self.newPostVideoName!)
+//                    try fileManager.moveItem(at: unwp_videoURL, to: destinationURL)
+                    do {
+                        try fileManager.copyItem(at: unwp_videoURL, to: destinationURL)
+                    } catch {
+                        print("Failed to copy video file")
+                    }
+                        
+                    
+                }
+            }
+        }
+    }
+    
     @objc func btnAddPhotosTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -355,17 +394,24 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
             sender.transform = .identity
         }, completion: nil)
-        self.arryNewPostImageFilenames = []
-        self.arryNewPostImages = []
+
 //        openPhotoGallery()
         
         
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title:"Add Photos", style:.default,handler: { _ in
+            self.arryNewPostImageFilenames = []
+            self.arryNewPostImages = []
             self.openPhotoGallery()
         }))
         actionSheet.addAction(UIAlertAction(title:"Add Video", style: .default,handler: { _ in
             print("Get a video")
+            let imagePicker = UIImagePickerController()
+            imagePicker.sourceType = .photoLibrary
+//            imagePicker.mediaTypes = [UTTypeMovie as String]
+            imagePicker.mediaTypes = [UTType.movie.identifier]
+            imagePicker.delegate = self
+            self.present(imagePicker, animated: true, completion: nil)
         }))
         present(actionSheet, animated: true, completion: nil)
     }
@@ -399,6 +445,32 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
             }
         }
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    /* Get videos */
+    
+    // MARK: - UIImagePickerControllerDelegate
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        dismiss(animated: true, completion: nil)
+
+        if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
+//            uploadVideoToAPI(videoURL: videoURL)
+            print("- selected a video: \(videoURL)")
+            SentrySDK.capture(message: "- selected a video: \(videoURL)")
+//            newPostVideoName = post.post_id+"_video.MOV"
+            newPostVideoURL = videoURL
+//            let crumb = Breadcrumb()
+//            crumb.level = SentryLevel.info
+//            crumb.category = "test"
+//            crumb.message = "Testing out breadcrumb - video: does Breadcrumb() object provide data that would otherwise be redacted?"
+//            SentrySDK.addBreadcrumb(crumb)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
     
     @objc private func refreshData(_ sender: UIRefreshControl) {
@@ -485,6 +557,10 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
                         for img_name in unwp_images_array{
                             self.imageStore.deleteImage(forKey: img_name, rincon:self.rincon)
                         }
+                    }
+                    
+                    if let unwp_video = current_post.video_file_name{
+                        self.imageStore.deleteImage(forKey: unwp_video, rincon:self.rincon)
                     }
                     
                     self.posts.remove(at: indexPath.row)

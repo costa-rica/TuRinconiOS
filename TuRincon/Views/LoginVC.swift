@@ -86,6 +86,7 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         setup_btnLogin()
         setup_stckVwRememberMe()
         setup_stckVwAdmin()
+        
         setup_lblMachineName()
         
         userStore.checkUserJson(completion: { result in
@@ -354,9 +355,18 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
     
     
     func setup_stckVwAdmin(){
-
+        btnAdmin=UIButton()
+        btnAdmin!.setTitle("API/Device Info", for: .normal)
+        btnAdmin!.addTarget(self, action: #selector(touchDownAdmin(_:)), for: .touchDown)
+        btnAdmin!.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+        btnAdmin!.layer.borderColor = UIColor.gray.cgColor
+        btnAdmin!.layer.borderWidth = 2
+//        btnAdmin!.layer.backgroundColor=UIColor.gray.cgColor
+        btnAdmin!.layer.cornerRadius = 5
+        
+        stckVwAdmin.addArrangedSubview(btnAdmin!)
         stckVwAdmin.translatesAutoresizingMaskIntoConstraints = false
-        stckVwAdmin.spacing = 5
+        stckVwAdmin.spacing = 10
         stckVwAdmin.axis = .vertical
         view.addSubview(stckVwAdmin)
 

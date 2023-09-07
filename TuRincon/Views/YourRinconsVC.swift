@@ -175,6 +175,7 @@ class YourRinconsVC: DefaultViewController, YourRinconsVCDelegate{
             rinconVC.rincon = self.segue_rincon
             rinconVC.userStore = self.userStore
             rinconVC.urlStore = self.urlStore
+
         }
         else if (segue.identifier == "goToSearchRinconsVC"){
             let searchRinconsVC = segue.destination as! SearchRinconsVC

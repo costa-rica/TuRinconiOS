@@ -229,10 +229,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
                 }
             } // for image_file_string in
             let imgArraySorted = resizeImagesInDictionary(imgDict!,postId: post.post_id)
-//            print("- sorted images (PostCell) -")
-//            print(imgArraySorted)
             stackViewImages = generateStackViewTwo(from: imgArraySorted)
-
 
             stckVwPostCell.addArrangedSubview(stackViewImages!)
             stackViewImages?.accessibilityIdentifier = "stackViewImages"
@@ -243,6 +240,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_video(){
         if let unwrapped_video_filename =  self.post.video_file_name{
+            print("- if let unwrapped_video_filename")
 //            SentrySDK.capture(message: "- in PostCell setup_video() for post: \(post.post_id!); post video: \(unwrapped_video_filename)-")
             
             if rinconStore.rinconFileExists(rincon: self.rincon, file_name: unwrapped_video_filename){

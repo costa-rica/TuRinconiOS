@@ -48,6 +48,7 @@ enum EndPoint: String {
     case check_invite_json="check_invite_json"
     case delete_rincon = "delete_rincon"
     case delete_user = "delete_user"
+    case receive_video = "receive_video"
 }
 
 class URLStore {
@@ -179,7 +180,6 @@ class RequestStore {
         
     }
     
-    
     func createRequestSendTokenAndPost(post:Post) -> URLRequest{
         print("- createRequestSendPost")
         var jsonData = Data()
@@ -203,7 +203,6 @@ class RequestStore {
         print("request: \(request)")
         return request
     }
-    
     
     /* send image 3: stackoverflow version */
     func createRequestSendImageAndTokenThree(dictNewImages:[String:UIImage]) -> (URLRequest, Data){
@@ -334,6 +333,31 @@ class RequestStore {
 //    func createRequestWithBody(endpoint:EndPoint,bodyDict:[String:String]->URLRequest){
 //
 //    }
-    
+    func createRequestSendVideoAndToken(videoName:String, videoURL:URL)->(URLRequest,Data){
+        let url = urlStore.callEndpoint(endPoint: .receive_video)
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue( self.token, forHTTPHeaderField: "x-access-token")
+        
+        let boundary = UUID().uuidString
+        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        var bodyData = Data()
+        bodyData.append("--\(boundary)\r\n".data(using: .utf8)!)
+        bodyData.append("Content-Disposition: form-data; name=\"video\"; filename=\"\(videoName)\"\r\n".data(using: .utf8)!)
+        bodyData.append("Content-Type: video/mp4\r\n\r\n".data(using: .utf8)!)
+
+        do {
+            let videoData = try Data(contentsOf: videoURL)
+            bodyData.append(videoData)
+        } catch {
+            print("failed to convert video url to data")
+        }
+
+        bodyData.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        urlRequest.httpBody = bodyData
+        return (urlRequest, bodyData)
+    }
 }
 
