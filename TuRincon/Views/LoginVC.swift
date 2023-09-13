@@ -209,7 +209,8 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         
         txtEmail.borderStyle = .roundedRect
         txtPassword.borderStyle = .roundedRect
-        if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
+        if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local" || ProcessInfo.processInfo.hostName == "localhost"
+        {
             txtEmail.text="nrodrig1@gmail.com"
             txtPassword.text = "test"
         }

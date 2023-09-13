@@ -37,14 +37,15 @@ class VideoView: UIView{
     private func setupPlayer() {
         
 //        SentrySDK.capture(message: "- Nick custom message from inside HomeVC viewDidLoad() -")
-        
-        if let videoURL = post.rincon_dir_path?.appendingPathComponent(post.video_file_name!){
-
-            player = AVPlayer(url: videoURL)
-            playerLayer = AVPlayerLayer(player: player)
-            playerLayer!.frame = bounds
-            self.layer.addSublayer(playerLayer!)
-            playerLayer!.frame.size.height = 200
+        if let unwp_video_file_name = post.video_file_name{
+            if let videoURL = post.rincon_dir_path?.appendingPathComponent(unwp_video_file_name){
+                
+                player = AVPlayer(url: videoURL)
+                playerLayer = AVPlayerLayer(player: player)
+                playerLayer!.frame = bounds
+                self.layer.addSublayer(playerLayer!)
+                playerLayer!.frame.size.height = 200
+            }
         }
     }
     

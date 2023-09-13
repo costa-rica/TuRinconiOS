@@ -105,7 +105,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     func configure(with post: Post) {
         self.post = post
         
-        
+        self.contentView.accessibilityIdentifier = "PCContVw_post\(post.post_id!)"
 
         setup_stckVwPostCell()
         setup_lblDate()
