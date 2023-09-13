@@ -209,6 +209,10 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         
         txtEmail.borderStyle = .roundedRect
         txtPassword.borderStyle = .roundedRect
+        if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
+            txtEmail.text="nrodrig1@gmail.com"
+            txtPassword.text = "test"
+        }
         
         view.addSubview(stckVwLogin)
 

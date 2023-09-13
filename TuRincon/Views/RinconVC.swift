@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 //import MobileCoreServices
 import UniformTypeIdentifiers
-import Sentry
+
 
 class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var urlStore:URLStore!
@@ -186,9 +186,9 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         stckVwSubmitPostTxtAndBtn.addArrangedSubview(txtPost)
         txtPost.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 75)).isActive=true
         txtPost.heightAnchor.constraint(equalToConstant: heightFromPct(percent: 15)).isActive=true
-        txtPost.backgroundColor = UIColor(named: "gray-400")
+//        txtPost.backgroundColor = UIColor(named: "gray-400")
         txtPost.layer.cornerRadius = 10
-        txtPost.layer.borderWidth = 1
+        txtPost.layer.borderWidth = 3
         txtPost.layer.borderColor = CGColor(gray: 0.5, alpha: 1.0)
         txtPost.font = UIFont(name: "Rockwell_tu", size: 13)
         
@@ -458,14 +458,7 @@ class RinconVC: DefaultViewController, RinconVCDelegate, PHPickerViewControllerD
         if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
 //            uploadVideoToAPI(videoURL: videoURL)
             print("- selected a video: \(videoURL)")
-            SentrySDK.capture(message: "- selected a video: \(videoURL)")
-//            newPostVideoName = post.post_id+"_video.MOV"
             newPostVideoURL = videoURL
-//            let crumb = Breadcrumb()
-//            crumb.level = SentryLevel.info
-//            crumb.category = "test"
-//            crumb.message = "Testing out breadcrumb - video: does Breadcrumb() object provide data that would otherwise be redacted?"
-//            SentrySDK.addBreadcrumb(crumb)
         }
     }
 
