@@ -99,14 +99,17 @@ class CommentsView:UIView {
         super.layoutSubviews()
         /* This function runs after all the ui objects have been set (i.e you can get sizes here */
     }
+    
+    override var intrinsicContentSize: CGSize {
+
+        return CGSize(width: stckVwComments!.frame.size.width, height: stckVwComments!.frame.size.height) // This sets the preferred height to 300
+    }
+    
     func setup_view(){
-        //        print("- CommentsView setup_view")
-        
         stckVwComments =  UIStackView()
         stckVwComments!.translatesAutoresizingMaskIntoConstraints = false
         stckVwComments!.axis = .vertical
         self.addSubview(stckVwComments!)
-        //        stckVwPostCell.addArrangedSubview(stckVwComments!)
         stckVwComments!.accessibilityIdentifier = "stckVwComments"
         dictCommentsDate = [String:UILabel]()
         dictCommentsUsername = [String:UILabel]()
@@ -115,11 +118,8 @@ class CommentsView:UIView {
         dictCommentsDeleteBtn = [String:DeleteCommentButton]()
         
         if let unwrapped_comments = post.comments {
-            //            stckVwCommentsHeight = 0.0
             stckVwComments?.spacing = heightFromPct(percent: 0.5)
             for comment_element in unwrapped_comments{
-                //                if let commentId = comment_element["comment_id"]{
-                //                if let commentId = comment_element.comment_id{
                 dictCommentsDate!["\(post.post_id!), \(comment_element.comment_id!)"] = UILabel()
                 dictCommentsUsername!["\(post.post_id!), \(comment_element.comment_id!)"] = UILabel()
                 dictCommentsText!["\(post.post_id!), \(comment_element.comment_id!)"] = UILabel()
@@ -190,10 +190,9 @@ class CommentsView:UIView {
                             unwp_btnDelete.widthAnchor.constraint(equalToConstant: widthFromPct(percent: 25) ).isActive=true
                             
                             unwp_btnDelete.comment_id = comment_element.comment_id
-//                            unwp_btnDelete.addTarget(self, action: #selector(deleteComment), for: .touchUpInside)
                             unwp_btnDelete.addTarget(self, action: #selector(deleteCommentTouchDown(_:)), for: .touchUpInside)
                             unwp_btnDelete.addTarget(self, action: #selector(deleteCommentTouchUpInside(_:)), for: .touchUpInside)
-                            //                                unwp_btnDelete.postIndexPath = indexPath
+
                         }
                     } else {
                         unwp_lblText.bottomAnchor.constraint(equalTo: unwp_vw.bottomAnchor, constant: heightFromPct(percent: -2)).isActive=true
@@ -211,10 +210,7 @@ class CommentsView:UIView {
         
     }
     
-//    @objc func deleteComment(_ sender: DeleteCommentButton) {
-//        rinconVCDelegate.deleteCommentAreYouSure(sender:sender, indexPath:indexPath)
-//    }
-//
+
     @objc func deleteCommentTouchDown(_ sender: DeleteCommentButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -236,5 +232,5 @@ class CommentsView:UIView {
 
 class DeleteCommentButton: UIButton {
     var comment_id: String = ""
-    //    var postIndexPath: IndexPath = IndexPath()
+
 }

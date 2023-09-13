@@ -14,7 +14,9 @@ class VideoView: UIView{
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
     var post: Post!
-    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: 300) // This sets the preferred height to 300
+    }
     init(frame: CGRect, post:Post) {
         super.init(frame: frame)
         self.post = post
