@@ -127,7 +127,7 @@ class RinconStore {
             let result = self.processImageRequest(data: data, error: error)
             OperationQueue.main.addOperation {
                 completion(result)
-                print("--> Successfully downloaded image: \(image_file_name)")
+//                print("--> Successfully downloaded image: \(image_file_name)")
             }
             if let unwrapped_error = error{
                 print("Error photo request: \(unwrapped_error)")

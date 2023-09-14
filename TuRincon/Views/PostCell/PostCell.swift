@@ -21,43 +21,30 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     let screenWidth = UIScreen.main.bounds.width
     var stckVwPostCell = UIStackView()
+    
     var lblDate = UILabel()
-    let lblDateFontSize = 15.0
     var lblUsername = UILabel()
-    let lblUsernameFontSize = 13.0
     var lblPostText:UILabel?
     
-    var imgViewDict: [String:UIImageView]?
-    var imgDict: [String:(UIImage, Bool)]?
+    var imgViewDict:[String:UIImageView]?
+    var imgDict:[String:(image:UIImage,downloaded:Bool)]?
     var spinnerViewDict:[String: UIActivityIndicatorView]?
-    var stackViewImages: UIStackView?
+    var stackViewImages:UIStackView?
     
-    var videoView: VideoView?
+    var videoView:VideoView?
     
-    var lineImageImageView01: UIImageView!
-    
+    var lineImageImageView01:UIImageView!
     let configSfSymbolSizeUserInteraction = UIImage.SymbolConfiguration(pointSize: 17, weight: .bold, scale: .large) // create a large configuration
     var stckVwUserInteraction=UIStackView()
-//    var stckVwUserInteractionHeight:CGFloat!
     var btnDeletePost:UIButton?
     var likeView:LikeView!
     var commentView:CommentView!
     var lineImageImageView02: UIImageView!
-    
-    
-//    //comments stack
-    var commentsVw: CommentsView?
-    
-    var btnPostDiagnostics: UIButton?
-    var btnPostDiagnosticsSize: CGSize?
-    
     var lineImageImageView03: UIImageView!
-    
-//    var stckVwNewCommentSuper: UIStackView!
     var stckVwNewComment: UIStackView!
-//    var txtNewComment: UITextField?
     var txtNewComment: UITextView?
     var btnTxtNewComment: UIButton?
+    var commentsVw:CommentsView?
 
     
     
@@ -67,12 +54,26 @@ class PostCell: UITableViewCell, PostCellDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+//    override func layoutSubviews() {
+//        print("- layoutSubviews() post: \(post.post_id!)")
+//        print("self.contentView.size: \(self.contentView.frame.size)")
+//        print("stckVwPostCell.size: \(stckVwPostCell.frame.size)")
+//        print("lblDate.size: \(lblDate.frame.size)")
+//        print("lblUsername.size: \(lblUsername.frame.size)")
+//        print("lblPostText.size: \(lblPostText?.frame.size)")
+//        print("commentsVw.size: \(commentsVw?.frame.size)")
+//        print("------------- End post cell \(post.post_id!) ---")
+//    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.stckVwPostCell.removeFromSuperview()
-        self.lblDate.removeFromSuperview()
-        self.lblUsername.removeFromSuperview()
-        self.lblPostText?.removeFromSuperview()
+        stckVwPostCell.removeFromSuperview()
+        
+        lblDate.removeFromSuperview()
+        lblUsername.removeFromSuperview()
+        lblPostText?.removeFromSuperview()
+        
         if let unwrapped_dict = imgViewDict{
             for uiImgVw in unwrapped_dict{
                 uiImgVw.value.removeFromSuperview()
@@ -86,27 +87,24 @@ class PostCell: UITableViewCell, PostCellDelegate {
         if let unwrappaed_stackViewImages = stackViewImages{
             unwrappaed_stackViewImages.removeFromSuperview()
         }
-        self.videoView?.removeFromSuperview()
-        lineImageImageView01.removeFromSuperview()
+        stackViewImages?.removeFromSuperview()
+        
+        videoView?.removeFromSuperview()
         stckVwUserInteraction.removeFromSuperview()
         btnDeletePost?.removeFromSuperview()
-        
         likeView.removeFromSuperview()
-        
         commentView.removeFromSuperview()
-        lineImageImageView02.removeFromSuperview()
-
-        commentsVw?.removeFromSuperview()
-        
-        lineImageImageView03?.removeFromSuperview()
+        stckVwNewComment.removeFromSuperview()
         txtNewComment?.removeFromSuperview()
-        
+        btnTxtNewComment?.removeFromSuperview()
+        commentsVw?.removeFromSuperview()
     }
+    
     func configure(with post: Post) {
         self.post = post
-        
+//        print("------------ Start post cell \(post.post_id!) ---")
         self.contentView.accessibilityIdentifier = "PCContVw_post\(post.post_id!)"
-
+//        self.contentView.backgroundColor = .red
         setup_stckVwPostCell()
         setup_lblDate()
         setup_lblUsername()
@@ -118,26 +116,18 @@ class PostCell: UITableViewCell, PostCellDelegate {
         setup_line02()
         setup_stckVwNewComment()
         setup_line03()
-        setup_commentsView()
-
-//        if post.image_files_array != nil{
-//            print("post.image names: \(post.image_files_array! )")
-//        } else {print("post.image names: no post.image_files_array ")}
-//        
-//        print("post.image names: \(post.image_filenames_ios ?? "no image_filenames_ios")")
         
-
+        setup_commentsView()
     }
     
     func setup_stckVwPostCell(){
-        stckVwPostCell.translatesAutoresizingMaskIntoConstraints = false
         stckVwPostCell.axis = .vertical
-        contentView.addSubview(stckVwPostCell)
-        stckVwPostCell.accessibilityIdentifier = "stckVwPostCell"
-        stckVwPostCell.topAnchor.constraint(equalTo: contentView.topAnchor).isActive=true
-        stckVwPostCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive=true
-        stckVwPostCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive=true
-        stckVwPostCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive=true
+        stckVwPostCell.translatesAutoresizingMaskIntoConstraints=false
+        self.contentView.addSubview(stckVwPostCell)
+        stckVwPostCell.topAnchor.constraint(equalTo: self.contentView.topAnchor).isActive=true
+        stckVwPostCell.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive=true
+        stckVwPostCell.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive=true
+        stckVwPostCell.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive=true
     }
     
     func setup_lblDate(){
@@ -148,18 +138,14 @@ class PostCell: UITableViewCell, PostCellDelegate {
         lblDate.translatesAutoresizingMaskIntoConstraints = false
         stckVwPostCell.addArrangedSubview(lblDate)
         lblDate.accessibilityIdentifier = "lblDate"
-        lblDate.sizeToFit()
-        lblDate.font = lblDate.font.withSize(lblDateFontSize)
+        lblDate.font = lblDate.font.withSize(13)
     }
     
     func setup_lblUsername(){
         lblUsername.text = post.username
-        lblUsername.translatesAutoresizingMaskIntoConstraints = false
-        lblUsername.font = lblUsername.font.withSize(12.0)
+        lblUsername.font = lblUsername.font.withSize(15)
+        lblUsername.translatesAutoresizingMaskIntoConstraints=false
         stckVwPostCell.addArrangedSubview(lblUsername)
-        lblUsername.accessibilityIdentifier = "lblUsername"
-        lblUsername.sizeToFit()
-        lblUsername.font = lblUsername.font.withSize(lblUsernameFontSize)
     }
     
     func setup_lblPostText(){
@@ -169,8 +155,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
             lblPostText!.text = unwrapped_postText
             lblPostText!.numberOfLines = 0
             let _ = sizeLabel(lbl: lblPostText!)// <-- This correctly sizes lblPostText
-//            post.cell_height = post.cell_height + lblPostText!.frame.size.height
-            
             stckVwPostCell.addArrangedSubview(lblPostText!)
             lblPostText!.accessibilityIdentifier = "lblPostText"
         }
@@ -178,47 +162,31 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_images(){
         if let unwrapped_images = post.image_files_array{
-//            print("Post: \(post.post_id!) has images: \(unwrapped_images)")
             imgViewDict = [String:UIImageView]()
             imgDict = [String:(image:UIImage,downloaded:Bool)]()
             spinnerViewDict = [String: UIActivityIndicatorView]()
             
             for image_file_string in unwrapped_images{
                 if let unwrapped_uiimage = imageStore.image(forKey: image_file_string, rincon:rincon){
-//                    print("-succussfully unwrapped got image from image store")
-                    
                     imgDict![image_file_string] = (unwrapped_uiimage, true)
                     
                 } else {
-//                    print("* Filed to unwrap image from imageStore *")
                     /* setup a defualt photo*/
                     imgDict![image_file_string] = (image:UIImage(named: "blackScreen")!, downloaded:false)
-//                    let spinner = UIActivityIndicatorView(style: .large)
-//                    spinner.translatesAutoresizingMaskIntoConstraints = false
-//                    spinner.accessibilityIdentifier = "spinner-\(image_file_string)"
-//                    spinner.color = UIColor.white.withAlphaComponent(1.0) // Make spinner brighter
-//                    spinner.transform = CGAffineTransform(scaleX: 2, y: 2)
-//                    spinner.startAnimating()
-                    
-                    // add spinner to image
-                    
-//                    self.spinnerViewDict![image_file_string] = spinner
                     
                     /* try to replace default photo with downloaded photo */
                     self.rinconStore.requestPostPhoto(rincon_id: post.rincon_id, image_file_name: image_file_string) { result in
-//                        if case let .success(image) = result {
+
                         switch result{
                         case let .success(image):
                             self.imageStore.setImage(image, forKey: image_file_string, rincon: self.rincon)
                             OperationQueue.main.addOperation  {
                                 self.imgDict![image_file_string] = (image,true)
-//                                self.rinconVCDelegate?.customReloadCell(indexPath: self.indexPath)
                                 // Inform the tableView about the changes to update cell's height
                                 guard let tblVwRinconVC = self.superview as? UITableView else { return }
                                 tblVwRinconVC.reloadRows(at: [self.indexPath], with: UITableView.RowAnimation.none)
                             }
-//                        }
-//                        if case let .failure(failure) = result { // failed photo in place of photo
+
                         case let .failure(error):
                             OperationQueue.main.addOperation  {
                                 self.imgDict![image_file_string] = (UIImage(named: "failedToDownload01")!, true)
@@ -240,8 +208,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
     
     func setup_video(){
         if let unwrapped_video_filename =  self.post.video_file_name{
-            print("- if let unwrapped_video_filename")
-//            SentrySDK.capture(message: "- in PostCell setup_video() for post: \(post.post_id!); post video: \(unwrapped_video_filename)-")
             
             if rinconStore.rinconFileExists(rincon: self.rincon, file_name: unwrapped_video_filename){
                 setup_videoPlayer(videoFilename: unwrapped_video_filename)
@@ -263,11 +229,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
                 let imgArraySorted = resizeImagesInDictionary(imgDict!,postId:post.post_id)
                 let stackViewImagesResult = generateStackView(with: imgArraySorted)
                 stackViewImages = stackViewImagesResult.0
-//                let stackViewImagesHeight = stackViewImagesResult.2
-//                print("*** stackViewImagesHeight: \(stackViewImagesHeight)")
                 stckVwPostCell.addArrangedSubview(stackViewImages!)
                 stackViewImages?.accessibilityIdentifier = "stackViewImages"
-                
                 
                 /* download video */
                 self.rinconStore.requestPostVideo(rincon_id: post.rincon_id, video_file_name: unwrapped_video_filename) { tempLocalURL in
@@ -287,10 +250,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
                         print("Failed to download video")
                     }
                 }
-                
             }
         }
-
     } // setup_video
     
     func setup_videoPlayer(videoFilename: String){
@@ -298,9 +259,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stckVwPostCell.addArrangedSubview(videoView!)
         videoView?.accessibilityIdentifier = "videoView"
         videoView!.translatesAutoresizingMaskIntoConstraints = false
-        videoView!.heightAnchor.constraint(equalToConstant: 300).isActive = true
+//        videoView!.heightAnchor.constraint(equalToConstant: 300).isActive = true
         videoView!.widthAnchor.constraint(equalToConstant: screenWidth).isActive=true
-//        post.cell_height = post.cell_height + 300
     }
     
     func setup_line01(){
@@ -312,8 +272,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     func setup_userInteractionStackView(){
         stckVwUserInteraction.axis = .horizontal
         var userInteractionBtnWidth = screenWidth/2
-//        print("------> post.user_id: \(post.user_id!)")
-//        print("------> currentUser.id: \(currentUser.id!)")
+
         if post.user_id == currentUser.id {
 //            print("* Should access to make a delete button for post: \(post.post_id!)")
             userInteractionBtnWidth = screenWidth/3
@@ -370,6 +329,8 @@ class PostCell: UITableViewCell, PostCellDelegate {
         lineImageImageView02.accessibilityIdentifier = "lineImageImageView02"
     }
     
+    
+    
     func setup_commentsView(){
         if  post.comments != nil {
             commentsVw = CommentsView()
@@ -378,16 +339,15 @@ class PostCell: UITableViewCell, PostCellDelegate {
             commentsVw!.indexPath = self.indexPath
             stckVwPostCell.addArrangedSubview(commentsVw!)
             // verified necessary constraint
-            commentsVw!.heightAnchor.constraint(equalToConstant: commentsVw!.stckVwComments!.frame.size.height).isActive=true
+//            commentsVw!.heightAnchor.constraint(equalToConstant: commentsVw!.stckVwComments!.frame.size.height).isActive=true
         }
     }
     
     func setup_line03(){
-        lineImageImageView03 = createDividerLine(thicknessOfLine: 1.5)
-        stckVwPostCell.addArrangedSubview(lineImageImageView02)
-        lineImageImageView02.accessibilityIdentifier = "lineImageImageView02"
+        lineImageImageView03 = createDividerLine(thicknessOfLine: 5.5)
+        stckVwPostCell.addArrangedSubview(lineImageImageView03)
+        lineImageImageView03.accessibilityIdentifier = "lineImageImageView03"
     }
-    
     func setup_stckVwNewComment(){
         stckVwNewComment = UIStackView()
         stckVwNewComment.translatesAutoresizingMaskIntoConstraints=false
@@ -396,10 +356,29 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stckVwNewComment.widthAnchor.constraint(equalToConstant: screenWidth).isActive=true
     }
     
+    @objc func btnDeletePostTouchDown(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: nil)
+
+    }
+    @objc func btnDeletePostTouchUpInside(_ sender: UIButton){
+        print("- btnDeletePostTouchUpInside ")
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        print("request to delete post: \(post.post_id!)")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
+            self.rinconVCDelegate.deletePostAreYouSure(indexPath: self.indexPath)
+        }
+    }
+    
     @objc func btnCommentTestPressed(){
         print("btnCommentTestPressed, post: \(post.post_id!)")
     }
     
+    
+    /* Delegate funcs */
     func expandNewComment(){
         print("- accessed expandNewComment(): post: \(post.post_id!) ")
 
@@ -472,23 +451,6 @@ class PostCell: UITableViewCell, PostCellDelegate {
                 //            self.post = post_list[self.indexPath.row]
                 self.rinconVCDelegate.customUpdatePostsAndReloadCell(posts: post_list, indexPath: self.indexPath)
             }
-        }
-    }
-    
-    @objc func btnDeletePostTouchDown(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
-            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }, completion: nil)
-
-    }
-    @objc func btnDeletePostTouchUpInside(_ sender: UIButton){
-        print("- btnDeletePostTouchUpInside ")
-        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
-            sender.transform = .identity
-        }, completion: nil)
-        print("request to delete post: \(post.post_id!)")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
-            self.rinconVCDelegate.deletePostAreYouSure(indexPath: self.indexPath)
         }
     }
     

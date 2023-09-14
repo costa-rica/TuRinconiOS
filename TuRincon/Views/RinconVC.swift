@@ -590,7 +590,7 @@ extension RinconVC: UITableViewDelegate {
         if let cell = tableView.cellForRow(at: indexPath) as? PostCell {
             // Replace `YourCustomTableViewCellClass` with the actual class of your cell
             
-                // Print accessibilityIdentifiers
+            /* commented out for refactorPostCell01 */
             if let unwp_stackViewImages = cell.stackViewImages{
                 for element in unwp_stackViewImages.arrangedSubviews{
 //                    print("element: \(element)")
