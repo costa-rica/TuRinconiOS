@@ -241,11 +241,11 @@ class HomeVC: DefaultViewController {
     
     func setup_pickerApi(){
         
-        let btnToDevWebsite = UIButton(type: .system)
-        btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
-        btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
-        btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-        stckVwHome.addArrangedSubview(btnToDevWebsite)
+//        let btnToDevWebsite = UIButton(type: .system)
+//        btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
+//        btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
+//        btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
+//        stckVwHome.addArrangedSubview(btnToDevWebsite)
         
         let stckVwApi = UIStackView()
         stckVwApi.translatesAutoresizingMaskIntoConstraints=false

@@ -85,6 +85,7 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         setup_stckVwLogin()
         setup_btnLogin()
         setup_stckVwRememberMe()
+        setup_forgotPassword()
         setup_stckVwAdmin()
         
         setup_lblMachineName()
@@ -358,6 +359,25 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         
     }
     
+    func setup_forgotPassword(){
+        let btnForgotPassword = UIButton(type: .system)
+        if urlStore.apiBase == .dev{
+            btnForgotPassword.setTitle("Forgot Password Dev", for: .normal)
+        } else {
+            btnForgotPassword.setTitle("Forgot Password Prod", for: .normal)
+        }
+        btnForgotPassword.addTarget(self, action: #selector(goToForgotPasswordWebsite), for: .touchUpInside)
+        btnForgotPassword.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
+        stckVwLogin.addArrangedSubview(btnForgotPassword)
+    }
+    
+    @objc func goToForgotPasswordWebsite() {
+        var url = URL(string: "https://tu-rincon.com/reset_password")!
+        if urlStore.apiBase == .dev{
+            url = URL(string: "https://dev.tu-rincon.com/reset_password")!
+        }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
     
     func setup_stckVwAdmin(){
         btnAdmin=UIButton()
