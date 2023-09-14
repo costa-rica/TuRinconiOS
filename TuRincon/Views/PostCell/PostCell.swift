@@ -40,8 +40,10 @@ class PostCell: UITableViewCell, PostCellDelegate {
     var likeView:LikeView!
     var commentView:CommentView!
     var lineImageImageView02: UIImageView!
-    
-    
+    var lineImageImageView03: UIImageView!
+    var stckVwNewComment: UIStackView!
+    var txtNewComment: UITextView?
+    var btnTxtNewComment: UIButton?
     var commentsVw:CommentsView?
 
     
@@ -88,8 +90,13 @@ class PostCell: UITableViewCell, PostCellDelegate {
         stackViewImages?.removeFromSuperview()
         
         videoView?.removeFromSuperview()
-
-        
+        stckVwUserInteraction.removeFromSuperview()
+        btnDeletePost?.removeFromSuperview()
+        likeView.removeFromSuperview()
+        commentView.removeFromSuperview()
+        stckVwNewComment.removeFromSuperview()
+        txtNewComment?.removeFromSuperview()
+        btnTxtNewComment?.removeFromSuperview()
         commentsVw?.removeFromSuperview()
     }
     
@@ -105,8 +112,11 @@ class PostCell: UITableViewCell, PostCellDelegate {
         setup_images()
         setup_video()
         setup_line01()
-//        setup_userInteractionStackView()
+        setup_userInteractionStackView()
         setup_line02()
+        setup_stckVwNewComment()
+        setup_line03()
+        
         setup_commentsView()
     }
     
@@ -333,6 +343,19 @@ class PostCell: UITableViewCell, PostCellDelegate {
         }
     }
     
+    func setup_line03(){
+        lineImageImageView03 = createDividerLine(thicknessOfLine: 5.5)
+        stckVwPostCell.addArrangedSubview(lineImageImageView03)
+        lineImageImageView03.accessibilityIdentifier = "lineImageImageView03"
+    }
+    func setup_stckVwNewComment(){
+        stckVwNewComment = UIStackView()
+        stckVwNewComment.translatesAutoresizingMaskIntoConstraints=false
+        stckVwPostCell.addArrangedSubview(stckVwNewComment)
+        stckVwNewComment.accessibilityIdentifier = "stckVwNewComment"
+        stckVwNewComment.widthAnchor.constraint(equalToConstant: screenWidth).isActive=true
+    }
+    
     @objc func btnDeletePostTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -350,10 +373,85 @@ class PostCell: UITableViewCell, PostCellDelegate {
         }
     }
     
+    @objc func btnCommentTestPressed(){
+        print("btnCommentTestPressed, post: \(post.post_id!)")
+    }
+    
     
     /* Delegate funcs */
     func expandNewComment(){
-        print("- expand comment screen")
+        print("- accessed expandNewComment(): post: \(post.post_id!) ")
+
+        if let textField = txtNewComment, let submitButton = btnTxtNewComment {
+            textField.removeFromSuperview()
+            submitButton.removeFromSuperview()
+            self.txtNewComment = nil
+            self.btnTxtNewComment = nil
+//            layoutIfNeeded()
+        } else {
+            // Create and add textField and submitButton to the stackView
+            setup_txtNewComment()
+        }
+        // Inform the tableView about the changes to update cell's height
+        guard let tblVwRinconVC = self.superview as? UITableView else { return }
+        tblVwRinconVC.beginUpdates()
+        tblVwRinconVC.endUpdates()
+        
+    }
+    
+    func setup_txtNewComment() {
+//        txtNewComment = UITextField()
+        txtNewComment = UITextView()
+        txtNewComment?.backgroundColor = UIColor(named: "gray-400")
+        txtNewComment?.translatesAutoresizingMaskIntoConstraints = false
+        txtNewComment?.layer.cornerRadius = 10
+        txtNewComment?.layer.borderWidth = 1
+        txtNewComment?.layer.borderColor = CGColor(gray: 0.5, alpha: 1.0)
+        txtNewComment?.font = UIFont(name: "Rockwell_tu", size: 13)
+        
+        btnTxtNewComment = UIButton()
+        btnTxtNewComment?.setTitle("Submit", for: .normal)
+        btnTxtNewComment?.setTitleColor(.blue, for: .normal)
+        btnTxtNewComment?.layer.cornerRadius = 10
+        btnTxtNewComment?.layer.borderWidth = 2
+        btnTxtNewComment?.layer.borderColor = UIColor(named: "blueBtn")?.cgColor
+        btnTxtNewComment?.translatesAutoresizingMaskIntoConstraints = false
+        btnTxtNewComment?.addTarget(self, action: #selector(btnTxtNewCommentTouchDown(_:)), for: .touchDown)
+        btnTxtNewComment?.addTarget(self, action: #selector(btnTextNewCommentTouchUpInside(_:)), for: .touchUpInside)
+        
+        if let textField = txtNewComment, let submitButton = btnTxtNewComment {
+            stckVwNewComment!.axis = .horizontal
+            stckVwNewComment!.translatesAutoresizingMaskIntoConstraints = false
+            stckVwNewComment.addArrangedSubview(textField)
+            stckVwNewComment.addArrangedSubview(submitButton)
+            
+            // Constraints
+            NSLayoutConstraint.activate([
+                textField.widthAnchor.constraint(equalToConstant: screenWidth * 0.75)
+            ])
+        }
+    }
+    @objc func btnTxtNewCommentTouchDown(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: nil)
+
+    }
+    @objc func btnTextNewCommentTouchUpInside(_ sender: UIButton){
+        print("- btnTextNewCommentPressed ")
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
+            print("text: \(self.txtNewComment!.text!)")
+            //        txtNewComment?.text = ""
+            self.txtNewComment?.removeFromSuperview()
+            self.btnTxtNewComment?.removeFromSuperview()
+            self.rinconStore.newComment(rincon_id: self.post.rincon_id, post_id: self.post.post_id, new_comment: self.txtNewComment!.text) { post_list in
+                //            self.post = post_list[self.indexPath.row]
+                self.rinconVCDelegate.customUpdatePostsAndReloadCell(posts: post_list, indexPath: self.indexPath)
+            }
+        }
     }
     
 }
