@@ -402,7 +402,7 @@ class PostCell: UITableViewCell, PostCellDelegate {
     func setup_txtNewComment() {
 //        txtNewComment = UITextField()
         txtNewComment = UITextView()
-        txtNewComment?.backgroundColor = UIColor(named: "gray-400")
+//        txtNewComment?.backgroundColor = UIColor(named: "gray-400")
         txtNewComment?.translatesAutoresizingMaskIntoConstraints = false
         txtNewComment?.layer.cornerRadius = 10
         txtNewComment?.layer.borderWidth = 1

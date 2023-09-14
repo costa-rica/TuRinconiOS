@@ -86,9 +86,9 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         setup_btnLogin()
         setup_stckVwRememberMe()
         setup_forgotPassword()
-        setup_stckVwAdmin()
+//        setup_stckVwAdmin()
         
-        setup_lblMachineName()
+//        setup_lblMachineName()
         
         userStore.checkUserJson(completion: { result in
             switch result{
@@ -364,7 +364,7 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         if urlStore.apiBase == .dev{
             btnForgotPassword.setTitle("Forgot Password Dev", for: .normal)
         } else {
-            btnForgotPassword.setTitle("Forgot Password Prod", for: .normal)
+            btnForgotPassword.setTitle("Forgot Password", for: .normal)
         }
         btnForgotPassword.addTarget(self, action: #selector(goToForgotPasswordWebsite), for: .touchUpInside)
         btnForgotPassword.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
@@ -379,39 +379,39 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
-    func setup_stckVwAdmin(){
-        btnAdmin=UIButton()
-        btnAdmin!.setTitle("API/Device Info", for: .normal)
-        btnAdmin!.addTarget(self, action: #selector(touchDownAdmin(_:)), for: .touchDown)
-        btnAdmin!.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
-        btnAdmin!.layer.borderColor = UIColor.gray.cgColor
-        btnAdmin!.layer.borderWidth = 2
-//        btnAdmin!.layer.backgroundColor=UIColor.gray.cgColor
-        btnAdmin!.layer.cornerRadius = 5
-        
-        stckVwAdmin.addArrangedSubview(btnAdmin!)
-        stckVwAdmin.translatesAutoresizingMaskIntoConstraints = false
-        stckVwAdmin.spacing = 10
-        stckVwAdmin.axis = .vertical
-        view.addSubview(stckVwAdmin)
-
-        NSLayoutConstraint.activate([
-            stckVwAdmin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor,constant: widthFromPct(percent: cardInteriorPadding)),
-            stckVwAdmin.trailingAnchor.constraint(equalTo: vwBackgroundCard.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)),
-            stckVwAdmin.bottomAnchor.constraint(equalTo: vwBackgroundCard.bottomAnchor, constant: heightFromPct(percent: -cardInteriorPadding)),
-
-        ])
-        
-        view.layoutIfNeeded()// <-- Realizes size of lblPassword and stckVwLogin
-
-    }
-    
-    
-    private func setup_lblMachineName(){
-        lblMachineName.text = ProcessInfo.processInfo.hostName
-        lblMachineName.textAlignment = .center
-        stckVwAdmin.addArrangedSubview(lblMachineName)
-    }
+//    func setup_stckVwAdmin(){
+//        btnAdmin=UIButton()
+//        btnAdmin!.setTitle("API/Device Info", for: .normal)
+//        btnAdmin!.addTarget(self, action: #selector(touchDownAdmin(_:)), for: .touchDown)
+//        btnAdmin!.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+//        btnAdmin!.layer.borderColor = UIColor.gray.cgColor
+//        btnAdmin!.layer.borderWidth = 2
+////        btnAdmin!.layer.backgroundColor=UIColor.gray.cgColor
+//        btnAdmin!.layer.cornerRadius = 5
+//        
+//        stckVwAdmin.addArrangedSubview(btnAdmin!)
+//        stckVwAdmin.translatesAutoresizingMaskIntoConstraints = false
+//        stckVwAdmin.spacing = 10
+//        stckVwAdmin.axis = .vertical
+//        view.addSubview(stckVwAdmin)
+//
+//        NSLayoutConstraint.activate([
+//            stckVwAdmin.leadingAnchor.constraint(equalTo: vwBackgroundCard.leadingAnchor,constant: widthFromPct(percent: cardInteriorPadding)),
+//            stckVwAdmin.trailingAnchor.constraint(equalTo: vwBackgroundCard.trailingAnchor, constant: widthFromPct(percent: cardInteriorPadding * -1)),
+//            stckVwAdmin.bottomAnchor.constraint(equalTo: vwBackgroundCard.bottomAnchor, constant: heightFromPct(percent: -cardInteriorPadding)),
+//
+//        ])
+//        
+//        view.layoutIfNeeded()// <-- Realizes size of lblPassword and stckVwLogin
+//
+//    }
+//    
+//    
+//    private func setup_lblMachineName(){
+//        lblMachineName.text = ProcessInfo.processInfo.hostName
+//        lblMachineName.textAlignment = .center
+//        stckVwAdmin.addArrangedSubview(lblMachineName)
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToYourRinconsVC"){
@@ -423,12 +423,12 @@ class LoginVC: DefaultViewController, LoginVCDelegate{
             yourRinconsVC.loginVcDelegate = self
 
         }
-        else if (segue.identifier == "goToAdminVC"){
-            let adminVC = segue.destination as! AdminVC
-            adminVC.userStore = self.userStore
-            adminVC.urlStore = self.urlStore
-            adminVC.rinconStore = self.rinconStore
-        }
+//        else if (segue.identifier == "goToAdminVC"){
+//            let adminVC = segue.destination as! AdminVC
+//            adminVC.userStore = self.userStore
+//            adminVC.urlStore = self.urlStore
+//            adminVC.rinconStore = self.rinconStore
+//        }
     }
     
     func clearUser(){

@@ -47,7 +47,7 @@ class HomeVC: DefaultViewController {
 //        urlStore.apiBase = APIBase.dev
         
         userStore.urlStore = self.urlStore
-        urlStore.apiBase = APIBase.dev
+        urlStore.apiBase = APIBase.prod
         rinconStore = RinconStore()
         rinconStore.requestStore = RequestStore()
         rinconStore.requestStore.urlStore = self.urlStore
@@ -138,7 +138,7 @@ class HomeVC: DefaultViewController {
         stckVwHome.spacing = 20
         setup_btnToRegister()
         setup_btnToLogin()
-        setup_pickerApi()
+//        setup_pickerApi()
     }
     
     func setup_vwEtymology(){
@@ -239,65 +239,65 @@ class HomeVC: DefaultViewController {
         btnToLogin.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
     }
     
-    func setup_pickerApi(){
-        
-//        let btnToDevWebsite = UIButton(type: .system)
-//        btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
-//        btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
-//        btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
-//        stckVwHome.addArrangedSubview(btnToDevWebsite)
-        
-        let stckVwApi = UIStackView()
-        stckVwApi.translatesAutoresizingMaskIntoConstraints=false
-        stckVwApi.axis = .vertical
-        stckVwHome.addArrangedSubview(stckVwApi)
-        
-        
-        let lblApi = UILabel()
-        lblApi.text = "Which Api?:"
-        lblApi.translatesAutoresizingMaskIntoConstraints=false
-        stckVwApi.addArrangedSubview(lblApi)
-        lblApi.sizeToFit()
-        stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
-        
-        self.segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
-        
-        
-        // This doesn't execute right away... needs to be async
-        DispatchQueue.global(qos: .background).async {
-            if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
-                DispatchQueue.main.async {
-                    self.segmentedControl.removeFromSuperview()
-                    
-                    self.arryEnvironment=APIBase.allCases
-                    self.segmentedControl = UISegmentedControl(items: self.arryEnvironment.map { $0.rawValue })
-                    self.urlStore.apiBase = APIBase.local
-                    print("**** updated self.urlStore.apiBase to \(self.urlStore.apiBase!) <---")
-                    self.segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
-                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
-                    stckVwApi.addArrangedSubview(self.segmentedControl)
-                    self.segmentedControl.addTarget(self, action: #selector(self.segmentedControlValueChanged), for: .valueChanged)
-                }
-                
-            }
-//            else {
+//    func setup_pickerApi(){
+//        
+////        let btnToDevWebsite = UIButton(type: .system)
+////        btnToDevWebsite.setTitle("Tu Rincón Dev Website", for: .normal)
+////        btnToDevWebsite.addTarget(self, action: #selector(goToDevWebsite), for: .touchUpInside)
+////        btnToDevWebsite.titleLabel?.font = UIFont(name: "Rockwell_tu", size: 20)
+////        stckVwHome.addArrangedSubview(btnToDevWebsite)
+//        
+//        let stckVwApi = UIStackView()
+//        stckVwApi.translatesAutoresizingMaskIntoConstraints=false
+//        stckVwApi.axis = .vertical
+//        stckVwHome.addArrangedSubview(stckVwApi)
+//        
+//        
+//        let lblApi = UILabel()
+//        lblApi.text = "Which Api?:"
+//        lblApi.translatesAutoresizingMaskIntoConstraints=false
+//        stckVwApi.addArrangedSubview(lblApi)
+//        lblApi.sizeToFit()
+//        stckVwApi.heightAnchor.constraint(equalToConstant: lblApi.frame.size.height + 40).isActive=true
+//        
+//        self.segmentedControl = UISegmentedControl(items: arryEnvironment.map { $0.rawValue })
+//        
+//        
+//        // This doesn't execute right away... needs to be async
+//        DispatchQueue.global(qos: .background).async {
+//            if ProcessInfo.processInfo.hostName == "nicks-mac-mini.local"{
 //                DispatchQueue.main.async {
-//                    self.urlStore.apiBase = APIBase.dev
-//                    self.arryEnvironment.remove(at: 0)
+//                    self.segmentedControl.removeFromSuperview()
+//                    
+//                    self.arryEnvironment=APIBase.allCases
+//                    self.segmentedControl = UISegmentedControl(items: self.arryEnvironment.map { $0.rawValue })
+//                    self.urlStore.apiBase = APIBase.local
+//                    print("**** updated self.urlStore.apiBase to \(self.urlStore.apiBase!) <---")
 //                    self.segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
 //                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+//                    stckVwApi.addArrangedSubview(self.segmentedControl)
+//                    self.segmentedControl.addTarget(self, action: #selector(self.segmentedControlValueChanged), for: .valueChanged)
 //                }
+//                
 //            }
-        }
-        
-        self.segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        
-        // Set initial selected segment -- prior to the async above finishing
-        self.segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
-        stckVwApi.addArrangedSubview(self.segmentedControl)
-        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
-
-    }
+////            else {
+////                DispatchQueue.main.async {
+////                    self.urlStore.apiBase = APIBase.dev
+////                    self.arryEnvironment.remove(at: 0)
+////                    self.segmentedControl.selectedSegmentIndex = self.arryEnvironment.firstIndex(where: { $0.urlString == self.urlStore.apiBase.urlString }) ?? 0
+////                    self.vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: self.urlStore)
+////                }
+////            }
+//        }
+//        
+//        self.segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+//        
+//        // Set initial selected segment -- prior to the async above finishing
+//        self.segmentedControl.selectedSegmentIndex = arryEnvironment.firstIndex(where: { $0.urlString == urlStore.apiBase.urlString }) ?? 0
+//        stckVwApi.addArrangedSubview(self.segmentedControl)
+//        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
+//
+//    }
     
     @objc func touchDown(_ sender: UIButton) {
         UIView.animate(withDuration: 0.1, delay: 0.0, options: [.curveEaseOut], animations: {
@@ -318,17 +318,17 @@ class HomeVC: DefaultViewController {
     }
     
     
-    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        let selectedEnvironment = arryEnvironment[sender.selectedSegmentIndex]
-        urlStore.apiBase = selectedEnvironment
-//        print("API base changed by user to: \(urlStore.apiBase.urlString)")
-        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
-    }
+//    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+//        let selectedEnvironment = arryEnvironment[sender.selectedSegmentIndex]
+//        urlStore.apiBase = selectedEnvironment
+////        print("API base changed by user to: \(urlStore.apiBase.urlString)")
+//        vwVCHeaderOrange.backgroundColor = environmentColor(urlStore: urlStore)
+//    }
     
-    @objc func goToDevWebsite() {
-        guard let url = URL(string: "https://dev.tu-rincon.com") else { return }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-    }
+//    @objc func goToDevWebsite() {
+//        guard let url = URL(string: "https://dev.tu-rincon.com") else { return }
+//        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//    }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToLoginVC"){
